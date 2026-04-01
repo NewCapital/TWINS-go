@@ -1,0 +1,92 @@
+{
+  "title": "Masternodet",
+  "myMasternodes": "Omat Masternodet",
+  "allMasternodes": "Verkon Masternodet",
+  "count": {
+    "total": "Yhteensä: {{count}}",
+    "enabled": "Käytössä: {{count}}",
+    "missing": "Puuttuu: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Osoite",
+    "protocol": "Protokolla",
+    "status": "Tila",
+    "activeTime": "Aktiivinen Aika",
+    "lastSeen": "Viimeksi Nähty",
+    "pubkey": "Julkinen Avain",
+    "tier": "Taso",
+    "rank": "Sija"
+  },
+  "status": {
+    "enabled": "KÄYTÖSSÄ",
+    "missing": "PUUTTUU",
+    "preEnabled": "ESI_KÄYTÖSSÄ",
+    "expired": "VANHENTUNUT",
+    "newStartRequired": "UUSI_KÄYNNISTYS_VAADITAAN",
+    "updateRequired": "PÄIVITYS_VAADITAAN",
+    "watchdogExpired": "VAHTIKOIRA_VANHENTUNUT",
+    "poseBan": "POSE_BAN",
+    "unknown": "TUNTEMATON"
+  },
+  "tiers": {
+    "bronze": "Pronssi",
+    "silver": "Hopea",
+    "gold": "Kulta",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Käynnistä",
+    "startAlias": "Käynnistä alias",
+    "startAll": "Käynnistä kaikki",
+    "startMissing": "Käynnistä PUUTTUVAT",
+    "stop": "Pysäytä",
+    "update": "Päivitä tila",
+    "edit": "Muokkaa",
+    "remove": "Poista",
+    "copyProTx": "Kopioi ProTx hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Käynnistä Masternode",
+      "message": "Haluatko varmasti käynnistää masternoden \"{{alias}}\"?",
+      "messageAll": "Haluatko varmasti käynnistää kaikki masternodet?",
+      "messageMissing": "Haluatko varmasti käynnistää kaikki PUUTTUVAT masternodet?"
+    },
+    "removeConfirm": {
+      "title": "Poista Masternode",
+      "message": "Haluatko varmasti poistaa masternoden \"{{alias}}\"? Tätä ei voi kumota."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" käynnistetty onnistuneesti",
+    "startAllSuccess": "Kaikki masternodet käynnistetty onnistuneesti",
+    "startMissingSuccess": "{{count}} puuttuvaa masternodea käynnistetty onnistuneesti",
+    "noMissingToStart": "Ei puuttuvia masternodeja käynnistettäväksi",
+    "startFailed": "Masternoden käynnistys epäonnistui: {{error}}",
+    "startAllFailed": "Kaikkien masternodien käynnistys epäonnistui: {{error}}",
+    "startMissingFailed": "Puuttuvien masternodien käynnistys epäonnistui: {{error}}",
+    "fetchFailed": "Masternodien haku epäonnistui",
+    "updateSuccess": "Masternoden tila päivitetty",
+    "removeSuccess": "Masternode \"{{alias}}\" poistettu"
+  },
+  "note": {
+    "title": "Huomio:",
+    "line1": "Masternodiesi tila paikallisessa lompakossa voi olla hieman epätarkka.",
+    "line2": "Odota aina lompakon synkronoivan lisätiedot ja tarkista sitten toiselta nodelta,",
+    "line3": "jos nodesi pitäisi olla käynnissä mutta näet yhä \"PUUTTUU\" \"Tila\"-kentässä."
+  },
+  "autoRefresh": "Automaattinen päivitys {{seconds}}s kuluttua",
+  "autoRefreshStatus": "Tila päivitetään automaattisesti (sek):",
+  "noMasternodes": "Ei määritettyjä masternodeja",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

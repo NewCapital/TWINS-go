@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Peněženka",
+    "version": "Verze {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Zrušit",
+    "apply": "Použít",
+    "close": "Zavřít",
+    "save": "Uložit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "copy": "Kopírovat",
+    "copyAddress": "Kopírovat adresu",
+    "paste": "Vložit ze schránky",
+    "addressBook": "Vybrat z adresáře",
+    "max": "Maximum",
+    "export": "Exportovat",
+    "import": "Importovat",
+    "refresh": "Obnovit",
+    "reset": "Resetovat",
+    "confirm": "Potvrdit",
+    "yes": "Ano",
+    "no": "Ne",
+    "back": "Zpět",
+    "next": "Další",
+    "done": "Hotovo",
+    "dismiss": "Zamítnout",
+    "retry": "Zkusit znovu",
+    "retryConnection": "Zkusit připojení znovu"
+  },
+  "navigation": {
+    "overview": "Přehled",
+    "send": "Odeslat",
+    "receive": "Přijmout",
+    "transactions": "Transakce",
+    "masternodes": "Masternody",
+    "explorer": "Průzkumník",
+    "staking": "Staking",
+    "privacy": "Soukromí"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Načítání...",
+    "success": "Úspěch",
+    "failed": "Selhalo",
+    "error": "Chyba",
+    "connected": "Připojeno",
+    "connecting": "Připojování...",
+    "disconnected": "Odpojeno",
+    "offline": "Offline",
+    "syncing": "Synchronizace...",
+    "synced": "Synchronizováno",
+    "outOfSync": "(nesynchronizováno)",
+    "upToDate": "Aktuální"
+  },
+  "errors": {
+    "generic": "Došlo k chybě",
+    "network": "Chyba sítě",
+    "timeout": "Vypršel časový limit",
+    "notFound": "Nenalezeno",
+    "invalidInput": "Neplatný vstup",
+    "unauthorized": "Neautorizováno"
+  },
+  "time": {
+    "seconds": "{{count}} sekunda",
+    "seconds_other": "{{count}} sekund",
+    "minutes": "{{count}} minuta",
+    "minutes_other": "{{count}} minut",
+    "hours": "{{count}} hodina",
+    "hours_other": "{{count}} hodin",
+    "days": "{{count}} den",
+    "days_other": "{{count}} dní",
+    "ago": "před {{time}}",
+    "never": "Nikdy"
+  },
+  "confirmDialog": {
+    "areYouSure": "Jste si jisti?",
+    "cannotUndo": "Tuto akci nelze vrátit zpět."
+  },
+  "statusBar": {
+    "synchronizing": "Synchronizace se sítí...",
+    "scanningBlock": "Skenování bloku {{height}}",
+    "upToDate": "Aktuální",
+    "hdEnabled": "HD peněženka povolena",
+    "torEnabled": "Tor povolen",
+    "walletEncrypted": "Peněženka zašifrována",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Peněženka není zašifrována",
+    "stakingActive": "Staking aktivní",
+    "stakingInactive": "Staking neaktivní",
+    "connections": "{{count}} síťové připojení",
+    "connections_other": "{{count}} síťových připojení"
+  },
+  "p2pError": {
+    "title": "Chyba síťového připojení",
+    "failedToConnect": "Nepodařilo se připojit k síti TWINS:",
+    "checkConnection": "Zkontrolujte prosím své internetové připojení a nastavení firewallu. Peněženka se bude nadále pokoušet připojit na pozadí."
+  },
+  "intro": {
+    "welcome": "Vítejte v TWINS",
+    "welcomeSubtitle": "Oficiální kryptoměnová peněženka TWINS",
+    "chooseDataDir": "Vyberte datový adresář",
+    "dataDirDescription": "TWINS bude ukládat svá data do níže uvedeného adresáře. To zahrnuje data blockchainu, soubory peněženky a konfiguraci.",
+    "defaultDir": "Použít výchozí datový adresář",
+    "customDir": "Použít vlastní datový adresář",
+    "browse": "Procházet...",
+    "spaceRequired": "Je vyžadováno alespoň {{size}} GB místa na disku.",
+    "getStarted": "Začít",
+    "continue": "Pokračovat"
+  },
+  "shutdown": {
+    "title": "Vypínání",
+    "message": "Peněženka TWINS se vypíná...",
+    "pleaseWait": "Počkejte prosím, než se peněženka bezpečně zavře.",
+    "savingData": "Ukládání dat peněženky...",
+    "closingConnections": "Zavírání síťových připojení..."
+  },
+  "loading": {
+    "default": "Načítání...",
+    "wallet": "Načítání peněženky...",
+    "transactions": "Načítání transakcí...",
+    "blocks": "Načítání bloků...",
+    "masternodes": "Načítání masternodů...",
+    "initializing": "Inicializace..."
+  },
+  "explorer": {
+    "title": "Průzkumník",
+    "blocks": "Bloky",
+    "transactions": "Transakce",
+    "addresses": "Adresy",
+    "search": "Hledat",
+    "searchPlaceholder": "Hledat podle výšky bloku, hashe, txid nebo adresy...",
+    "height": "Výška",
+    "hash": "Hash",
+    "time": "Čas",
+    "age": "Stáří",
+    "txCount": "Tx",
+    "size": "Velikost",
+    "confirmations": "Potvrzení",
+    "difficulty": "Obtížnost",
+    "noBlocks": "Žádné bloky nenalezeny",
+    "noTransactions": "Žádné transakce nenalezeny",
+    "blockDetails": "Detail bloku",
+    "transactionDetails": "Detail transakce",
+    "addressDetails": "Detail adresy",
+    "inputs": "Vstupy",
+    "outputs": "Výstupy",
+    "value": "Hodnota",
+    "from": "Od",
+    "to": "Komu",
+    "viewAll": "Zobrazit vše"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking povolen",
+    "disabled": "Staking zakázán",
+    "stakingBalance": "Staking zůstatek",
+    "immatureBalance": "Nezralý zůstatek"
+  },
+  "privacy": {
+    "title": "Soukromí",
+    "mint": "Razit",
+    "spend": "Utratit",
+    "balance": "Soukromý zůstatek",
+    "denominations": "Denominace"
+  },
+  "notifications": {
+    "newTransaction": "Nová transakce",
+    "transactionReceived": "Přijato {{amount}} TWINS",
+    "transactionSent": "Odesláno {{amount}} TWINS"
+  }
+}

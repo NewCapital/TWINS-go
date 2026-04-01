@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "PREGLED",
+    "recentTransactions": "Nedavne transakcije"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Kombinirani saldo",
+    "twins": "TWINS saldo",
+    "total": "Ukupno",
+    "totalBalance": "Ukupni saldo",
+    "available": "Dostupno",
+    "pending": "Na čekanju",
+    "immature": "Nezrelo",
+    "locked": "Zaključano",
+    "watchOnly": "Samo za gledanje",
+    "spendable": "Za potrošiti"
+  },
+  "send": {
+    "title": "Pošalji",
+    "payTo": "Platiti",
+    "payToPlaceholder": "Unesite TWINS adresu (npr. D...)",
+    "label": "Oznaka",
+    "labelPlaceholder": "Unesite oznaku za ovu adresu",
+    "amount": "Iznos",
+    "amountPlaceholder": "0,00",
+    "message": "Poruka",
+    "messagePlaceholder": "Unesite poruku (nije obavezno)",
+    "coinControl": {
+      "title": "Značajke upravljanja novcem",
+      "inputs": "Unosi",
+      "customChangeAddress": "Prilagođena adresa za ostatak",
+      "customChangePlaceholder": "Unesite prilagođenu adresu za ostatak",
+      "splitUtxo": "Podijeli blok",
+      "splitThreshold": "nakon",
+      "utxoSize": "UTXO veličina"
+    },
+    "recipients": {
+      "add": "Dodaj primatelja",
+      "remove": "Ukloni ovaj unos",
+      "useMaximum": "Koristi dostupni saldo",
+      "subtractFee": "Oduzmi naknadu od iznosa"
+    },
+    "fee": {
+      "label": "Naknada za transakciju",
+      "normal": "Normalno",
+      "fast": "Brzo",
+      "recommended": "Preporučeno",
+      "custom": "Prilagođeno",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Ukupna naknada: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Ukupno primatelja",
+      "estimatedFee": "Procijenjena naknada",
+      "afterFee": "Nakon naknade",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Pošalji",
+      "clearAll": "Poništi sve"
+    },
+    "errors": {
+      "invalidAddress": "Nevažeći format TWINS adrese",
+      "amountRequired": "Iznos je obavezan",
+      "amountTooLow": "Iznos mora biti najmanje {{min}} TWINS kako bi se izbjegao dust",
+      "insufficientFunds": "Nedovoljna sredstva",
+      "noRecipients": "Molimo dodajte barem jednog primatelja"
+    },
+    "confirmation": {
+      "title": "Potvrdi transakciju",
+      "recipient": "Za",
+      "recipients": "Primatelji",
+      "amount": "Iznos",
+      "totalAmount": "Ukupni iznos",
+      "fee": "Naknada",
+      "transactionFee": "Naknada za transakciju",
+      "total": "Ukupno",
+      "grandTotal": "Sveukupno",
+      "walletPassphrase": "Zaporka novčanika",
+      "passphrasePlaceholder": "Unesite zaporku novčanika",
+      "passphraseRequired": "Zaporka je potrebna za šifrirane novčanike",
+      "showPassphrase": "Prikaži zaporku",
+      "hidePassphrase": "Sakrij zaporku",
+      "capsLockOn": "Caps Lock je UKLJUČEN",
+      "largeTransactionWarning": "Upozorenje: Ovo je velika transakcija. Molimo pažljivo provjerite sve detalje.",
+      "confirmSend": "Potvrdi slanje",
+      "sending": "Slanje..."
+    },
+    "success": {
+      "title": "Transakcija uspješno poslana",
+      "message": "Transakcija je poslana na mrežu.",
+      "txid": "ID transakcije",
+      "copyTxid": "Kopiraj TXID",
+      "viewInExplorer": "Pogledaj u exploreru",
+      "copiedToClipboard": "Kopirano u međuspremnik!",
+      "copyFailed": "Kopiranje nije uspjelo - molimo kopirajte ručno"
+    }
+  },
+  "receive": {
+    "title": "Primi",
+    "currentAddress": "Trenutna adresa za primanje",
+    "requestPayment": "Zatraži plaćanje",
+    "requestingPayment": "Stvaranje...",
+    "newAddress": "Generiraj novu adresu",
+    "addressList": "Adrese za primanje",
+    "copyAddress": "Kopiraj adresu u međuspremnik",
+    "showQR": "Prikaži QR kod",
+    "qrCode": "QR kod",
+    "amount": "Iznos",
+    "label": "Oznaka",
+    "message": "Poruka",
+    "address": "Adresa",
+    "reusePrevious": "Ponovno koristi postojeću adresu za primanje (nije preporučeno)",
+    "formInfo": "Koristite ovaj obrazac za zahtjev plaćanja. Sva polja su <1>neobavezna</1>.",
+    "clear": "Izbriši",
+    "receivingAddresses": "Adrese za primanje",
+    "requestedHistory": "Povijest zahtjeva za plaćanje",
+    "noRequests": "Još nema zahtjeva za plaćanje",
+    "show": "Prikaži",
+    "remove": "Ukloni",
+    "contextMenu": {
+      "copyLabel": "Kopiraj oznaku",
+      "copyAddress": "Kopiraj adresu",
+      "copyMessage": "Kopiraj poruku",
+      "copyAmount": "Kopiraj iznos"
+    },
+    "table": {
+      "date": "Datum",
+      "label": "Oznaka",
+      "address": "Adresa",
+      "message": "Poruka",
+      "amountTwins": "Iznos (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "POVIJEST",
+    "recent": "Nedavne transakcije",
+    "all": "Sve transakcije",
+    "noTransactions": "Nema pronađenih transakcija",
+    "loading": "Učitavanje transakcija...",
+    "error": "Greška: {{message}}",
+    "type": {
+      "all": "Sve",
+      "mostCommon": "Najučestaliji",
+      "sent": "Poslano na",
+      "received": "Primljeno s",
+      "toYourself": "Samom sebi",
+      "mined": "Mined",
+      "minted": "Minted",
+      "masternode": "Masternode nagrada",
+      "other": "Ostalo"
+    },
+    "status": {
+      "confirmed": "Potvrđeno",
+      "unconfirmed": "Nepotvrđeno",
+      "pending": "Na čekanju",
+      "conflicted": "U sukobu",
+      "abandoned": "Napušteno",
+      "confirmations": "{{count}} potvrda",
+      "confirmations_other": "{{count}} potvrda"
+    },
+    "details": {
+      "title": "Detalji transakcije",
+      "txid": "ID transakcije",
+      "date": "Datum",
+      "status": "Status",
+      "amount": "Iznos",
+      "fee": "Naknada",
+      "from": "Od",
+      "to": "Za",
+      "confirmations": "Potvrde",
+      "blockHash": "Hash bloka",
+      "blockHeight": "Visina bloka"
+    },
+    "filters": {
+      "all": "Sve",
+      "today": "Danas",
+      "thisWeek": "Ovaj tjedan",
+      "thisMonth": "Ovaj mjesec",
+      "lastMonth": "Prošli mjesec",
+      "thisYear": "Ove godine",
+      "range": "Raspon...",
+      "dateRange": "Raspon datuma",
+      "type": "Tip",
+      "minAmount": "Min iznos",
+      "search": "Unesite adresu ili oznaku za pretragu",
+      "rangeTo": "do"
+    },
+    "table": {
+      "date": "Datum",
+      "type": "Tip",
+      "address": "Adresa",
+      "amount": "Iznos"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopiraj adresu",
+      "copyLabel": "Kopiraj oznaku",
+      "copyAmount": "Kopiraj iznos",
+      "copyTxId": "Kopiraj ID transakcije",
+      "editLabel": "Uredi oznaku",
+      "showDetails": "Prikaži detalje transakcije",
+      "hideOrphanStakes": "Sakrij orphan stakeove"
+    },
+    "footer": {
+      "selectedAmount": "Odabrani iznos:",
+      "transactions": "{{count}} transakcija",
+      "transactions_other": "{{count}} transakcija",
+      "export": "Izvezi"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Nema transakcija za izvoz",
+      "noTransactionsMessage": "Nijedna transakcija ne odgovara trenutnim filtrima.",
+      "exportSuccess": "Izvoz uspješan",
+      "exportedCount": "Izvezeno {{count}} transakcija u CSV datoteku",
+      "exportedCount_other": "Izvezeno {{count}} transakcija u CSV datoteku",
+      "exportFailed": "Izvoz nije uspio"
+    }
+  },
+  "addressBook": {
+    "title": "Adresar",
+    "add": "Dodaj adresu",
+    "edit": "Uredi adresu",
+    "delete": "Izbriši adresu",
+    "label": "Oznaka",
+    "address": "Adresa",
+    "noAddresses": "Nema spremljenih adresa"
+  }
+}

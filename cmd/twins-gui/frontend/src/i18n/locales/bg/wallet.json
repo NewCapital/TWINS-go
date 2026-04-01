@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "ПРЕГЛЕД",
+    "recentTransactions": "Наскорошни транзакции"
+  },
+  "balance": {
+    "title": "Баланс",
+    "combined": "Комбиниран баланс",
+    "twins": "TWINS Баланс",
+    "total": "Общо",
+    "totalBalance": "Общ баланс",
+    "available": "Налични",
+    "pending": "В изчакване",
+    "immature": "Неузрели",
+    "locked": "Заключени",
+    "watchOnly": "Само наблюдение",
+    "spendable": "Налични за харчене"
+  },
+  "send": {
+    "title": "Изпрати",
+    "payTo": "Плати на",
+    "payToPlaceholder": "Въведете TWINS адрес (напр. D...)",
+    "label": "Етикет",
+    "labelPlaceholder": "Въведете етикет за този адрес",
+    "amount": "Сума",
+    "amountPlaceholder": "0,00",
+    "message": "Съобщение",
+    "messagePlaceholder": "Въведете съобщение (по желание)",
+    "coinControl": {
+      "title": "Настройки Монетен Контрол",
+      "inputs": "Входящи",
+      "customChangeAddress": "Друг адрес за ресто",
+      "customChangePlaceholder": "Въведете адрес за ресто",
+      "splitUtxo": "Раздели UTXO",
+      "splitThreshold": "след",
+      "utxoSize": "Размер на UTXO"
+    },
+    "recipients": {
+      "add": "Добави получател",
+      "remove": "Премахни този запис",
+      "useMaximum": "Използвай наличния баланс",
+      "subtractFee": "Извади таксата от сумата"
+    },
+    "fee": {
+      "label": "Такса за транзакция",
+      "normal": "Нормална",
+      "fast": "Бърза",
+      "recommended": "Препоръчителна",
+      "custom": "Собствена",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Обща такса: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Общо за получатели",
+      "estimatedFee": "Очаквана такса",
+      "afterFee": "След такса",
+      "balance": "Баланс: {{amount}}"
+    },
+    "buttons": {
+      "send": "Изпрати",
+      "clearAll": "Изчисти всичко"
+    },
+    "errors": {
+      "invalidAddress": "Невалиден формат на TWINS адрес",
+      "amountRequired": "Сумата е задължителна",
+      "amountTooLow": "Сумата трябва да е поне {{min}} TWINS за избягване на остатък",
+      "insufficientFunds": "Средствата ви не достигат",
+      "noRecipients": "Моля добавете поне един получател"
+    },
+    "confirmation": {
+      "title": "Потвърди транзакция",
+      "recipient": "До",
+      "recipients": "Получатели",
+      "amount": "Сума",
+      "totalAmount": "Обща сума",
+      "fee": "Такса",
+      "transactionFee": "Такса за транзакция",
+      "total": "Общо",
+      "grandTotal": "Крайна сума",
+      "walletPassphrase": "Парола на портфейла",
+      "passphrasePlaceholder": "Въведете паролата на портфейла",
+      "passphraseRequired": "Паролата е задължителна за шифрирани портфейли",
+      "showPassphrase": "Покажи паролата",
+      "hidePassphrase": "Скрий паролата",
+      "capsLockOn": "Caps Lock е ВКЛЮЧЕН",
+      "largeTransactionWarning": "Внимание: Това е голяма транзакция. Моля, проверете внимателно всички детайли.",
+      "confirmSend": "Потвърди изпращане",
+      "sending": "Изпращане..."
+    },
+    "success": {
+      "title": "Транзакцията е изпратена успешно",
+      "message": "Транзакцията е изпратена към мрежата.",
+      "txid": "ID на транзакцията",
+      "copyTxid": "Копирай TXID",
+      "viewInExplorer": "Виж в експлорера",
+      "copiedToClipboard": "Копирано в клипборда!",
+      "copyFailed": "Копирането неуспешно - копирайте ръчно"
+    }
+  },
+  "receive": {
+    "title": "Получи",
+    "currentAddress": "Текущ адрес за получаване",
+    "requestPayment": "Поискай плащане",
+    "requestingPayment": "Създаване...",
+    "newAddress": "Генерирай нов адрес",
+    "addressList": "Адреси за получаване",
+    "copyAddress": "Копирай адреса в клипборда",
+    "showQR": "Покажи QR код",
+    "qrCode": "QR код",
+    "amount": "Сума",
+    "label": "Етикет",
+    "message": "Съобщение",
+    "address": "Адрес",
+    "reusePrevious": "Използвай отново съществуващ адрес за получаване (не се препоръчва)",
+    "formInfo": "Използвайте този формуляр за заявяване на плащания. Всички полета са <1>по желание</1>.",
+    "clear": "Изчисти",
+    "receivingAddresses": "Адреси за получаване",
+    "requestedHistory": "История на поисканите плащания",
+    "noRequests": "Все още няма заявки за плащане",
+    "show": "Покажи",
+    "remove": "Премахни",
+    "contextMenu": {
+      "copyLabel": "Копирай етикет",
+      "copyAddress": "Копирай адрес",
+      "copyMessage": "Копирай съобщение",
+      "copyAmount": "Копирай сума"
+    },
+    "table": {
+      "date": "Дата",
+      "label": "Етикет",
+      "address": "Адрес",
+      "message": "Съобщение",
+      "amountTwins": "Сума (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "ИСТОРИЯ",
+    "recent": "Наскорошни транзакции",
+    "all": "Всички транзакции",
+    "noTransactions": "Няма намерени транзакции",
+    "loading": "Зареждане на транзакциите...",
+    "error": "Грешка: {{message}}",
+    "type": {
+      "all": "Всички",
+      "mostCommon": "Най-общи",
+      "sent": "Изпратени до",
+      "received": "Получени с",
+      "toYourself": "Към себе си",
+      "mined": "Изсечени",
+      "minted": "Емитирани",
+      "masternode": "Мастърноуд награда",
+      "other": "Други"
+    },
+    "status": {
+      "confirmed": "Потвърдена",
+      "unconfirmed": "Непотвърдена",
+      "pending": "В изчакване",
+      "conflicted": "Конфликтна",
+      "abandoned": "Изоставена",
+      "confirmations": "{{count}} потвърждение",
+      "confirmations_other": "{{count}} потвърждения"
+    },
+    "details": {
+      "title": "Детайли на транзакцията",
+      "txid": "ID на транзакцията",
+      "date": "Дата",
+      "status": "Състояние",
+      "amount": "Сума",
+      "fee": "Такса",
+      "from": "От",
+      "to": "До",
+      "confirmations": "Потвърждения",
+      "blockHash": "Хеш на блока",
+      "blockHeight": "Височина на блока"
+    },
+    "filters": {
+      "all": "Всички",
+      "today": "Днес",
+      "thisWeek": "Тази седмица",
+      "thisMonth": "Този месец",
+      "lastMonth": "Миналия месец",
+      "thisYear": "Тази година",
+      "range": "Диапазон...",
+      "dateRange": "Период от дати",
+      "type": "Вид",
+      "minAmount": "Минимална сума",
+      "search": "Въведете адрес или етикет за търсене",
+      "rangeTo": "до"
+    },
+    "table": {
+      "date": "Дата",
+      "type": "Вид",
+      "address": "Адрес",
+      "amount": "Сума"
+    },
+    "contextMenu": {
+      "copyAddress": "Копирай адрес",
+      "copyLabel": "Копирай етикет",
+      "copyAmount": "Копирай сума",
+      "copyTxId": "Копирай ID на транзакцията",
+      "editLabel": "Редактирай етикета",
+      "showDetails": "Покажи детайли на транзакцията",
+      "hideOrphanStakes": "Скрий осиротелите стейкове"
+    },
+    "footer": {
+      "selectedAmount": "Избрана сума:",
+      "transactions": "{{count}} транзакция",
+      "transactions_other": "{{count}} транзакции",
+      "export": "Експортирай"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Няма транзакции за експортиране",
+      "noTransactionsMessage": "Няма транзакции, отговарящи на текущите филтри.",
+      "exportSuccess": "Експортирането успешно",
+      "exportedCount": "Експортирана {{count}} транзакция в CSV файл",
+      "exportedCount_other": "Експортирани {{count}} транзакции в CSV файл",
+      "exportFailed": "Експортирането неуспешно"
+    }
+  },
+  "addressBook": {
+    "title": "Адресна книга",
+    "add": "Добави адрес",
+    "edit": "Редактирай адрес",
+    "delete": "Изтрий адрес",
+    "label": "Етикет",
+    "address": "Адрес",
+    "noAddresses": "Няма запазени адреси"
+  }
+}

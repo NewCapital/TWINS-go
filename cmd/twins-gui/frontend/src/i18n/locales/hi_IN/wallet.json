@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "अवलोकन",
+    "recentTransactions": "हाल के लेनदेन"
+  },
+  "balance": {
+    "title": "बैलेंस",
+    "combined": "संयुक्त बैलेंस",
+    "twins": "TWINS बैलेंस",
+    "total": "कुल",
+    "totalBalance": "कुल बैलेंस",
+    "available": "उपलब्ध",
+    "pending": "लंबित",
+    "immature": "अपरिपक्व",
+    "locked": "लॉक",
+    "watchOnly": "केवल देखें",
+    "spendable": "खर्च योग्य"
+  },
+  "send": {
+    "title": "भेजें",
+    "payTo": "को भुगतान करें",
+    "payToPlaceholder": "TWINS पता दर्ज करें (जैसे D...)",
+    "label": "लेबल",
+    "labelPlaceholder": "इस पते के लिए एक लेबल दर्ज करें",
+    "amount": "राशि",
+    "amountPlaceholder": "0.00",
+    "message": "संदेश",
+    "messagePlaceholder": "एक संदेश दर्ज करें (वैकल्पिक)",
+    "coinControl": {
+      "title": "कॉइन कंट्रोल फ़ीचर्स",
+      "inputs": "इनपुट",
+      "customChangeAddress": "कस्टम चेंज एड्रेस",
+      "customChangePlaceholder": "कस्टम चेंज एड्रेस दर्ज करें",
+      "splitUtxo": "ब्लॉक विभाजित करें",
+      "splitThreshold": "के बाद",
+      "utxoSize": "UTXO आकार"
+    },
+    "recipients": {
+      "add": "प्राप्तकर्ता जोड़ें",
+      "remove": "यह प्रविष्टि हटाएँ",
+      "useMaximum": "उपलब्ध बैलेंस का उपयोग करें",
+      "subtractFee": "राशि से फ़ीस घटाएँ"
+    },
+    "fee": {
+      "label": "लेनदेन फ़ीस",
+      "normal": "साधारण",
+      "fast": "तेज",
+      "recommended": "अनुशंसित",
+      "custom": "कस्टम",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "कुल फ़ीस: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "प्राप्तकर्ता कुल",
+      "estimatedFee": "अनुमानित फ़ीस",
+      "afterFee": "फ़ीस के बाद",
+      "balance": "बैलेंस: {{amount}}"
+    },
+    "buttons": {
+      "send": "भेजें",
+      "clearAll": "सब साफ़ करें"
+    },
+    "errors": {
+      "invalidAddress": "अमान्य TWINS पता प्रारूप",
+      "amountRequired": "राशि आवश्यक है",
+      "amountTooLow": "डस्ट से बचने के लिए राशि कम से कम {{min}} TWINS होनी चाहिए",
+      "insufficientFunds": "अपर्याप्त धनराशि",
+      "noRecipients": "कृपया कम से कम एक प्राप्तकर्ता जोड़ें"
+    },
+    "confirmation": {
+      "title": "लेनदेन की पुष्टि करें",
+      "recipient": "को",
+      "recipients": "प्राप्तकर्ता",
+      "amount": "राशि",
+      "totalAmount": "कुल राशि",
+      "fee": "फ़ीस",
+      "transactionFee": "लेनदेन फ़ीस",
+      "total": "कुल",
+      "grandTotal": "महा योग",
+      "walletPassphrase": "वॉलेट पासफ़्रेज़",
+      "passphrasePlaceholder": "अपना वॉलेट पासफ़्रेज़ दर्ज करें",
+      "passphraseRequired": "एन्क्रिप्टेड वॉलेट के लिए पासफ़्रेज़ आवश्यक है",
+      "showPassphrase": "पासफ़्रेज़ दिखाएँ",
+      "hidePassphrase": "पासफ़्रेज़ छिपाएँ",
+      "capsLockOn": "Caps Lock चालू है",
+      "largeTransactionWarning": "चेतावनी: यह एक बड़ा लेनदेन है। कृपया सभी विवरण ध्यान से जाँचें।",
+      "confirmSend": "भेजना पुष्टि करें",
+      "sending": "भेजा जा रहा है..."
+    },
+    "success": {
+      "title": "लेनदेन सफलतापूर्वक भेजा गया",
+      "message": "लेनदेन नेटवर्क पर भेज दिया गया है।",
+      "txid": "लेनदेन ID",
+      "copyTxid": "TXID कॉपी करें",
+      "viewInExplorer": "एक्सप्लोरर में देखें",
+      "copiedToClipboard": "क्लिपबोर्ड पर कॉपी किया गया!",
+      "copyFailed": "कॉपी विफल - कृपया मैन्युअल रूप से कॉपी करें"
+    }
+  },
+  "receive": {
+    "title": "प्राप्त करें",
+    "currentAddress": "वर्तमान प्राप्ति पता",
+    "requestPayment": "भुगतान अनुरोध करें",
+    "requestingPayment": "बनाया जा रहा है...",
+    "newAddress": "नया पता बनाएँ",
+    "addressList": "प्राप्ति पते",
+    "copyAddress": "पता क्लिपबोर्ड पर कॉपी करें",
+    "showQR": "QR कोड दिखाएँ",
+    "qrCode": "QR कोड",
+    "amount": "राशि",
+    "label": "लेबल",
+    "message": "संदेश",
+    "address": "पता",
+    "reusePrevious": "मौजूदा प्राप्ति पते का पुन: उपयोग करें (अनुशंसित नहीं)",
+    "formInfo": "भुगतान अनुरोध करने के लिए इस फ़ॉर्म का उपयोग करें। सभी फ़ील्ड <1>वैकल्पिक</1> हैं।",
+    "clear": "साफ़ करें",
+    "receivingAddresses": "प्राप्ति पते",
+    "requestedHistory": "भुगतान अनुरोध इतिहास",
+    "noRequests": "अभी तक कोई भुगतान अनुरोध नहीं",
+    "show": "दिखाएँ",
+    "remove": "हटाएँ",
+    "contextMenu": {
+      "copyLabel": "लेबल कॉपी करें",
+      "copyAddress": "पता कॉपी करें",
+      "copyMessage": "संदेश कॉपी करें",
+      "copyAmount": "राशि कॉपी करें"
+    },
+    "table": {
+      "date": "तिथि",
+      "label": "लेबल",
+      "address": "पता",
+      "message": "संदेश",
+      "amountTwins": "राशि (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "इतिहास",
+    "recent": "हाल के लेनदेन",
+    "all": "सभी लेनदेन",
+    "noTransactions": "कोई लेनदेन नहीं मिला",
+    "loading": "लेनदेन लोड हो रहे हैं...",
+    "error": "त्रुटि: {{message}}",
+    "type": {
+      "all": "सभी",
+      "mostCommon": "सबसे सामान्य",
+      "sent": "भेजा गया",
+      "received": "प्राप्त हुआ",
+      "toYourself": "स्वयं को",
+      "mined": "माइन किया गया",
+      "minted": "मिंट किया गया",
+      "masternode": "मास्टरनोड पुरस्कार",
+      "other": "अन्य"
+    },
+    "status": {
+      "confirmed": "पुष्टित",
+      "unconfirmed": "अपुष्टित",
+      "pending": "लंबित",
+      "conflicted": "विवादित",
+      "abandoned": "त्यागित",
+      "confirmations": "{{count}} पुष्टिकरण",
+      "confirmations_other": "{{count}} पुष्टिकरण"
+    },
+    "details": {
+      "title": "लेनदेन विवरण",
+      "txid": "लेनदेन ID",
+      "date": "तिथि",
+      "status": "स्थिति",
+      "amount": "राशि",
+      "fee": "फ़ीस",
+      "from": "से",
+      "to": "को",
+      "confirmations": "पुष्टिकरण",
+      "blockHash": "ब्लॉक हैश",
+      "blockHeight": "ब्लॉक ऊँचाई"
+    },
+    "filters": {
+      "all": "सभी",
+      "today": "आज",
+      "thisWeek": "इस सप्ताह",
+      "thisMonth": "इस महीने",
+      "lastMonth": "पिछले महीने",
+      "thisYear": "इस वर्ष",
+      "range": "सीमा...",
+      "dateRange": "तिथि सीमा",
+      "type": "प्रकार",
+      "minAmount": "न्यूनतम राशि",
+      "search": "खोजने के लिए पता या लेबल दर्ज करें",
+      "rangeTo": "से"
+    },
+    "table": {
+      "date": "तिथि",
+      "type": "प्रकार",
+      "address": "पता",
+      "amount": "राशि"
+    },
+    "contextMenu": {
+      "copyAddress": "पता कॉपी करें",
+      "copyLabel": "लेबल कॉपी करें",
+      "copyAmount": "राशि कॉपी करें",
+      "copyTxId": "लेनदेन ID कॉपी करें",
+      "editLabel": "लेबल संपादित करें",
+      "showDetails": "लेनदेन विवरण दिखाएँ",
+      "hideOrphanStakes": "अनाथ स्टेक्स छिपाएँ"
+    },
+    "footer": {
+      "selectedAmount": "चयनित राशि:",
+      "transactions": "{{count}} लेनदेन",
+      "transactions_other": "{{count}} लेनदेन",
+      "export": "निर्यात करें"
+    },
+    "notifications": {
+      "noTransactionsToExport": "निर्यात करने के लिए कोई लेनदेन नहीं",
+      "noTransactionsMessage": "वर्तमान फ़िल्टर से कोई लेनदेन मेल नहीं खाता।",
+      "exportSuccess": "निर्यात सफल",
+      "exportedCount": "CSV फ़ाइल में {{count}} लेनदेन निर्यात किया गया",
+      "exportedCount_other": "CSV फ़ाइल में {{count}} लेनदेन निर्यात किए गए",
+      "exportFailed": "निर्यात विफल"
+    }
+  },
+  "addressBook": {
+    "title": "पता पुस्तिका",
+    "add": "पता जोड़ें",
+    "edit": "पता संपादित करें",
+    "delete": "पता हटाएँ",
+    "label": "लेबल",
+    "address": "पता",
+    "noAddresses": "कोई सहेजे गए पते नहीं"
+  }
+}

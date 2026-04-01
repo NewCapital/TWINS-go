@@ -1,0 +1,108 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Window"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Size of database cache:",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Script verification threads:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "User interface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "User interface theme:",
+    "dataDirectory": "Data Directory",
+    "dataDirectoryPath": "Current location:",
+    "dataDirectorySource": "Source:",
+    "dataDirectorySourceCli": "Overridden by -datadir flag",
+    "dataDirectorySourcePreference": "User preference",
+    "dataDirectorySourceDefault": "Default location"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Spend unconfirmed change",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Stake split threshold:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Enable coin control features",
+    "showMasternodes": "Show Masternodes tab",
+    "staking": "Staking",
+    "enableStaking": "Enable staking",
+    "stakingStatusActive": "Staking is active",
+    "stakingStatusEnabledNotStaking": "Staking enabled, waiting to stake",
+    "stakingStatusDisabled": "Staking is disabled",
+    "stakingRequiresUnlock": "Wallet must be unlocked to stake",
+    "reserveBalance": "Reserve balance:",
+    "reserveBalanceNote": "TWINS reserved (not staked)",
+    "encryption": "Encryption",
+    "encryptionStatusLocked": "Encrypted — Locked",
+    "encryptionStatusUnlocked": "Encrypted — Unlocked",
+    "encryptionStatusNotEncrypted": "Not Encrypted",
+    "encryptWalletButton": "Encrypt Wallet",
+    "unlockWalletButton": "Unlock Wallet",
+    "changePassphraseButton": "Change Passphrase",
+    "encryptionHelpEncrypted": "Your wallet is encrypted. Keep your passphrase safe — there is no recovery option if it is lost.",
+    "encryptionHelpNotEncrypted": "Encrypting your wallet protects your funds with a passphrase. Strongly recommended.",
+    "expert": "Expert"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Map port using UPnP",
+    "allowIncoming": "Allow incoming connections",
+    "proxy": "Proxy",
+    "connectProxy": "Connect through SOCKS5 proxy (default proxy):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Port",
+    "proxyHelp": "IP address of the proxy (e.g. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimize to the tray instead of the taskbar",
+    "minimizeOnClose": "Minimize on close"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Unit to show amounts in:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimal digits:",
+    "thirdPartyTitle": "Third-party transaction URLs",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Hide zero balances"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "resetDefaults": "Reset to Defaults"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Some changes will take effect after restarting the wallet.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Are you sure you want to reset all settings to their default values?"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

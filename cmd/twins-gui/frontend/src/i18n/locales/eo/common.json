@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Monujo",
+    "version": "Versio {{version}}"
+  },
+  "buttons": {
+    "ok": "Bone",
+    "cancel": "Nuligi",
+    "apply": "Apliki",
+    "close": "Fermi",
+    "save": "Konservi",
+    "delete": "Forigi",
+    "edit": "Redaktu",
+    "copy": "Kopii",
+    "copyAddress": "Kopii adreson",
+    "paste": "Almeti el poŝo",
+    "addressBook": "Elekti el adresaro",
+    "max": "Maksimumo",
+    "export": "Eksporti",
+    "import": "Importi",
+    "refresh": "Aktualigi",
+    "reset": "Restarigi",
+    "confirm": "Konfirmi",
+    "yes": "Jes",
+    "no": "Ne",
+    "back": "Reen",
+    "next": "Sekva",
+    "done": "Finita",
+    "dismiss": "Ignori",
+    "retry": "Riprovi",
+    "retryConnection": "Riprovi konekton"
+  },
+  "navigation": {
+    "overview": "Superrigardo",
+    "send": "Sendi",
+    "receive": "Ricevi",
+    "transactions": "Transakcioj",
+    "masternodes": "Mastronodoj",
+    "explorer": "Esplorilo",
+    "staking": "Staki",
+    "privacy": "Privateco"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Ŝarĝante...",
+    "success": "Sukceso",
+    "failed": "Malsukcesis",
+    "error": "Eraro",
+    "connected": "Konektita",
+    "connecting": "Konektante...",
+    "disconnected": "Malkonektita",
+    "offline": "Senrete",
+    "syncing": "Sinkronigante...",
+    "synced": "Sinkronigita",
+    "outOfSync": "(ne sinkronigita)",
+    "upToDate": "Ĝisdata"
+  },
+  "errors": {
+    "generic": "Okazis eraro",
+    "network": "Reta eraro",
+    "timeout": "Peto eltempiĝis",
+    "notFound": "Ne trovita",
+    "invalidInput": "Nevalida enigo",
+    "unauthorized": "Neaŭtorizita"
+  },
+  "time": {
+    "seconds": "{{count}} sekundo",
+    "seconds_other": "{{count}} sekundoj",
+    "minutes": "{{count}} minuto",
+    "minutes_other": "{{count}} minutoj",
+    "hours": "{{count}} horo",
+    "hours_other": "{{count}} horoj",
+    "days": "{{count}} tago",
+    "days_other": "{{count}} tagoj",
+    "ago": "antaŭ {{time}}",
+    "never": "Neniam"
+  },
+  "confirmDialog": {
+    "areYouSure": "Ĉu vi certas?",
+    "cannotUndo": "Ĉi tiu ago ne povas esti malfari."
+  },
+  "statusBar": {
+    "synchronizing": "Sinkronigante kun reto...",
+    "scanningBlock": "Skanante blokon {{height}}",
+    "upToDate": "Ĝisdata",
+    "hdEnabled": "HD monujo ebligita",
+    "torEnabled": "Tor ebligita",
+    "walletEncrypted": "Monujo ĉifrita",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Monujo ne ĉifrita",
+    "stakingActive": "Staki aktiva",
+    "stakingInactive": "Staki neaktiva",
+    "connections": "{{count}} reta konekto",
+    "connections_other": "{{count}} retaj konektoj"
+  },
+  "p2pError": {
+    "title": "Reta Konekta Eraro",
+    "failedToConnect": "Malsukcesis konekti al TWINS reto:",
+    "checkConnection": "Bonvolu kontroli vian interretan konekton kaj fajroŝirmilajn agordojn. La monujo daŭros provi konekti fonerte."
+  },
+  "intro": {
+    "welcome": "Bonvenon al TWINS",
+    "welcomeSubtitle": "La oficiala TWINS kriptovaluto monujo",
+    "chooseDataDir": "Elektu datumujan dosierujon",
+    "dataDirDescription": "TWINS stokos siajn datumojn en la suba dosierujo. Tio inkluzivas blokĉenan datumojn, monujajn dosierojn kaj agordon.",
+    "defaultDir": "Uzi defaŭltan datumujan dosierujon",
+    "customDir": "Uzi personan datumujan dosierujon",
+    "browse": "Foliumi...",
+    "spaceRequired": "Almenaŭ {{size}} GB da diska spaco bezonatas.",
+    "getStarted": "Komenci",
+    "continue": "Daŭrigi"
+  },
+  "shutdown": {
+    "title": "Fermante",
+    "message": "TWINS Monujo fermiĝas...",
+    "pleaseWait": "Bonvolu atendi dum la monujo fermiĝas sekure.",
+    "savingData": "Konservante monujajn datumojn...",
+    "closingConnections": "Fermante retajn konektojn..."
+  },
+  "loading": {
+    "default": "Ŝarĝante...",
+    "wallet": "Ŝarĝante monujon...",
+    "transactions": "Ŝarĝante transakciojn...",
+    "blocks": "Ŝarĝante blokojn...",
+    "masternodes": "Ŝarĝante mastronodojn...",
+    "initializing": "Komencante..."
+  },
+  "explorer": {
+    "title": "Esplorilo",
+    "blocks": "Blokoj",
+    "transactions": "Transakcioj",
+    "addresses": "Adresoj",
+    "search": "Serĉi",
+    "searchPlaceholder": "Serĉi laŭ blokalto, hash, txid aŭ adreso...",
+    "height": "Alto",
+    "hash": "Hash",
+    "time": "Tempo",
+    "age": "Aĝo",
+    "txCount": "Txs",
+    "size": "Grandeco",
+    "confirmations": "Konfirmoj",
+    "difficulty": "Malfacileco",
+    "noBlocks": "Neniuj blokoj trovitaj",
+    "noTransactions": "Neniuj transakcioj trovitaj",
+    "blockDetails": "Blokaj Detaloj",
+    "transactionDetails": "Transakciaj Detaloj",
+    "addressDetails": "Adresaj Detaloj",
+    "inputs": "Enigoj",
+    "outputs": "Eligoj",
+    "value": "Valoro",
+    "from": "De",
+    "to": "Al",
+    "viewAll": "Vidi ĉiujn"
+  },
+  "staking": {
+    "title": "Staki",
+    "enabled": "Staki ebligita",
+    "disabled": "Staki malebligita",
+    "stakingBalance": "Staki saldo",
+    "immatureBalance": "Nematura saldo"
+  },
+  "privacy": {
+    "title": "Privateco",
+    "mint": "Minti",
+    "spend": "Elspezi",
+    "balance": "Privata saldo",
+    "denominations": "Denominacioj"
+  },
+  "notifications": {
+    "newTransaction": "Nova transakcio",
+    "transactionReceived": "Ricevita {{amount}} TWINS",
+    "transactionSent": "Sendita {{amount}} TWINS"
+  }
+}

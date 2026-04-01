@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "OVERZICHT",
+    "recentTransactions": "Recente transacties"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Gecombineerd saldo",
+    "twins": "TWINS saldo",
+    "total": "Totaal",
+    "totalBalance": "Totaal saldo",
+    "available": "Beschikbaar",
+    "pending": "In afwachting",
+    "immature": "Onvolwassen",
+    "locked": "Vergrendeld",
+    "watchOnly": "Alleen bekijken",
+    "spendable": "Uitgeefbaar"
+  },
+  "send": {
+    "title": "Verzenden",
+    "payTo": "Betaal aan",
+    "payToPlaceholder": "Voer TWINS adres in (bijv. D...)",
+    "label": "Label",
+    "labelPlaceholder": "Voer een label in voor dit adres",
+    "amount": "Bedrag",
+    "amountPlaceholder": "0,00",
+    "message": "Bericht",
+    "messagePlaceholder": "Voer een bericht in (optioneel)",
+    "coinControl": {
+      "title": "Munt controle functies",
+      "inputs": "Inputs",
+      "customChangeAddress": "Aangepast wisselgeld adres",
+      "customChangePlaceholder": "Voer aangepast wisselgeld adres in",
+      "splitUtxo": "Split blok",
+      "splitThreshold": "na",
+      "utxoSize": "UTXO grootte"
+    },
+    "recipients": {
+      "add": "Ontvanger toevoegen",
+      "remove": "Dit item verwijderen",
+      "useMaximum": "Gebruik beschikbaar saldo",
+      "subtractFee": "Trek kosten af van bedrag"
+    },
+    "fee": {
+      "label": "Transactiekosten",
+      "normal": "Normaal",
+      "fast": "Snel",
+      "recommended": "Aanbevolen",
+      "custom": "Aangepast",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Totale kosten: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Totaal ontvangers",
+      "estimatedFee": "Geschatte kosten",
+      "afterFee": "Na kosten",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Verzenden",
+      "clearAll": "Alles wissen"
+    },
+    "errors": {
+      "invalidAddress": "Ongeldig TWINS adres formaat",
+      "amountRequired": "Bedrag is verplicht",
+      "amountTooLow": "Bedrag moet minimaal {{min}} TWINS zijn om stof te vermijden",
+      "insufficientFunds": "Onvoldoende saldo",
+      "noRecipients": "Voeg minimaal één ontvanger toe"
+    },
+    "confirmation": {
+      "title": "Bevestig transactie",
+      "recipient": "Aan",
+      "recipients": "Ontvangers",
+      "amount": "Bedrag",
+      "totalAmount": "Totaal bedrag",
+      "fee": "Kosten",
+      "transactionFee": "Transactiekosten",
+      "total": "Totaal",
+      "grandTotal": "Eindtotaal",
+      "walletPassphrase": "Portemonnee wachtwoord",
+      "passphrasePlaceholder": "Voer portemonnee wachtwoord in",
+      "passphraseRequired": "Wachtwoord vereist voor versleutelde portemonnees",
+      "showPassphrase": "Wachtwoord tonen",
+      "hidePassphrase": "Wachtwoord verbergen",
+      "capsLockOn": "Caps Lock staat AAN",
+      "largeTransactionWarning": "Waarschuwing: Dit is een grote transactie. Controleer alle details zorgvuldig.",
+      "confirmSend": "Bevestig verzending",
+      "sending": "Verzenden..."
+    },
+    "success": {
+      "title": "Transactie succesvol verzonden",
+      "message": "De transactie is naar het netwerk verzonden.",
+      "txid": "Transactie ID",
+      "copyTxid": "Kopieer TXID",
+      "viewInExplorer": "Bekijk in verkenner",
+      "copiedToClipboard": "Gekopieerd naar klembord!",
+      "copyFailed": "Kopiëren mislukt - kopieer handmatig"
+    }
+  },
+  "receive": {
+    "title": "Ontvangen",
+    "currentAddress": "Huidig ontvangstadres",
+    "requestPayment": "Betaling aanvragen",
+    "requestingPayment": "Aanmaken...",
+    "newAddress": "Nieuw adres genereren",
+    "addressList": "Ontvangstadressen",
+    "copyAddress": "Adres naar klembord kopiëren",
+    "showQR": "QR code tonen",
+    "qrCode": "QR code",
+    "amount": "Bedrag",
+    "label": "Label",
+    "message": "Bericht",
+    "address": "Adres",
+    "reusePrevious": "Hergebruik bestaand ontvangstadres (niet aanbevolen)",
+    "formInfo": "Gebruik dit formulier om betalingen aan te vragen. Alle velden zijn <1>optioneel</1>.",
+    "clear": "Wissen",
+    "receivingAddresses": "Ontvangstadressen",
+    "requestedHistory": "Betalingsverzoeken geschiedenis",
+    "noRequests": "Nog geen betalingsverzoeken",
+    "show": "Tonen",
+    "remove": "Verwijderen",
+    "contextMenu": {
+      "copyLabel": "Label kopiëren",
+      "copyAddress": "Adres kopiëren",
+      "copyMessage": "Bericht kopiëren",
+      "copyAmount": "Bedrag kopiëren"
+    },
+    "table": {
+      "date": "Datum",
+      "label": "Label",
+      "address": "Adres",
+      "message": "Bericht",
+      "amountTwins": "Bedrag (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "GESCHIEDENIS",
+    "recent": "Recente transacties",
+    "all": "Alle transacties",
+    "noTransactions": "Geen transacties gevonden",
+    "loading": "Transacties laden...",
+    "error": "Fout: {{message}}",
+    "type": {
+      "all": "Alle",
+      "mostCommon": "Meest voorkomend",
+      "sent": "Verzonden naar",
+      "received": "Ontvangen van",
+      "toYourself": "Naar jezelf",
+      "mined": "Mined",
+      "minted": "Minted",
+      "masternode": "Masternode beloning",
+      "other": "Overig"
+    },
+    "status": {
+      "confirmed": "Bevestigd",
+      "unconfirmed": "Onbevestigd",
+      "pending": "In afwachting",
+      "conflicted": "Conflicterend",
+      "abandoned": "Verlaten",
+      "confirmations": "{{count}} bevestiging",
+      "confirmations_other": "{{count}} bevestigingen"
+    },
+    "details": {
+      "title": "Transactie details",
+      "txid": "Transactie ID",
+      "date": "Datum",
+      "status": "Status",
+      "amount": "Bedrag",
+      "fee": "Kosten",
+      "from": "Van",
+      "to": "Naar",
+      "confirmations": "Bevestigingen",
+      "blockHash": "Blok hash",
+      "blockHeight": "Blok hoogte"
+    },
+    "filters": {
+      "all": "Alle",
+      "today": "Vandaag",
+      "thisWeek": "Deze week",
+      "thisMonth": "Deze maand",
+      "lastMonth": "Vorige maand",
+      "thisYear": "Dit jaar",
+      "range": "Bereik...",
+      "dateRange": "Datumbereik",
+      "type": "Type",
+      "minAmount": "Min bedrag",
+      "search": "Voer adres of label in om te zoeken",
+      "rangeTo": "tot"
+    },
+    "table": {
+      "date": "Datum",
+      "type": "Type",
+      "address": "Adres",
+      "amount": "Bedrag"
+    },
+    "contextMenu": {
+      "copyAddress": "Adres kopiëren",
+      "copyLabel": "Label kopiëren",
+      "copyAmount": "Bedrag kopiëren",
+      "copyTxId": "Transactie ID kopiëren",
+      "editLabel": "Label bewerken",
+      "showDetails": "Transactie details tonen",
+      "hideOrphanStakes": "Orphan stakes verbergen"
+    },
+    "footer": {
+      "selectedAmount": "Geselecteerd bedrag:",
+      "transactions": "{{count}} transactie",
+      "transactions_other": "{{count}} transacties",
+      "export": "Exporteren"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Geen transacties om te exporteren",
+      "noTransactionsMessage": "Geen transacties komen overeen met de huidige filters.",
+      "exportSuccess": "Export succesvol",
+      "exportedCount": "{{count}} transactie geëxporteerd naar CSV bestand",
+      "exportedCount_other": "{{count}} transacties geëxporteerd naar CSV bestand",
+      "exportFailed": "Export mislukt"
+    }
+  },
+  "addressBook": {
+    "title": "Adresboek",
+    "add": "Adres toevoegen",
+    "edit": "Adres bewerken",
+    "delete": "Adres verwijderen",
+    "label": "Label",
+    "address": "Adres",
+    "noAddresses": "Geen opgeslagen adressen"
+  }
+}

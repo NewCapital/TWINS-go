@@ -1,0 +1,92 @@
+{
+  "title": "Mastronodoj",
+  "myMasternodes": "Miaj Mastronodoj",
+  "allMasternodes": "Retaj Mastronodoj",
+  "count": {
+    "total": "Totale: {{count}}",
+    "enabled": "Ebligita: {{count}}",
+    "missing": "Mankanta: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adreso",
+    "protocol": "Protokolo",
+    "status": "Stato",
+    "activeTime": "Aktiva Tempo",
+    "lastSeen": "Laste Vidita",
+    "pubkey": "Publika Ŝlosilo",
+    "tier": "Nivelo",
+    "rank": "Rango"
+  },
+  "status": {
+    "enabled": "EBLIGITA",
+    "missing": "MANKANTA",
+    "preEnabled": "ANTAŬ_EBLIGITA",
+    "expired": "ELTEMPIĜIS",
+    "newStartRequired": "NOVA_KOMENCO_BEZONATA",
+    "updateRequired": "ĜISDATIGO_BEZONATA",
+    "watchdogExpired": "GARDOHUNDO_ELTEMPIĜIS",
+    "poseBan": "POSE_BAN",
+    "unknown": "NEKONATA"
+  },
+  "tiers": {
+    "bronze": "Bronzo",
+    "silver": "Arĝento",
+    "gold": "Oro",
+    "platinum": "Plateno",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Komenci",
+    "startAlias": "Komenci alias",
+    "startAll": "Komenci ĉiujn",
+    "startMissing": "Komenci MANKANTAJN",
+    "stop": "Halti",
+    "update": "Ĝisdatigi staton",
+    "edit": "Redakti",
+    "remove": "Forigi",
+    "copyProTx": "Kopii ProTx hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Komenci Mastronodon",
+      "message": "Ĉu vi certas ke vi volas komenci mastronodon \"{{alias}}\"?",
+      "messageAll": "Ĉu vi certas ke vi volas komenci ĉiujn mastronodojn?",
+      "messageMissing": "Ĉu vi certas ke vi volas komenci ĉiujn MANKANTAJN mastronodojn?"
+    },
+    "removeConfirm": {
+      "title": "Forigi Mastronodon",
+      "message": "Ĉu vi certas ke vi volas forigi mastronodon \"{{alias}}\"? Ĉi tio ne povas esti malfari."
+    }
+  },
+  "messages": {
+    "startSuccess": "Mastronodo \"{{alias}}\" komencita sukcese",
+    "startAllSuccess": "Ĉiuj mastronodoj komencitaj sukcese",
+    "startMissingSuccess": "{{count}} mankanta(j) mastronodo(j) komencita(j) sukcese",
+    "noMissingToStart": "Neniuj mankantaj mastronodoj por komenci",
+    "startFailed": "Malsukcesis komenci mastronodon: {{error}}",
+    "startAllFailed": "Malsukcesis komenci ĉiujn mastronodojn: {{error}}",
+    "startMissingFailed": "Malsukcesis komenci mankantajn mastronodojn: {{error}}",
+    "fetchFailed": "Malsukcesis ŝarĝi mastronodojn",
+    "updateSuccess": "Mastronodo stato ĝisdatigita",
+    "removeSuccess": "Mastronodo \"{{alias}}\" forigita"
+  },
+  "note": {
+    "title": "Noto:",
+    "line1": "Stato de viaj mastronodoj en la loka monujo povas esti iomete neĝusta.",
+    "line2": "Ĉiam atendu ke la monujo sinkronigas pliajn datumojn kaj poste kontrolu denove el alia nodo,",
+    "line3": "se via nodo devus funkcii sed vi ankoraŭ vidas \"MANKANTA\" en la \"Stato\" kampo."
+  },
+  "autoRefresh": "Aŭtomata aktualigo post {{seconds}}s",
+  "autoRefreshStatus": "Stato estos aŭtomate ĝisdatigita post (sek):",
+  "noMasternodes": "Neniuj agordaj mastronodoj",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

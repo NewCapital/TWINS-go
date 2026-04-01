@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Mina masternodes",
+  "allMasternodes": "Nätverkets masternodes",
+  "count": {
+    "total": "Totalt: {{count}}",
+    "enabled": "Aktiverade: {{count}}",
+    "missing": "Saknas: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adress",
+    "protocol": "Protokoll",
+    "status": "Status",
+    "activeTime": "Aktiv tid",
+    "lastSeen": "Senast sedd",
+    "collateralAddress": "Collateral Address",
+    "tier": "Nivå",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "AKTIVERAD",
+    "missing": "SAKNAS",
+    "preEnabled": "FÖRAKT_IVERAD",
+    "expired": "UTGÅNGEN",
+    "newStartRequired": "NY_START_KRÄVS",
+    "updateRequired": "UPPDATERING_KRÄVS",
+    "watchdogExpired": "WATCHDOG_UTGÅNGEN",
+    "poseBan": "POSE_BAN",
+    "unknown": "OKÄND"
+  },
+  "tiers": {
+    "bronze": "Brons",
+    "silver": "Silver",
+    "gold": "Guld",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Starta",
+    "startAlias": "Starta alias",
+    "startAll": "Starta alla",
+    "startMissing": "Starta SAKNADE",
+    "stop": "Stoppa",
+    "update": "Uppdatera status",
+    "edit": "Redigera",
+    "remove": "Ta bort",
+    "copyProTx": "Kopiera ProTx-hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Starta masternode",
+      "message": "Är du säker på att du vill starta masternode \"{{alias}}\"?",
+      "messageAll": "Är du säker på att du vill starta ALLA masternodes?",
+      "messageMissing": "Är du säker på att du vill starta alla SAKNADE masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Ta bort masternode",
+      "message": "Är du säker på att du vill ta bort masternode \"{{alias}}\"? Denna åtgärd kan inte ångras."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" startad",
+    "startAllSuccess": "Alla masternodes startade",
+    "startMissingSuccess": "{{count}} saknade masternode(s) startade",
+    "noMissingToStart": "Inga saknade masternodes att starta",
+    "startFailed": "Kunde inte starta masternode: {{error}}",
+    "startAllFailed": "Kunde inte starta alla masternodes: {{error}}",
+    "startMissingFailed": "Kunde inte starta saknade masternodes: {{error}}",
+    "fetchFailed": "Kunde inte hämta masternodes",
+    "updateSuccess": "Masternode-status uppdaterad",
+    "removeSuccess": "Masternode \"{{alias}}\" borttagen"
+  },
+  "note": {
+    "title": "Observera:",
+    "line1": "Status för dina masternodes i lokal plånbok kan potentiellt vara något felaktig.",
+    "line2": "Vänta alltid tills plånboken synkroniserar ytterligare data, verifiera sedan från en annan nod,",
+    "line3": "om din nod borde köras men du fortfarande ser \"SAKNAS\" i statusfältet."
+  },
+  "autoRefresh": "Automatisk uppdatering om {{seconds}}s",
+  "autoRefreshStatus": "Status uppdateras automatiskt om (sek):",
+  "noMasternodes": "Inga konfigurerade masternodes",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "ОГЛЯД",
+    "recentTransactions": "Останні транзакції"
+  },
+  "balance": {
+    "title": "Баланс",
+    "combined": "Загальний баланс",
+    "twins": "Баланс TWINS",
+    "total": "Всього",
+    "totalBalance": "Загальний баланс",
+    "available": "Доступно",
+    "pending": "Очікує",
+    "immature": "Незрілий",
+    "locked": "Заблоковано",
+    "watchOnly": "Тільки перегляд",
+    "spendable": "Доступно для витрат"
+  },
+  "send": {
+    "title": "Надіслати",
+    "payTo": "Отримувач",
+    "payToPlaceholder": "Введіть адресу TWINS (наприклад, D...)",
+    "label": "Мітка",
+    "labelPlaceholder": "Введіть мітку для цієї адреси",
+    "amount": "Сума",
+    "amountPlaceholder": "0,00",
+    "message": "Повідомлення",
+    "messagePlaceholder": "Введіть повідомлення (необов'язково)",
+    "coinControl": {
+      "title": "Функції контролю монет",
+      "inputs": "Входи",
+      "customChangeAddress": "Власна адреса здачі",
+      "customChangePlaceholder": "Введіть власну адресу здачі",
+      "splitUtxo": "Розділити блок",
+      "splitThreshold": "після",
+      "utxoSize": "Розмір UTXO"
+    },
+    "recipients": {
+      "add": "Додати отримувача",
+      "remove": "Видалити цей запис",
+      "useMaximum": "Використати доступний баланс",
+      "subtractFee": "Відняти комісію від суми"
+    },
+    "fee": {
+      "label": "Комісія транзакції",
+      "normal": "Звичайна",
+      "fast": "Швидка",
+      "recommended": "Рекомендована",
+      "custom": "Власна",
+      "perKB": "{{rate}} TWINS/кБ",
+      "total": "Загальна комісія: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Всього отримувачам",
+      "estimatedFee": "Розрахункова комісія",
+      "afterFee": "Після комісії",
+      "balance": "Баланс: {{amount}}"
+    },
+    "buttons": {
+      "send": "Надіслати",
+      "clearAll": "Очистити все"
+    },
+    "errors": {
+      "invalidAddress": "Невірний формат адреси TWINS",
+      "amountRequired": "Потрібна сума",
+      "amountTooLow": "Сума повинна бути не менше {{min}} TWINS для уникнення пилу",
+      "insufficientFunds": "Недостатньо коштів",
+      "noRecipients": "Будь ласка, додайте хоча б одного отримувача"
+    },
+    "confirmation": {
+      "title": "Підтвердити транзакцію",
+      "recipient": "Кому",
+      "recipients": "Отримувачі",
+      "amount": "Сума",
+      "totalAmount": "Загальна сума",
+      "fee": "Комісія",
+      "transactionFee": "Комісія транзакції",
+      "total": "Всього",
+      "grandTotal": "Загальна сума",
+      "walletPassphrase": "Пароль гаманця",
+      "passphrasePlaceholder": "Введіть пароль гаманця",
+      "passphraseRequired": "Пароль потрібен для зашифрованих гаманців",
+      "showPassphrase": "Показати пароль",
+      "hidePassphrase": "Приховати пароль",
+      "capsLockOn": "Caps Lock УВІМКНЕНО",
+      "largeTransactionWarning": "Увага: це велика транзакція. Будь ласка, уважно перевірте всі деталі.",
+      "confirmSend": "Підтвердити надсилання",
+      "sending": "Надсилання..."
+    },
+    "success": {
+      "title": "Транзакцію успішно надіслано",
+      "message": "Транзакцію було надіслано в мережу.",
+      "txid": "ID транзакції",
+      "copyTxid": "Копіювати TXID",
+      "viewInExplorer": "Переглянути в оглядачі",
+      "copiedToClipboard": "Скопійовано до буфера обміну!",
+      "copyFailed": "Не вдалося скопіювати - скопіюйте вручну"
+    }
+  },
+  "receive": {
+    "title": "Отримати",
+    "currentAddress": "Поточна адреса отримання",
+    "requestPayment": "Запросити платіж",
+    "requestingPayment": "Створення...",
+    "newAddress": "Створити нову адресу",
+    "addressList": "Адреси отримання",
+    "copyAddress": "Копіювати адресу до буфера обміну",
+    "showQR": "Показати QR-код",
+    "qrCode": "QR-код",
+    "amount": "Сума",
+    "label": "Мітка",
+    "message": "Повідомлення",
+    "address": "Адреса",
+    "reusePrevious": "Повторно використати існуючу адресу отримання (не рекомендується)",
+    "formInfo": "Використовуйте цю форму для запиту платежів. Усі поля <1>необов'язкові</1>.",
+    "clear": "Очистити",
+    "receivingAddresses": "Адреси отримання",
+    "requestedHistory": "Історія запитів платежів",
+    "noRequests": "Запитів платежів поки немає",
+    "show": "Показати",
+    "remove": "Видалити",
+    "contextMenu": {
+      "copyLabel": "Копіювати мітку",
+      "copyAddress": "Копіювати адресу",
+      "copyMessage": "Копіювати повідомлення",
+      "copyAmount": "Копіювати суму"
+    },
+    "table": {
+      "date": "Дата",
+      "label": "Мітка",
+      "address": "Адреса",
+      "message": "Повідомлення",
+      "amountTwins": "Сума (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "ІСТОРІЯ",
+    "recent": "Останні транзакції",
+    "all": "Усі транзакції",
+    "noTransactions": "Транзакції не знайдено",
+    "loading": "Завантаження транзакцій...",
+    "error": "Помилка: {{message}}",
+    "type": {
+      "all": "Усі",
+      "mostCommon": "Найчастіші",
+      "sent": "Надіслано на",
+      "received": "Отримано з",
+      "toYourself": "Собі",
+      "mined": "Видобуто",
+      "minted": "Викарбувано",
+      "masternode": "Нагорода мастерноди",
+      "other": "Інше"
+    },
+    "status": {
+      "confirmed": "Підтверджено",
+      "unconfirmed": "Не підтверджено",
+      "pending": "Очікує",
+      "conflicted": "Конфлікт",
+      "abandoned": "Скасовано",
+      "confirmations": "{{count}} підтвердження",
+      "confirmations_other": "{{count}} підтверджень"
+    },
+    "details": {
+      "title": "Деталі транзакції",
+      "txid": "ID транзакції",
+      "date": "Дата",
+      "status": "Статус",
+      "amount": "Сума",
+      "fee": "Комісія",
+      "from": "Від",
+      "to": "Кому",
+      "confirmations": "Підтвердження",
+      "blockHash": "Хеш блоку",
+      "blockHeight": "Висота блоку"
+    },
+    "filters": {
+      "all": "Усі",
+      "today": "Сьогодні",
+      "thisWeek": "Цей тиждень",
+      "thisMonth": "Цей місяць",
+      "lastMonth": "Минулий місяць",
+      "thisYear": "Цей рік",
+      "range": "Діапазон...",
+      "dateRange": "Діапазон дат",
+      "type": "Тип",
+      "minAmount": "Мін. сума",
+      "search": "Пошук за адресою або міткою",
+      "rangeTo": "до"
+    },
+    "table": {
+      "date": "Дата",
+      "type": "Тип",
+      "address": "Адреса",
+      "amount": "Сума"
+    },
+    "contextMenu": {
+      "copyAddress": "Копіювати адресу",
+      "copyLabel": "Копіювати мітку",
+      "copyAmount": "Копіювати суму",
+      "copyTxId": "Копіювати ID транзакції",
+      "editLabel": "Редагувати мітку",
+      "showDetails": "Показати деталі транзакції",
+      "hideOrphanStakes": "Приховати осиротілі стейки"
+    },
+    "footer": {
+      "selectedAmount": "Вибрана сума:",
+      "transactions": "{{count}} транзакція",
+      "transactions_other": "{{count}} транзакцій",
+      "export": "Експорт"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Немає транзакцій для експорту",
+      "noTransactionsMessage": "Немає транзакцій, що відповідають поточним фільтрам.",
+      "exportSuccess": "Експорт успішний",
+      "exportedCount": "Експортовано {{count}} транзакцію в CSV файл",
+      "exportedCount_other": "Експортовано {{count}} транзакцій в CSV файл",
+      "exportFailed": "Помилка експорту"
+    }
+  },
+  "addressBook": {
+    "title": "Адресна книга",
+    "add": "Додати адресу",
+    "edit": "Редагувати адресу",
+    "delete": "Видалити адресу",
+    "label": "Мітка",
+    "address": "Адреса",
+    "noAddresses": "Адреси не збережено"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Wallet",
+    "version": "Version {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "apply": "Anwenden",
+    "close": "Schließen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "copy": "Kopieren",
+    "copyAddress": "Adresse kopieren",
+    "paste": "Aus Zwischenablage einfügen",
+    "addressBook": "Aus Adressbuch wählen",
+    "max": "Max",
+    "export": "Exportieren",
+    "import": "Importieren",
+    "refresh": "Aktualisieren",
+    "reset": "Zurücksetzen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "dismiss": "Schließen",
+    "retry": "Erneut versuchen",
+    "retryConnection": "Verbindung erneut versuchen"
+  },
+  "navigation": {
+    "overview": "Übersicht",
+    "send": "Senden",
+    "receive": "Empfangen",
+    "transactions": "Transaktionen",
+    "masternodes": "Masternodes",
+    "explorer": "Explorer",
+    "staking": "Staking",
+    "privacy": "Privatsphäre"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Laden...",
+    "success": "Erfolgreich",
+    "failed": "Fehlgeschlagen",
+    "error": "Fehler",
+    "connected": "Verbunden",
+    "connecting": "Verbinde...",
+    "disconnected": "Getrennt",
+    "offline": "Offline",
+    "syncing": "Synchronisiere...",
+    "synced": "Synchronisiert",
+    "outOfSync": "(nicht synchron)",
+    "upToDate": "Aktuell"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten",
+    "network": "Netzwerkfehler",
+    "timeout": "Zeitüberschreitung",
+    "notFound": "Nicht gefunden",
+    "invalidInput": "Ungültige Eingabe",
+    "unauthorized": "Nicht autorisiert"
+  },
+  "time": {
+    "seconds": "{{count}} Sekunde",
+    "seconds_other": "{{count}} Sekunden",
+    "minutes": "{{count}} Minute",
+    "minutes_other": "{{count}} Minuten",
+    "hours": "{{count}} Stunde",
+    "hours_other": "{{count}} Stunden",
+    "days": "{{count}} Tag",
+    "days_other": "{{count}} Tage",
+    "ago": "vor {{time}}",
+    "never": "Nie"
+  },
+  "confirmDialog": {
+    "areYouSure": "Sind Sie sicher?",
+    "cannotUndo": "Diese Aktion kann nicht rückgängig gemacht werden."
+  },
+  "statusBar": {
+    "synchronizing": "Synchronisiere mit Netzwerk...",
+    "scanningBlock": "Scanne Block {{height}}",
+    "upToDate": "Aktuell",
+    "hdEnabled": "HD-Wallet aktiviert",
+    "torEnabled": "Tor aktiviert",
+    "walletEncrypted": "Wallet verschlüsselt",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Wallet nicht verschlüsselt",
+    "stakingActive": "Staking aktiv",
+    "stakingInactive": "Staking inaktiv",
+    "connections": "{{count}} Netzwerkverbindung",
+    "connections_other": "{{count}} Netzwerkverbindungen"
+  },
+  "p2pError": {
+    "title": "Netzwerkverbindungsfehler",
+    "failedToConnect": "Verbindung zum TWINS-Netzwerk fehlgeschlagen:",
+    "checkConnection": "Bitte überprüfen Sie Ihre Internetverbindung und Firewall-Einstellungen. Die Wallet wird im Hintergrund weiter versuchen, eine Verbindung herzustellen."
+  },
+  "intro": {
+    "welcome": "Willkommen bei TWINS",
+    "welcomeSubtitle": "Die offizielle TWINS-Kryptowährungs-Wallet",
+    "chooseDataDir": "Datenverzeichnis wählen",
+    "dataDirDescription": "TWINS speichert seine Daten im unten angegebenen Verzeichnis. Dazu gehören Blockchain-Daten, Wallet-Dateien und Konfiguration.",
+    "defaultDir": "Standard-Datenverzeichnis verwenden",
+    "customDir": "Benutzerdefiniertes Datenverzeichnis verwenden",
+    "browse": "Durchsuchen...",
+    "spaceRequired": "Mindestens {{size}} GB Speicherplatz erforderlich.",
+    "getStarted": "Loslegen",
+    "continue": "Fortfahren"
+  },
+  "shutdown": {
+    "title": "Beenden",
+    "message": "TWINS Wallet wird beendet...",
+    "pleaseWait": "Bitte warten Sie, während die Wallet sicher geschlossen wird.",
+    "savingData": "Wallet-Daten werden gespeichert...",
+    "closingConnections": "Netzwerkverbindungen werden geschlossen..."
+  },
+  "loading": {
+    "default": "Laden...",
+    "wallet": "Wallet wird geladen...",
+    "transactions": "Transaktionen werden geladen...",
+    "blocks": "Blöcke werden geladen...",
+    "masternodes": "Masternodes werden geladen...",
+    "initializing": "Initialisiere..."
+  },
+  "explorer": {
+    "title": "Explorer",
+    "blocks": "Blöcke",
+    "transactions": "Transaktionen",
+    "addresses": "Adressen",
+    "search": "Suchen",
+    "searchPlaceholder": "Suche nach Blockhöhe, Hash, TxID oder Adresse...",
+    "height": "Höhe",
+    "hash": "Hash",
+    "time": "Zeit",
+    "age": "Alter",
+    "txCount": "Txn",
+    "size": "Größe",
+    "confirmations": "Bestätigungen",
+    "difficulty": "Schwierigkeit",
+    "noBlocks": "Keine Blöcke gefunden",
+    "noTransactions": "Keine Transaktionen gefunden",
+    "blockDetails": "Blockdetails",
+    "transactionDetails": "Transaktionsdetails",
+    "addressDetails": "Adressdetails",
+    "inputs": "Eingaben",
+    "outputs": "Ausgaben",
+    "value": "Wert",
+    "from": "Von",
+    "to": "An",
+    "viewAll": "Alle anzeigen"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking aktiviert",
+    "disabled": "Staking deaktiviert",
+    "stakingBalance": "Staking-Guthaben",
+    "immatureBalance": "Unreifes Guthaben"
+  },
+  "privacy": {
+    "title": "Privatsphäre",
+    "mint": "Prägen",
+    "spend": "Ausgeben",
+    "balance": "Privates Guthaben",
+    "denominations": "Stückelungen"
+  },
+  "notifications": {
+    "newTransaction": "Neue Transaktion",
+    "transactionReceived": "{{amount}} TWINS empfangen",
+    "transactionSent": "{{amount}} TWINS gesendet"
+  }
+}

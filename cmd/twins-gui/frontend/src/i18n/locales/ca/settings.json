@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Window"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Size of database cache:",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Script verification threads:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "User interface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Tema de la interfície d'usuari:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Spend unconfirmed change",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Stake split threshold:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Activa la funcionalitat de control de monedes",
+    "showMasternodes": "Mostra la pestanya de Masternodes",
+    "expert": "Expert"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Map port using UPnP",
+    "allowIncoming": "Permet connexions entrants",
+    "proxy": "Proxy",
+    "connectProxy": "Connecta a través d'un proxy SOCKS5 (proxy per defecte):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Port:",
+    "proxyHelp": "IP address of the proxy (e.g. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimize to the tray instead of the taskbar",
+    "minimizeOnClose": "Minimize on close"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Unit to show amounts in:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimal digits:",
+    "thirdPartyTitle": "Third-party transaction URLs",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Hide zero balances"
+  },
+  "buttons": {
+    "ok": "D'acord",
+    "cancel": "Cancel·la",
+    "apply": "Apply",
+    "resetDefaults": "Restableix les opcions"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "The displayed language setting will take effect after restarting the wallet.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Are you sure you want to reset all settings to their default values?"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

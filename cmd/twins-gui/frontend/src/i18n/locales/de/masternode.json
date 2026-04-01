@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Meine Masternodes",
+  "allMasternodes": "Netzwerk-Masternodes",
+  "count": {
+    "total": "Gesamt: {{count}}",
+    "enabled": "Aktiviert: {{count}}",
+    "missing": "Fehlend: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adresse",
+    "protocol": "Protokoll",
+    "status": "Status",
+    "activeTime": "Aktive Zeit",
+    "lastSeen": "Zuletzt gesehen",
+    "collateralAddress": "Collateral Address",
+    "tier": "Stufe",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "AKTIVIERT",
+    "missing": "FEHLEND",
+    "preEnabled": "VORHER_AKTIVIERT",
+    "expired": "ABGELAUFEN",
+    "newStartRequired": "NEUER_START_ERFORDERLICH",
+    "updateRequired": "AKTUALISIERUNG_ERFORDERLICH",
+    "watchdogExpired": "WATCHDOG_ABGELAUFEN",
+    "poseBan": "POSE_SPERRE",
+    "unknown": "UNBEKANNT"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Silber",
+    "gold": "Gold",
+    "platinum": "Platin",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Starten",
+    "startAlias": "Alias starten",
+    "startAll": "Alle starten",
+    "startMissing": "FEHLENDE starten",
+    "stop": "Stoppen",
+    "update": "Status aktualisieren",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen",
+    "copyProTx": "ProTx-Hash kopieren"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Masternode starten",
+      "message": "Sind Sie sicher, dass Sie Masternode \"{{alias}}\" starten möchten?",
+      "messageAll": "Sind Sie sicher, dass Sie alle Masternodes starten möchten?",
+      "messageMissing": "Sind Sie sicher, dass Sie alle FEHLENDEN Masternodes starten möchten?"
+    },
+    "removeConfirm": {
+      "title": "Masternode entfernen",
+      "message": "Sind Sie sicher, dass Sie Masternode \"{{alias}}\" entfernen möchten? Dies kann nicht rückgängig gemacht werden."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" erfolgreich gestartet",
+    "startAllSuccess": "Alle Masternodes erfolgreich gestartet",
+    "startMissingSuccess": "{{count}} fehlende Masternode(s) erfolgreich gestartet",
+    "noMissingToStart": "Keine fehlenden Masternodes zum Starten",
+    "startFailed": "Masternode-Start fehlgeschlagen: {{error}}",
+    "startAllFailed": "Start aller Masternodes fehlgeschlagen: {{error}}",
+    "startMissingFailed": "Start der fehlenden Masternodes fehlgeschlagen: {{error}}",
+    "fetchFailed": "Masternodes konnten nicht abgerufen werden",
+    "updateSuccess": "Masternode-Status aktualisiert",
+    "removeSuccess": "Masternode \"{{alias}}\" entfernt"
+  },
+  "note": {
+    "title": "Hinweis:",
+    "line1": "Der Status Ihrer Masternodes in der lokalen Wallet kann möglicherweise leicht ungenau sein.",
+    "line2": "Warten Sie immer, bis die Wallet zusätzliche Daten synchronisiert hat, und überprüfen Sie dann von einem anderen Knoten,",
+    "line3": "ob Ihr Knoten laufen sollte, aber Sie immer noch \"FEHLEND\" im \"Status\"-Feld sehen."
+  },
+  "autoRefresh": "Automatische Aktualisierung in {{seconds}}s",
+  "autoRefreshStatus": "Status wird automatisch aktualisiert in (Sek.):",
+  "noMasternodes": "Keine Masternodes konfiguriert",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

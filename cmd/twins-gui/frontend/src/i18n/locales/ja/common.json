@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS ウォレット",
+    "version": "バージョン {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "apply": "適用",
+    "close": "閉じる",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "copy": "コピー",
+    "copyAddress": "アドレスをコピー",
+    "paste": "クリップボードから貼り付け",
+    "addressBook": "アドレス帳から選択",
+    "max": "最大",
+    "export": "エクスポート",
+    "import": "インポート",
+    "refresh": "更新",
+    "reset": "リセット",
+    "confirm": "確認",
+    "yes": "はい",
+    "no": "いいえ",
+    "back": "戻る",
+    "next": "次へ",
+    "done": "完了",
+    "dismiss": "閉じる",
+    "retry": "再試行",
+    "retryConnection": "接続を再試行"
+  },
+  "navigation": {
+    "overview": "概要",
+    "send": "送金",
+    "receive": "受取",
+    "transactions": "取引履歴",
+    "masternodes": "マスターノード",
+    "explorer": "エクスプローラー",
+    "staking": "ステーキング",
+    "privacy": "プライバシー"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "読み込み中...",
+    "success": "成功",
+    "failed": "失敗",
+    "error": "エラー",
+    "connected": "接続済み",
+    "connecting": "接続中...",
+    "disconnected": "切断済み",
+    "offline": "オフライン",
+    "syncing": "同期中...",
+    "synced": "同期完了",
+    "outOfSync": "(同期していません)",
+    "upToDate": "最新"
+  },
+  "errors": {
+    "generic": "エラーが発生しました",
+    "network": "ネットワークエラー",
+    "timeout": "リクエストタイムアウト",
+    "notFound": "見つかりません",
+    "invalidInput": "無効な入力",
+    "unauthorized": "認証されていません"
+  },
+  "time": {
+    "seconds": "{{count}}秒",
+    "seconds_other": "{{count}}秒",
+    "minutes": "{{count}}分",
+    "minutes_other": "{{count}}分",
+    "hours": "{{count}}時間",
+    "hours_other": "{{count}}時間",
+    "days": "{{count}}日",
+    "days_other": "{{count}}日",
+    "ago": "{{time}}前",
+    "never": "なし"
+  },
+  "confirmDialog": {
+    "areYouSure": "よろしいですか？",
+    "cannotUndo": "この操作は取り消せません。"
+  },
+  "statusBar": {
+    "synchronizing": "ネットワークと同期中...",
+    "scanningBlock": "ブロック {{height}} をスキャン中",
+    "upToDate": "最新",
+    "hdEnabled": "HDウォレット有効",
+    "torEnabled": "Tor有効",
+    "walletEncrypted": "ウォレット暗号化済み",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "ウォレット未暗号化",
+    "stakingActive": "ステーキング有効",
+    "stakingInactive": "ステーキング無効",
+    "connections": "ネットワーク接続 {{count}}件",
+    "connections_other": "ネットワーク接続 {{count}}件"
+  },
+  "p2pError": {
+    "title": "ネットワーク接続エラー",
+    "failedToConnect": "TWINSネットワークに接続できませんでした：",
+    "checkConnection": "インターネット接続とファイアウォール設定を確認してください。ウォレットはバックグラウンドで接続を試み続けます。"
+  },
+  "intro": {
+    "welcome": "TWINSへようこそ",
+    "welcomeSubtitle": "TWINS暗号通貨の公式ウォレット",
+    "chooseDataDir": "データディレクトリを選択",
+    "dataDirDescription": "TWINSは以下のディレクトリにデータを保存します。ブロックチェーンデータ、ウォレットファイル、設定が含まれます。",
+    "defaultDir": "デフォルトのデータディレクトリを使用",
+    "customDir": "カスタムデータディレクトリを使用",
+    "browse": "参照...",
+    "spaceRequired": "少なくとも {{size}} GBのディスク空き容量が必要です。",
+    "getStarted": "開始",
+    "continue": "続行"
+  },
+  "shutdown": {
+    "title": "シャットダウン",
+    "message": "TWINSウォレットをシャットダウン中...",
+    "pleaseWait": "ウォレットが安全にシャットダウンされるまでお待ちください。",
+    "savingData": "ウォレットデータを保存中...",
+    "closingConnections": "ネットワーク接続を閉じています..."
+  },
+  "loading": {
+    "default": "読み込み中...",
+    "wallet": "ウォレットを読み込み中...",
+    "transactions": "取引履歴を読み込み中...",
+    "blocks": "ブロックを読み込み中...",
+    "masternodes": "マスターノードを読み込み中...",
+    "initializing": "初期化中..."
+  },
+  "explorer": {
+    "title": "エクスプローラー",
+    "blocks": "ブロック",
+    "transactions": "取引",
+    "addresses": "アドレス",
+    "search": "検索",
+    "searchPlaceholder": "ブロック高、ハッシュ、TxID、またはアドレスで検索...",
+    "height": "高さ",
+    "hash": "ハッシュ",
+    "time": "時刻",
+    "age": "経過時間",
+    "txCount": "取引数",
+    "size": "サイズ",
+    "confirmations": "確認数",
+    "difficulty": "難易度",
+    "noBlocks": "ブロックが見つかりません",
+    "noTransactions": "取引が見つかりません",
+    "blockDetails": "ブロック詳細",
+    "transactionDetails": "取引詳細",
+    "addressDetails": "アドレス詳細",
+    "inputs": "入力",
+    "outputs": "出力",
+    "value": "値",
+    "from": "送信元",
+    "to": "送信先",
+    "viewAll": "すべて表示"
+  },
+  "staking": {
+    "title": "ステーキング",
+    "enabled": "ステーキング有効",
+    "disabled": "ステーキング無効",
+    "stakingBalance": "ステーキング残高",
+    "immatureBalance": "未成熟残高"
+  },
+  "privacy": {
+    "title": "プライバシー",
+    "mint": "ミント",
+    "spend": "使用",
+    "balance": "プライベート残高",
+    "denominations": "額面"
+  },
+  "notifications": {
+    "newTransaction": "新しい取引",
+    "transactionReceived": "{{amount}} TWINSを受信しました",
+    "transactionSent": "{{amount}} TWINSを送信しました"
+  }
+}

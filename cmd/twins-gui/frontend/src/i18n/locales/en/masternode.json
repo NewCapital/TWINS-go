@@ -1,0 +1,335 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "My Masternodes",
+  "allMasternodes": "Network Masternodes",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Enabled: {{count}}",
+    "missing": "Missing: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Address",
+    "protocol": "Protocol",
+    "status": "Status",
+    "activeTime": "Active Time",
+    "lastSeen": "Last Seen",
+    "lastPaid": "Last Paid",
+    "collateralAddress": "Collateral Address",
+    "tier": "Tier",
+    "payRank": "Pay Rank",
+    "rank": "Rank",
+    "network": "Network",
+    "walletAddress": "Wallet Address"
+  },
+  "status": {
+    "enabled": "ENABLED",
+    "missing": "MISSING",
+    "preEnabled": "PRE_ENABLED",
+    "expired": "EXPIRED",
+    "outpointSpent": "OUTPOINT_SPENT",
+    "removed": "REMOVED",
+    "newStartRequired": "NEW_START_REQUIRED",
+    "updateRequired": "UPDATE_REQUIRED",
+    "watchdogExpired": "WATCHDOG_EXPIRED",
+    "poseBan": "POSE_BAN",
+    "inactive": "INACTIVE",
+    "unknown": "UNKNOWN"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Start",
+    "startAlias": "Start alias",
+    "startAll": "Start all",
+    "startMissing": "Start MISSING",
+    "stop": "Stop",
+    "update": "Update status",
+    "configure": "Configure",
+    "edit": "Edit",
+    "remove": "Remove",
+    "copyProTx": "Copy ProTx Hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Start Masternode",
+      "message": "Are you sure you want to start masternode \"{{alias}}\"?",
+      "messageAll": "Are you sure you want to start all masternodes?",
+      "messageMissing": "Are you sure you want to start all MISSING masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Remove Masternode",
+      "message": "Are you sure you want to remove masternode \"{{alias}}\"? This cannot be undone."
+    }
+  },
+  "messages": {
+    "startSuccess": "Successfully started masternode \"{{alias}}\"",
+    "startAllSuccess": "Successfully started all masternodes",
+    "startMissingSuccess": "Successfully started {{count}} missing masternode(s)",
+    "noMissingToStart": "No missing masternodes to start",
+    "startFailed": "Failed to start masternode: {{error}}",
+    "startAllFailed": "Failed to start all masternodes: {{error}}",
+    "startMissingFailed": "Failed to start missing masternodes: {{error}}",
+    "fetchFailed": "Failed to fetch masternodes",
+    "updateSuccess": "Masternode status updated",
+    "removeSuccess": "Masternode \"{{alias}}\" removed",
+    "unlockCancelled": "Operation cancelled: wallet unlock required"
+  },
+  "note": {
+    "title": "Note:",
+    "line1": "Status of your masternodes in local wallet can potentially be slightly incorrect.",
+    "line2": "Always wait for wallet to sync additional data and then double check from another node",
+    "line3": "if your node should be running but you still see \"MISSING\" in \"Status\" field."
+  },
+  "autoRefresh": "Auto-refresh in {{seconds}}s",
+  "autoRefreshStatus": "Status will be updated automatically in (sec):",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  },
+  "noMasternodes": "No masternodes configured",
+  "tabs": {
+    "myMasternodes": "My Masternodes",
+    "network": "Network",
+    "paymentStats": "Payment Stats"
+  },
+  "network": {
+    "description": "All masternodes currently active on the network",
+    "noResults": "No masternodes match your filter criteria",
+    "autoRefresh": "Auto-refresh in {{seconds}}s",
+    "count": {
+      "total": "{{count}} masternodes",
+      "filtered": "{{filtered}} of {{total}} masternodes"
+    },
+    "filters": {
+      "tier": "Tier",
+      "tierAll": "All Tiers",
+      "status": "Status",
+      "statusAll": "All Statuses",
+      "search": "Search",
+      "searchPlaceholder": "Wallet address...",
+      "clear": "Clear"
+    }
+  },
+  "statistics": {
+    "title": "Network Statistics",
+    "loading": "Loading statistics...",
+    "tierDistribution": "Tier Distribution",
+    "networkSummary": "Network Summary",
+    "total": "Total",
+    "enabled": "Enabled",
+    "totalCollateral": "Total Collateral Locked"
+  },
+  "paymentStats": {
+    "title": "Payment Statistics",
+    "loading": "Loading payment statistics...",
+    "noData": "No payment data available. Payment statistics are built from blockchain scan on startup.",
+    "summary": {
+      "totalPaid": "Total Paid",
+      "totalPayments": "Total Payments",
+      "uniqueMasternodes": "Unique Masternodes",
+      "scannedBlocks": "Scanned Blocks (Low / High)"
+    },
+    "table": {
+      "address": "Address",
+      "tier": "Tier",
+      "paymentCount": "Payments",
+      "totalPaid": "Total Paid",
+      "lastPaidTime": "Last Payment",
+      "latestTxID": "Latest TX"
+    },
+    "copied": "Transaction ID copied",
+    "copyTxID": "Copy TX ID",
+    "unknown": "Unknown",
+    "pagination": {
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{page}} of {{total}}",
+      "perPage": "{{count}} per page"
+    }
+  },
+  "config": {
+    "title": "Masternode Configuration",
+    "addTitle": "Add Masternode",
+    "editTitle": "Edit Masternode",
+    "loading": "Loading configuration...",
+    "noEntries": "No masternodes configured. Click \"Add\" to create one.",
+    "fetchError": "Failed to load masternode configuration",
+    "addSuccess": "Masternode \"{{alias}}\" added successfully",
+    "updateSuccess": "Masternode \"{{alias}}\" updated successfully",
+    "deleteSuccess": "Masternode \"{{alias}}\" deleted successfully",
+    "deleteFailed": "Failed to delete masternode: {{error}}",
+    "generateKeyFailed": "Failed to generate key: {{error}}",
+    "reloadSuccess": "Configuration reloaded successfully",
+    "reloadFailed": "Failed to reload configuration: {{error}}",
+    "columns": {
+      "alias": "Alias",
+      "ip": "IP:Port",
+      "collateral": "Collateral TX"
+    },
+    "form": {
+      "alias": "Alias",
+      "aliasPlaceholder": "e.g., masternode1",
+      "ip": "IP Address:Port",
+      "ipPlaceholder": "e.g., 192.168.1.100:37817",
+      "ipHint": "Mainnet port is 37817",
+      "privateKey": "Masternode Private Key",
+      "privateKeyPlaceholder": "WIF-encoded private key",
+      "privateKeyHint": "Click \"Generate\" to create a new key, or paste an existing one",
+      "generateKey": "Generate",
+      "collateral": "Collateral UTXO",
+      "selectCollateral": "Select collateral transaction...",
+      "currentCollateral": "Current",
+      "noCollateralAvailable": "No suitable collateral UTXOs found. Send exact tier amounts to your wallet first.",
+      "collateralHint": "Select a wallet UTXO with the correct tier amount (1M/5M/20M/100M TWINS)",
+      "pendingCollateralHint": "Some UTXOs are waiting for 15 confirmations.",
+      "collateralNotReady": "[{{count}}/15 conf — not ready]"
+    },
+    "buttons": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "close": "Close",
+      "reload": "Reload",
+      "deleting": "Deleting..."
+    },
+    "validation": {
+      "aliasRequired": "Alias is required",
+      "aliasFormat": "Alias must contain only letters, numbers, and underscores",
+      "aliasExists": "A masternode with this alias already exists",
+      "ipRequired": "IP address is required",
+      "ipFormat": "IP must be in format IP:Port (e.g., 192.168.1.100:37817)",
+      "portRange": "Port must be between 1 and 65535",
+      "privateKeyRequired": "Private key is required",
+      "collateralRequired": "Please select a collateral UTXO"
+    },
+    "deleteConfirm": {
+      "title": "Delete Masternode",
+      "message": "Are you sure you want to delete masternode \"{{alias}}\"? This will remove the entry from masternode.conf."
+    }
+  },
+  "wizard": {
+    "title": "Setup New Masternode",
+    "buttons": {
+      "back": "Back",
+      "next": "Next",
+      "finish": "Create Masternode",
+      "cancel": "Cancel",
+      "startNow": "Start Masternode Now"
+    },
+    "progress": "Step {{current}} of {{total}}",
+    "step1": {
+      "title": "Welcome",
+      "subtitle": "Let's set up your masternode",
+      "description": "This wizard will guide you through the process of configuring a new masternode. Before you begin, please ensure you have:",
+      "requirements": {
+        "title": "Requirements",
+        "vps": "A VPS or dedicated server with a static IP address",
+        "uptime": "24/7 uptime capability for your server",
+        "collateral": "Sufficient TWINS balance for your desired tier",
+        "wallet": "Your wallet synced to the latest block"
+      },
+      "tierOverview": {
+        "title": "Masternode Tiers",
+        "description": "TWINS supports 4 masternode tiers with different collateral requirements and reward weights:",
+        "bronze": "Bronze: 1,000,000 TWINS (1x weight)",
+        "silver": "Silver: 5,000,000 TWINS (5x weight)",
+        "gold": "Gold: 20,000,000 TWINS (20x weight)",
+        "platinum": "Platinum: 100,000,000 TWINS (100x weight)"
+      },
+      "note": "Higher tiers have proportionally higher chances of receiving masternode payments."
+    },
+    "step2": {
+      "title": "Select Tier",
+      "subtitle": "Choose your masternode tier",
+      "description": "Select the tier based on your available collateral. Higher tiers require more TWINS but have higher payment weights.",
+      "availableBalance": "Available Balance: {{balance}} TWINS",
+      "noTierAvailable": "You don't have enough balance for any masternode tier. Please deposit more TWINS to your wallet.",
+      "tierCard": {
+        "collateral": "Collateral",
+        "weight": "Payment Weight",
+        "available": "Available",
+        "insufficient": "Insufficient balance",
+        "waitingConfirmations": "⏳ Waiting for confirmations"
+      }
+    },
+    "step3": {
+      "title": "Select Collateral",
+      "subtitle": "Choose a collateral UTXO",
+      "description": "Select a wallet UTXO to use as collateral for your masternode. This UTXO will be locked and cannot be spent while the masternode is active.",
+      "noUtxos": "No suitable UTXOs found for {{tier}} tier. You need a UTXO with exactly {{amount}} TWINS.",
+      "utxoInfo": "UTXO: {{txHash}}:{{index}}",
+      "amount": "{{amount}} TWINS",
+      "confirmations": "{{count}} confirmations",
+      "pendingUtxo": "⏳ {{count}} / 15 confirmations",
+      "waitingForConfirmations": "Your collateral UTXO is waiting for confirmations ({{count}}/15). It will become available automatically."
+    },
+    "step4": {
+      "title": "Private Key",
+      "subtitle": "Generate or enter your masternode key",
+      "description": "Each masternode needs a unique private key. You can generate a new one or paste an existing key if you're migrating from another setup.",
+      "generateNew": "Generate New Key",
+      "useExisting": "Use Existing Key",
+      "keyGenerated": "Key generated successfully",
+      "keyPlaceholder": "Enter WIF-encoded masternode private key",
+      "keyHint": "This key is used to sign masternode messages. Keep it secure!",
+      "generating": "Generating..."
+    },
+    "step5": {
+      "title": "Network Config",
+      "subtitle": "Enter your VPS details",
+      "description": "Enter the IP address of your VPS where the masternode will run. The default port for TWINS mainnet is 37817.",
+      "ipAddress": "IP Address",
+      "ipPlaceholder": "e.g., 192.168.1.100",
+      "port": "Port",
+      "portHint": "Default mainnet port is 37817",
+      "validation": {
+        "ipRequired": "IP address is required",
+        "ipInvalid": "Invalid IP address format",
+        "portRequired": "Port is required",
+        "portInvalid": "Port must be between 1 and 65535"
+      }
+    },
+    "step6": {
+      "title": "Alias",
+      "subtitle": "Name your masternode",
+      "description": "Choose a unique, friendly name for your masternode. This helps you identify it in your masternode list.",
+      "aliasLabel": "Masternode Alias",
+      "aliasPlaceholder": "e.g., my_masternode_1",
+      "aliasHint": "Use only letters, numbers, and underscores",
+      "validation": {
+        "required": "Alias is required",
+        "format": "Alias must contain only letters, numbers, and underscores",
+        "exists": "A masternode with this alias already exists"
+      }
+    },
+    "step7": {
+      "title": "Review & Confirm",
+      "subtitle": "Verify your masternode configuration",
+      "description": "Please review all the details below. Once confirmed, the masternode entry will be added to your configuration.",
+      "summary": {
+        "tier": "Tier",
+        "collateral": "Collateral",
+        "privateKey": "Private Key",
+        "network": "Network Address",
+        "alias": "Alias"
+      },
+      "creating": "Creating masternode...",
+      "success": "Masternode \"{{alias}}\" created successfully!",
+      "successHint": "You can now start your masternode from the Masternodes page.",
+      "error": "Failed to create masternode: {{error}}"
+    }
+  }
+}

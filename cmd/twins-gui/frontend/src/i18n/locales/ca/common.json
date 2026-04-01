@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "Moneder TWINS",
+    "version": "Versió {{version}}"
+  },
+  "buttons": {
+    "ok": "D'acord",
+    "cancel": "Cancel·la",
+    "apply": "Aplica",
+    "close": "Tanca",
+    "save": "Desa",
+    "delete": "Elimina",
+    "edit": "Edita",
+    "copy": "Copia",
+    "copyAddress": "Copia l'adreça",
+    "paste": "Enganxa del porta-retalls",
+    "addressBook": "Tria de la llibreta d'adreces",
+    "max": "Màxim",
+    "export": "Exporta",
+    "import": "Importa",
+    "refresh": "Actualitza",
+    "reset": "Reinicia",
+    "confirm": "Confirma",
+    "yes": "Sí",
+    "no": "No",
+    "back": "Enrere",
+    "next": "Següent",
+    "done": "Fet",
+    "dismiss": "Descarta",
+    "retry": "Torna-ho a provar",
+    "retryConnection": "Torna a connectar"
+  },
+  "navigation": {
+    "overview": "Resum",
+    "send": "Envia",
+    "receive": "Rep",
+    "transactions": "Transaccions",
+    "masternodes": "Masternodes",
+    "explorer": "Explorador",
+    "staking": "Staking",
+    "privacy": "Privacitat"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Carregant...",
+    "success": "Èxit",
+    "failed": "Ha fallat",
+    "error": "Error",
+    "connected": "Connectat",
+    "connecting": "Connectant...",
+    "disconnected": "Desconnectat",
+    "offline": "Fora de línia",
+    "syncing": "Sincronitzant...",
+    "synced": "Sincronitzat",
+    "outOfSync": "(fora de sincronització)",
+    "upToDate": "Actualitzat"
+  },
+  "errors": {
+    "generic": "S'ha produït un error",
+    "network": "Error de xarxa",
+    "timeout": "S'ha esgotat el temps d'espera",
+    "notFound": "No trobat",
+    "invalidInput": "Entrada no vàlida",
+    "unauthorized": "No autoritzat"
+  },
+  "time": {
+    "seconds": "{{count}} segon",
+    "seconds_other": "{{count}} segons",
+    "minutes": "{{count}} minut",
+    "minutes_other": "{{count}} minuts",
+    "hours": "{{count}} hora",
+    "hours_other": "{{count}} hores",
+    "days": "{{count}} dia",
+    "days_other": "{{count}} dies",
+    "ago": "fa {{time}}",
+    "never": "Mai"
+  },
+  "confirmDialog": {
+    "areYouSure": "N'esteu segur?",
+    "cannotUndo": "Aquesta acció no es pot desfer."
+  },
+  "statusBar": {
+    "synchronizing": "Sincronitzant amb la xarxa...",
+    "scanningBlock": "Escanejant bloc {{height}}",
+    "upToDate": "Actualitzat",
+    "hdEnabled": "Moneder HD activat",
+    "torEnabled": "Tor activat",
+    "walletEncrypted": "Moneder encriptat",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Moneder no encriptat",
+    "stakingActive": "Staking actiu",
+    "stakingInactive": "Staking inactiu",
+    "connections": "{{count}} connexió de xarxa",
+    "connections_other": "{{count}} connexions de xarxa"
+  },
+  "p2pError": {
+    "title": "Error de connexió de xarxa",
+    "failedToConnect": "No s'ha pogut connectar a la xarxa TWINS:",
+    "checkConnection": "Si us plau, comproveu la vostra connexió a Internet i la configuració del tallafocs. El moneder continuarà intentant connectar-se en segon pla."
+  },
+  "intro": {
+    "welcome": "Benvingut a TWINS",
+    "welcomeSubtitle": "El moneder oficial de criptomoneda TWINS",
+    "chooseDataDir": "Trieu la carpeta de dades",
+    "dataDirDescription": "TWINS emmagatzemarà les seves dades a la carpeta següent. Això inclou les dades de la cadena de blocs, els fitxers del moneder i la configuració.",
+    "defaultDir": "Utilitza la carpeta de dades predeterminada",
+    "customDir": "Utilitza una carpeta de dades personalitzada",
+    "browse": "Explora...",
+    "spaceRequired": "Es requereixen almenys {{size}} GB d'espai de disc.",
+    "getStarted": "Comença",
+    "continue": "Continua"
+  },
+  "shutdown": {
+    "title": "Tancant",
+    "message": "El moneder TWINS s'està tancant...",
+    "pleaseWait": "Si us plau, espereu mentre el moneder es tanca de forma segura.",
+    "savingData": "Desant les dades del moneder...",
+    "closingConnections": "Tancant les connexions de xarxa..."
+  },
+  "loading": {
+    "default": "Carregant...",
+    "wallet": "Carregant el moneder...",
+    "transactions": "Carregant les transaccions...",
+    "blocks": "Carregant els blocs...",
+    "masternodes": "Carregant els masternodes...",
+    "initializing": "Inicialitzant..."
+  },
+  "explorer": {
+    "title": "Explorador",
+    "blocks": "Blocs",
+    "transactions": "Transaccions",
+    "addresses": "Adreces",
+    "search": "Cerca",
+    "searchPlaceholder": "Cerca per alçada de bloc, hash, txid o adreça...",
+    "height": "Alçada",
+    "hash": "Hash",
+    "time": "Hora",
+    "age": "Edat",
+    "txCount": "Txns",
+    "size": "Mida",
+    "confirmations": "Confirmacions",
+    "difficulty": "Dificultat",
+    "noBlocks": "No s'han trobat blocs",
+    "noTransactions": "No s'han trobat transaccions",
+    "blockDetails": "Detalls del bloc",
+    "transactionDetails": "Detalls de la transacció",
+    "addressDetails": "Detalls de l'adreça",
+    "inputs": "Entrades",
+    "outputs": "Sortides",
+    "value": "Valor",
+    "from": "De",
+    "to": "A",
+    "viewAll": "Veure tot"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking activat",
+    "disabled": "Staking desactivat",
+    "stakingBalance": "Balanç de staking",
+    "immatureBalance": "Balanç immadur"
+  },
+  "privacy": {
+    "title": "Privacitat",
+    "mint": "Encunyar",
+    "spend": "Gastar",
+    "balance": "Balanç privat",
+    "denominations": "Denominacions"
+  },
+  "notifications": {
+    "newTransaction": "Nova transacció",
+    "transactionReceived": "Rebuts {{amount}} TWINS",
+    "transactionSent": "Enviats {{amount}} TWINS"
+  }
+}

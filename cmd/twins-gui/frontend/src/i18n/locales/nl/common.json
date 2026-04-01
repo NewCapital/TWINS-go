@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Portemonnee",
+    "version": "Versie {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Annuleren",
+    "apply": "Toepassen",
+    "close": "Sluiten",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "copy": "Kopiëren",
+    "copyAddress": "Adres kopiëren",
+    "paste": "Plakken van klembord",
+    "addressBook": "Kiezen uit adresboek",
+    "max": "Max",
+    "export": "Exporteren",
+    "import": "Importeren",
+    "refresh": "Vernieuwen",
+    "reset": "Resetten",
+    "confirm": "Bevestigen",
+    "yes": "Ja",
+    "no": "Nee",
+    "back": "Terug",
+    "next": "Volgende",
+    "done": "Gereed",
+    "dismiss": "Sluiten",
+    "retry": "Opnieuw proberen",
+    "retryConnection": "Verbinding opnieuw proberen"
+  },
+  "navigation": {
+    "overview": "Overzicht",
+    "send": "Verzenden",
+    "receive": "Ontvangen",
+    "transactions": "Transacties",
+    "masternodes": "Masternodes",
+    "explorer": "Verkenner",
+    "staking": "Staking",
+    "privacy": "Privacy"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Laden...",
+    "success": "Gelukt",
+    "failed": "Mislukt",
+    "error": "Fout",
+    "connected": "Verbonden",
+    "connecting": "Verbinden...",
+    "disconnected": "Niet verbonden",
+    "offline": "Offline",
+    "syncing": "Synchroniseren...",
+    "synced": "Gesynchroniseerd",
+    "outOfSync": "(niet gesynchroniseerd)",
+    "upToDate": "Bijgewerkt"
+  },
+  "errors": {
+    "generic": "Er is een fout opgetreden",
+    "network": "Netwerkfout",
+    "timeout": "Verzoek time-out",
+    "notFound": "Niet gevonden",
+    "invalidInput": "Ongeldige invoer",
+    "unauthorized": "Niet geautoriseerd"
+  },
+  "time": {
+    "seconds": "{{count}} seconde",
+    "seconds_other": "{{count}} seconden",
+    "minutes": "{{count}} minuut",
+    "minutes_other": "{{count}} minuten",
+    "hours": "{{count}} uur",
+    "hours_other": "{{count}} uur",
+    "days": "{{count}} dag",
+    "days_other": "{{count}} dagen",
+    "ago": "{{time}} geleden",
+    "never": "Nooit"
+  },
+  "confirmDialog": {
+    "areYouSure": "Weet je het zeker?",
+    "cannotUndo": "Deze actie kan niet ongedaan worden gemaakt."
+  },
+  "statusBar": {
+    "synchronizing": "Synchroniseren met netwerk...",
+    "scanningBlock": "Scannen blok {{height}}",
+    "upToDate": "Bijgewerkt",
+    "hdEnabled": "HD portemonnee ingeschakeld",
+    "torEnabled": "Tor ingeschakeld",
+    "walletEncrypted": "Portemonnee versleuteld",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Portemonnee niet versleuteld",
+    "stakingActive": "Staking actief",
+    "stakingInactive": "Staking niet actief",
+    "connections": "{{count}} netwerkverbinding",
+    "connections_other": "{{count}} netwerkverbindingen"
+  },
+  "p2pError": {
+    "title": "Netwerkverbindingsfout",
+    "failedToConnect": "Kan niet verbinden met TWINS netwerk:",
+    "checkConnection": "Controleer uw internetverbinding en firewall-instellingen. De portemonnee blijft op de achtergrond proberen te verbinden."
+  },
+  "intro": {
+    "welcome": "Welkom bij TWINS",
+    "welcomeSubtitle": "De officiële TWINS cryptocurrency portemonnee",
+    "chooseDataDir": "Kies data directory",
+    "dataDirDescription": "TWINS slaat uw gegevens op in de onderstaande directory. Dit omvat blockchain gegevens, portemonnee bestanden en configuratie.",
+    "defaultDir": "Gebruik standaard data directory",
+    "customDir": "Gebruik aangepaste data directory",
+    "browse": "Bladeren...",
+    "spaceRequired": "Minimaal {{size}} GB schijfruimte vereist.",
+    "getStarted": "Aan de slag",
+    "continue": "Doorgaan"
+  },
+  "shutdown": {
+    "title": "Afsluiten",
+    "message": "TWINS portemonnee wordt afgesloten...",
+    "pleaseWait": "Wacht tot de portemonnee veilig is afgesloten.",
+    "savingData": "Portemonnee gegevens opslaan...",
+    "closingConnections": "Netwerkverbindingen sluiten..."
+  },
+  "loading": {
+    "default": "Laden...",
+    "wallet": "Portemonnee laden...",
+    "transactions": "Transacties laden...",
+    "blocks": "Blokken laden...",
+    "masternodes": "Masternodes laden...",
+    "initializing": "Initialiseren..."
+  },
+  "explorer": {
+    "title": "Verkenner",
+    "blocks": "Blokken",
+    "transactions": "Transacties",
+    "addresses": "Adressen",
+    "search": "Zoeken",
+    "searchPlaceholder": "Zoek op blokhoogte, hash, txid of adres...",
+    "height": "Hoogte",
+    "hash": "Hash",
+    "time": "Tijd",
+    "age": "Leeftijd",
+    "txCount": "Txs",
+    "size": "Grootte",
+    "confirmations": "Bevestigingen",
+    "difficulty": "Moeilijkheid",
+    "noBlocks": "Geen blokken gevonden",
+    "noTransactions": "Geen transacties gevonden",
+    "blockDetails": "Blok details",
+    "transactionDetails": "Transactie details",
+    "addressDetails": "Adres details",
+    "inputs": "Inputs",
+    "outputs": "Outputs",
+    "value": "Waarde",
+    "from": "Van",
+    "to": "Naar",
+    "viewAll": "Alles bekijken"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking ingeschakeld",
+    "disabled": "Staking uitgeschakeld",
+    "stakingBalance": "Staking saldo",
+    "immatureBalance": "Onvolwassen saldo"
+  },
+  "privacy": {
+    "title": "Privacy",
+    "mint": "Minten",
+    "spend": "Besteden",
+    "balance": "Privé saldo",
+    "denominations": "Denominaties"
+  },
+  "notifications": {
+    "newTransaction": "Nieuwe transactie",
+    "transactionReceived": "{{amount}} TWINS ontvangen",
+    "transactionSent": "{{amount}} TWINS verzonden"
+  }
+}

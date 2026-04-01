@@ -1,0 +1,85 @@
+{
+  "title": "选项",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "窗口"
+  },
+  "common": {
+    "requiresRestart": "需要重启",
+    "overriddenBy": "已被 {{flag}} 覆盖",
+    "custom": "自定义"
+  },
+  "main": {
+    "title": "主要设置",
+    "database": "数据库",
+    "userInterface": "用户界面",
+    "databaseCache": "数据库缓存大小：",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "脚本验证线程：",
+    "scriptThreadsAuto": "(0 = 自动)",
+    "language": "界面语言：",
+    "languageDefault": "(默认)",
+    "languageNote": "当前语言：{{language}}",
+    "theme": "界面主题："
+  },
+  "wallet": {
+    "title": "钱包",
+    "spendUnconfirmed": "花费未确认的找零",
+    "spendUnconfirmedNote": "(仅限专家)",
+    "stakeSplitThreshold": "权益分割阈值：",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "自动合并权益奖励",
+    "coinControl": "启用币控制功能",
+    "showMasternodes": "显示主节点标签页",
+    "expert": "专家"
+  },
+  "network": {
+    "title": "网络",
+    "mapPort": "使用 UPnP 映射端口",
+    "allowIncoming": "允许传入连接",
+    "proxy": "代理",
+    "connectProxy": "通过 SOCKS5 代理连接（默认代理）：",
+    "proxyIP": "代理 IP：",
+    "proxyPort": "端口",
+    "proxyHelp": "代理的 IP 地址（例如 IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050）",
+    "proxyFormatError": "格式无效。请使用 IPv4:端口 (127.0.0.1:9050) 或 [IPv6]:端口"
+  },
+  "window": {
+    "title": "窗口设置",
+    "hideTrayIcon": "隐藏托盘图标",
+    "minimizeToTray": "最小化到托盘而非任务栏",
+    "minimizeOnClose": "关闭时最小化"
+  },
+  "display": {
+    "title": "显示设置",
+    "units": "单位",
+    "unitLabel": "金额显示单位：",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (毫)",
+    "unitMicro": "uTWINS (微)",
+    "decimalDigits": "小数位数：",
+    "thirdPartyTitle": "第三方交易链接",
+    "thirdPartyLabel": "交易信息链接：",
+    "thirdPartyHelp": "使用 %s 代替交易 ID。多个链接用 | 分隔",
+    "transactionDisplay": "交易显示",
+    "hideOrphanStakes": "在交易列表中隐藏孤立权益",
+    "hideZeroBalances": "隐藏零余额"
+  },
+  "buttons": {
+    "ok": "确定",
+    "cancel": "取消",
+    "apply": "应用",
+    "resetDefaults": "恢复默认设置"
+  },
+  "messages": {
+    "saved": "设置保存成功",
+    "restartRequired": "语言更改将在重启钱包后生效。",
+    "restartRequiredTitle": "需要重启",
+    "resetConfirm": "您确定要将所有设置恢复为默认值吗？"
+  },
+  "overridden": {
+    "title": "设置已覆盖",
+    "message": "此设置已被命令行选项覆盖：{{flag}}"
+  }
+}

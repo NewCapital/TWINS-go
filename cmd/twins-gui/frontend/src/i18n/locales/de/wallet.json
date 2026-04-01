@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "ÜBERSICHT",
+    "recentTransactions": "Letzte Transaktionen"
+  },
+  "balance": {
+    "title": "Guthaben",
+    "combined": "Gesamtguthaben",
+    "twins": "TWINS-Guthaben",
+    "total": "Gesamt",
+    "totalBalance": "Gesamtguthaben",
+    "available": "Verfügbar",
+    "pending": "Ausstehend",
+    "immature": "Unreif",
+    "locked": "Gesperrt",
+    "watchOnly": "Nur Beobachtung",
+    "spendable": "Ausgabefähig"
+  },
+  "send": {
+    "title": "Senden",
+    "payTo": "Empfänger",
+    "payToPlaceholder": "TWINS-Adresse eingeben (z.B. D...)",
+    "label": "Bezeichnung",
+    "labelPlaceholder": "Bezeichnung für diese Adresse eingeben",
+    "amount": "Betrag",
+    "amountPlaceholder": "0,00",
+    "message": "Nachricht",
+    "messagePlaceholder": "Nachricht eingeben (optional)",
+    "coinControl": {
+      "title": "Coin-Control-Funktionen",
+      "inputs": "Eingaben",
+      "customChangeAddress": "Benutzerdefinierte Wechseladresse",
+      "customChangePlaceholder": "Benutzerdefinierte Wechseladresse eingeben",
+      "splitUtxo": "Block teilen",
+      "splitThreshold": "nach",
+      "utxoSize": "UTXO-Größe"
+    },
+    "recipients": {
+      "add": "Empfänger hinzufügen",
+      "remove": "Diesen Eintrag entfernen",
+      "useMaximum": "Verfügbares Guthaben verwenden",
+      "subtractFee": "Gebühr vom Betrag abziehen"
+    },
+    "fee": {
+      "label": "Transaktionsgebühr",
+      "normal": "Normal",
+      "fast": "Schnell",
+      "recommended": "Empfohlen",
+      "custom": "Benutzerdefiniert",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Gesamtgebühr: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Empfänger gesamt",
+      "estimatedFee": "Geschätzte Gebühr",
+      "afterFee": "Nach Gebühr",
+      "balance": "Guthaben: {{amount}}"
+    },
+    "buttons": {
+      "send": "Senden",
+      "clearAll": "Alle löschen"
+    },
+    "errors": {
+      "invalidAddress": "Ungültiges TWINS-Adressformat",
+      "amountRequired": "Betrag ist erforderlich",
+      "amountTooLow": "Betrag muss mindestens {{min}} TWINS betragen, um Dust zu vermeiden",
+      "insufficientFunds": "Unzureichendes Guthaben",
+      "noRecipients": "Bitte fügen Sie mindestens einen Empfänger hinzu"
+    },
+    "confirmation": {
+      "title": "Transaktion bestätigen",
+      "recipient": "An",
+      "recipients": "Empfänger",
+      "amount": "Betrag",
+      "totalAmount": "Gesamtbetrag",
+      "fee": "Gebühr",
+      "transactionFee": "Transaktionsgebühr",
+      "total": "Gesamt",
+      "grandTotal": "Gesamtsumme",
+      "walletPassphrase": "Wallet-Passphrase",
+      "passphrasePlaceholder": "Wallet-Passphrase eingeben",
+      "passphraseRequired": "Passphrase ist für verschlüsselte Wallets erforderlich",
+      "showPassphrase": "Passphrase anzeigen",
+      "hidePassphrase": "Passphrase verbergen",
+      "capsLockOn": "Feststelltaste ist AN",
+      "largeTransactionWarning": "Warnung: Dies ist eine große Transaktion. Bitte überprüfen Sie alle Details sorgfältig.",
+      "confirmSend": "Senden bestätigen",
+      "sending": "Sende..."
+    },
+    "success": {
+      "title": "Transaktion erfolgreich gesendet",
+      "message": "Transaktion wurde an das Netzwerk gesendet.",
+      "txid": "Transaktions-ID",
+      "copyTxid": "TXID kopieren",
+      "viewInExplorer": "Im Explorer anzeigen",
+      "copiedToClipboard": "In Zwischenablage kopiert!",
+      "copyFailed": "Kopieren fehlgeschlagen - bitte manuell kopieren"
+    }
+  },
+  "receive": {
+    "title": "Empfangen",
+    "currentAddress": "Aktuelle Empfangsadresse",
+    "requestPayment": "Zahlung anfordern",
+    "requestingPayment": "Erstelle...",
+    "newAddress": "Neue Adresse generieren",
+    "addressList": "Empfangsadressen",
+    "copyAddress": "Adresse in Zwischenablage kopieren",
+    "showQR": "QR-Code anzeigen",
+    "qrCode": "QR-Code",
+    "amount": "Betrag",
+    "label": "Bezeichnung",
+    "message": "Nachricht",
+    "address": "Adresse",
+    "reusePrevious": "Vorhandene Empfangsadresse wiederverwenden (nicht empfohlen)",
+    "formInfo": "Verwenden Sie dieses Formular, um Zahlungen anzufordern. Alle Felder sind <1>optional</1>.",
+    "clear": "Löschen",
+    "receivingAddresses": "Empfangsadressen",
+    "requestedHistory": "Zahlungsanforderungsverlauf",
+    "noRequests": "Noch keine Zahlungsanforderungen",
+    "show": "Anzeigen",
+    "remove": "Entfernen",
+    "contextMenu": {
+      "copyLabel": "Bezeichnung kopieren",
+      "copyAddress": "Adresse kopieren",
+      "copyMessage": "Nachricht kopieren",
+      "copyAmount": "Betrag kopieren"
+    },
+    "table": {
+      "date": "Datum",
+      "label": "Bezeichnung",
+      "address": "Adresse",
+      "message": "Nachricht",
+      "amountTwins": "Betrag (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "VERLAUF",
+    "recent": "Letzte Transaktionen",
+    "all": "Alle Transaktionen",
+    "noTransactions": "Keine Transaktionen gefunden",
+    "loading": "Transaktionen werden geladen...",
+    "error": "Fehler: {{message}}",
+    "type": {
+      "all": "Alle",
+      "mostCommon": "Häufigste",
+      "sent": "Gesendet an",
+      "received": "Empfangen mit",
+      "toYourself": "An sich selbst",
+      "mined": "Geschürft",
+      "minted": "Geprägt",
+      "masternode": "Masternode-Belohnung",
+      "other": "Andere"
+    },
+    "status": {
+      "confirmed": "Bestätigt",
+      "unconfirmed": "Unbestätigt",
+      "pending": "Ausstehend",
+      "conflicted": "Konflikt",
+      "abandoned": "Aufgegeben",
+      "confirmations": "{{count}} Bestätigung",
+      "confirmations_other": "{{count}} Bestätigungen"
+    },
+    "details": {
+      "title": "Transaktionsdetails",
+      "txid": "Transaktions-ID",
+      "date": "Datum",
+      "status": "Status",
+      "amount": "Betrag",
+      "fee": "Gebühr",
+      "from": "Von",
+      "to": "An",
+      "confirmations": "Bestätigungen",
+      "blockHash": "Block-Hash",
+      "blockHeight": "Blockhöhe"
+    },
+    "filters": {
+      "all": "Alle",
+      "today": "Heute",
+      "thisWeek": "Diese Woche",
+      "thisMonth": "Diesen Monat",
+      "lastMonth": "Letzten Monat",
+      "thisYear": "Dieses Jahr",
+      "range": "Bereich...",
+      "dateRange": "Datumsbereich",
+      "type": "Typ",
+      "minAmount": "Mindestbetrag",
+      "search": "Adresse oder Bezeichnung suchen",
+      "rangeTo": "bis"
+    },
+    "table": {
+      "date": "Datum",
+      "type": "Typ",
+      "address": "Adresse",
+      "amount": "Betrag"
+    },
+    "contextMenu": {
+      "copyAddress": "Adresse kopieren",
+      "copyLabel": "Bezeichnung kopieren",
+      "copyAmount": "Betrag kopieren",
+      "copyTxId": "Transaktions-ID kopieren",
+      "editLabel": "Bezeichnung bearbeiten",
+      "showDetails": "Transaktionsdetails anzeigen",
+      "hideOrphanStakes": "Verwaiste Stakes ausblenden"
+    },
+    "footer": {
+      "selectedAmount": "Ausgewählter Betrag:",
+      "transactions": "{{count}} Transaktion",
+      "transactions_other": "{{count}} Transaktionen",
+      "export": "Exportieren"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Keine Transaktionen zum Exportieren",
+      "noTransactionsMessage": "Es gibt keine Transaktionen, die den aktuellen Filtern entsprechen.",
+      "exportSuccess": "Export erfolgreich",
+      "exportedCount": "{{count}} Transaktion in CSV-Datei exportiert",
+      "exportedCount_other": "{{count}} Transaktionen in CSV-Datei exportiert",
+      "exportFailed": "Export fehlgeschlagen"
+    }
+  },
+  "addressBook": {
+    "title": "Adressbuch",
+    "add": "Adresse hinzufügen",
+    "edit": "Adresse bearbeiten",
+    "delete": "Adresse löschen",
+    "label": "Bezeichnung",
+    "address": "Adresse",
+    "noAddresses": "Keine Adressen gespeichert"
+  }
+}

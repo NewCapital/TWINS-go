@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "RESUMEN",
+    "recentTransactions": "Transacciones recientes"
+  },
+  "balance": {
+    "title": "Balance",
+    "combined": "Balance combinado",
+    "twins": "Balance TWINS",
+    "total": "Total",
+    "totalBalance": "Balance total",
+    "available": "Disponible",
+    "pending": "Pendiente",
+    "immature": "Inmaduro",
+    "locked": "Bloqueado",
+    "watchOnly": "Solo observación",
+    "spendable": "Gastable"
+  },
+  "send": {
+    "title": "Enviar",
+    "payTo": "Pagar a",
+    "payToPlaceholder": "Ingrese una dirección TWINS (ej. D...)",
+    "label": "Etiqueta",
+    "labelPlaceholder": "Ingrese una etiqueta para esta dirección",
+    "amount": "Cantidad",
+    "amountPlaceholder": "0.00",
+    "message": "Mensaje",
+    "messagePlaceholder": "Ingrese un mensaje (opcional)",
+    "coinControl": {
+      "title": "Funciones de control de monedas",
+      "inputs": "Entradas",
+      "customChangeAddress": "Dirección de cambio personalizada",
+      "customChangePlaceholder": "Ingrese dirección de cambio personalizada",
+      "splitUtxo": "Dividir bloque",
+      "splitThreshold": "después de",
+      "utxoSize": "Tamaño UTXO"
+    },
+    "recipients": {
+      "add": "Agregar destinatario",
+      "remove": "Eliminar esta entrada",
+      "useMaximum": "Usar balance disponible",
+      "subtractFee": "Restar comisión de la cantidad"
+    },
+    "fee": {
+      "label": "Comisión de transacción",
+      "normal": "Normal",
+      "fast": "Rápido",
+      "recommended": "Recomendado",
+      "custom": "Personalizado",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Comisión total: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Total destinatarios",
+      "estimatedFee": "Comisión estimada",
+      "afterFee": "Después de comisión",
+      "balance": "Balance: {{amount}}"
+    },
+    "buttons": {
+      "send": "Enviar",
+      "clearAll": "Limpiar todo"
+    },
+    "errors": {
+      "invalidAddress": "Formato de dirección TWINS inválido",
+      "amountRequired": "Se requiere cantidad",
+      "amountTooLow": "La cantidad debe ser al menos {{min}} TWINS para evitar polvo",
+      "insufficientFunds": "Fondos insuficientes",
+      "noRecipients": "Por favor agregue al menos un destinatario"
+    },
+    "confirmation": {
+      "title": "Confirmar transacción",
+      "recipient": "A",
+      "recipients": "Destinatarios",
+      "amount": "Cantidad",
+      "totalAmount": "Cantidad total",
+      "fee": "Comisión",
+      "transactionFee": "Comisión de transacción",
+      "total": "Total",
+      "grandTotal": "Total general",
+      "walletPassphrase": "Contraseña de cartera",
+      "passphrasePlaceholder": "Ingrese contraseña de cartera",
+      "passphraseRequired": "Se requiere contraseña para carteras cifradas",
+      "showPassphrase": "Mostrar contraseña",
+      "hidePassphrase": "Ocultar contraseña",
+      "capsLockOn": "Bloq Mayús ACTIVADO",
+      "largeTransactionWarning": "Advertencia: Esta es una transacción grande. Por favor verifique todos los detalles cuidadosamente.",
+      "confirmSend": "Confirmar envío",
+      "sending": "Enviando..."
+    },
+    "success": {
+      "title": "Transacción enviada exitosamente",
+      "message": "La transacción ha sido enviada a la red.",
+      "txid": "ID de transacción",
+      "copyTxid": "Copiar TXID",
+      "viewInExplorer": "Ver en explorador",
+      "copiedToClipboard": "¡Copiado al portapapeles!",
+      "copyFailed": "Error al copiar - por favor copie manualmente"
+    }
+  },
+  "receive": {
+    "title": "Recibir",
+    "currentAddress": "Dirección de recepción actual",
+    "requestPayment": "Solicitar pago",
+    "requestingPayment": "Creando...",
+    "newAddress": "Generar nueva dirección",
+    "addressList": "Direcciones de recepción",
+    "copyAddress": "Copiar dirección al portapapeles",
+    "showQR": "Mostrar código QR",
+    "qrCode": "Código QR",
+    "amount": "Cantidad",
+    "label": "Etiqueta",
+    "message": "Mensaje",
+    "address": "Dirección",
+    "reusePrevious": "Reutilizar dirección de recepción existente (no recomendado)",
+    "formInfo": "Use este formulario para solicitar pagos. Todos los campos son <1>opcionales</1>.",
+    "clear": "Limpiar",
+    "receivingAddresses": "Direcciones de recepción",
+    "requestedHistory": "Historial de solicitudes de pago",
+    "noRequests": "Aún no hay solicitudes de pago",
+    "show": "Mostrar",
+    "remove": "Eliminar",
+    "contextMenu": {
+      "copyLabel": "Copiar etiqueta",
+      "copyAddress": "Copiar dirección",
+      "copyMessage": "Copiar mensaje",
+      "copyAmount": "Copiar cantidad"
+    },
+    "table": {
+      "date": "Fecha",
+      "label": "Etiqueta",
+      "address": "Dirección",
+      "message": "Mensaje",
+      "amountTwins": "Cantidad (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIAL",
+    "recent": "Transacciones recientes",
+    "all": "Todas las transacciones",
+    "noTransactions": "No se encontraron transacciones",
+    "loading": "Cargando transacciones...",
+    "error": "Error: {{message}}",
+    "type": {
+      "all": "Todas",
+      "mostCommon": "Más comunes",
+      "sent": "Enviado a",
+      "received": "Recibido con",
+      "toYourself": "A usted mismo",
+      "mined": "Minado",
+      "minted": "Acuñado",
+      "masternode": "Recompensa de Masternode",
+      "other": "Otro"
+    },
+    "status": {
+      "confirmed": "Confirmado",
+      "unconfirmed": "Sin confirmar",
+      "pending": "Pendiente",
+      "conflicted": "En conflicto",
+      "abandoned": "Abandonado",
+      "confirmations": "{{count}} confirmación",
+      "confirmations_other": "{{count}} confirmaciones"
+    },
+    "details": {
+      "title": "Detalles de transacción",
+      "txid": "ID de transacción",
+      "date": "Fecha",
+      "status": "Estado",
+      "amount": "Cantidad",
+      "fee": "Comisión",
+      "from": "De",
+      "to": "A",
+      "confirmations": "Confirmaciones",
+      "blockHash": "Hash del bloque",
+      "blockHeight": "Altura del bloque"
+    },
+    "filters": {
+      "all": "Todas",
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "lastMonth": "Mes pasado",
+      "thisYear": "Este año",
+      "range": "Rango...",
+      "dateRange": "Rango de fechas",
+      "type": "Tipo",
+      "minAmount": "Cantidad mínima",
+      "search": "Buscar por dirección o etiqueta",
+      "rangeTo": "hasta"
+    },
+    "table": {
+      "date": "Fecha",
+      "type": "Tipo",
+      "address": "Dirección",
+      "amount": "Cantidad"
+    },
+    "contextMenu": {
+      "copyAddress": "Copiar dirección",
+      "copyLabel": "Copiar etiqueta",
+      "copyAmount": "Copiar cantidad",
+      "copyTxId": "Copiar ID de transacción",
+      "editLabel": "Editar etiqueta",
+      "showDetails": "Mostrar detalles de transacción",
+      "hideOrphanStakes": "Ocultar stakes huérfanos"
+    },
+    "footer": {
+      "selectedAmount": "Cantidad seleccionada:",
+      "transactions": "{{count}} transacción",
+      "transactions_other": "{{count}} transacciones",
+      "export": "Exportar"
+    },
+    "notifications": {
+      "noTransactionsToExport": "No hay transacciones para exportar",
+      "noTransactionsMessage": "No hay transacciones que coincidan con los filtros actuales.",
+      "exportSuccess": "Exportación exitosa",
+      "exportedCount": "Exportada {{count}} transacción a archivo CSV",
+      "exportedCount_other": "Exportadas {{count}} transacciones a archivo CSV",
+      "exportFailed": "Error en exportación"
+    }
+  },
+  "addressBook": {
+    "title": "Libreta de direcciones",
+    "add": "Agregar dirección",
+    "edit": "Editar dirección",
+    "delete": "Eliminar dirección",
+    "label": "Etiqueta",
+    "address": "Dirección",
+    "noAddresses": "No hay direcciones guardadas"
+  }
+}

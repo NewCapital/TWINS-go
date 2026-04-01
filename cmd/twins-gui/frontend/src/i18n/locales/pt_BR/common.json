@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "Carteira TWINS",
+    "version": "Versão {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "close": "Fechar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "copy": "Copiar",
+    "copyAddress": "Copiar endereço",
+    "paste": "Colar da área de transferência",
+    "addressBook": "Escolher da agenda de endereços",
+    "max": "Máx",
+    "export": "Exportar",
+    "import": "Importar",
+    "refresh": "Atualizar",
+    "reset": "Redefinir",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não",
+    "back": "Voltar",
+    "next": "Próximo",
+    "done": "Concluído",
+    "dismiss": "Dispensar",
+    "retry": "Tentar novamente",
+    "retryConnection": "Tentar conexão novamente"
+  },
+  "navigation": {
+    "overview": "Visão Geral",
+    "send": "Enviar",
+    "receive": "Receber",
+    "transactions": "Transações",
+    "masternodes": "Masternodes",
+    "explorer": "Explorador",
+    "staking": "Staking",
+    "privacy": "Privacidade"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Carregando...",
+    "success": "Sucesso",
+    "failed": "Falhou",
+    "error": "Erro",
+    "connected": "Conectado",
+    "connecting": "Conectando...",
+    "disconnected": "Desconectado",
+    "offline": "Offline",
+    "syncing": "Sincronizando...",
+    "synced": "Sincronizado",
+    "outOfSync": "(fora de sincronia)",
+    "upToDate": "Atualizado"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro",
+    "network": "Erro de rede",
+    "timeout": "Tempo esgotado da solicitação",
+    "notFound": "Não encontrado",
+    "invalidInput": "Entrada inválida",
+    "unauthorized": "Não autorizado"
+  },
+  "time": {
+    "seconds": "{{count}} segundo",
+    "seconds_other": "{{count}} segundos",
+    "minutes": "{{count}} minuto",
+    "minutes_other": "{{count}} minutos",
+    "hours": "{{count}} hora",
+    "hours_other": "{{count}} horas",
+    "days": "{{count}} dia",
+    "days_other": "{{count}} dias",
+    "ago": "{{time}} atrás",
+    "never": "Nunca"
+  },
+  "confirmDialog": {
+    "areYouSure": "Tem certeza?",
+    "cannotUndo": "Esta ação não pode ser desfeita."
+  },
+  "statusBar": {
+    "synchronizing": "Sincronizando com a rede...",
+    "scanningBlock": "Escaneando bloco {{height}}",
+    "upToDate": "Atualizado",
+    "hdEnabled": "Carteira HD habilitada",
+    "torEnabled": "Tor habilitado",
+    "walletEncrypted": "Carteira criptografada",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Carteira não criptografada",
+    "stakingActive": "Staking ativo",
+    "stakingInactive": "Staking inativo",
+    "connections": "{{count}} conexão de rede",
+    "connections_other": "{{count}} conexões de rede"
+  },
+  "p2pError": {
+    "title": "Erro de Conexão de Rede",
+    "failedToConnect": "Falha ao conectar à rede TWINS:",
+    "checkConnection": "Verifique sua conexão com a internet e configurações do firewall. A carteira continuará tentando conectar em segundo plano."
+  },
+  "intro": {
+    "welcome": "Bem-vindo ao TWINS",
+    "welcomeSubtitle": "A carteira oficial da criptomoeda TWINS",
+    "chooseDataDir": "Escolha o Diretório de Dados",
+    "dataDirDescription": "O TWINS armazenará seus dados no diretório abaixo. Isso inclui dados do blockchain, arquivos da carteira e configurações.",
+    "defaultDir": "Usar diretório de dados padrão",
+    "customDir": "Usar diretório de dados personalizado",
+    "browse": "Procurar...",
+    "spaceRequired": "São necessários pelo menos {{size}} GB de espaço em disco.",
+    "getStarted": "Começar",
+    "continue": "Continuar"
+  },
+  "shutdown": {
+    "title": "Encerrando",
+    "message": "A carteira TWINS está encerrando...",
+    "pleaseWait": "Por favor, aguarde enquanto a carteira é encerrada com segurança.",
+    "savingData": "Salvando dados da carteira...",
+    "closingConnections": "Fechando conexões de rede..."
+  },
+  "loading": {
+    "default": "Carregando...",
+    "wallet": "Carregando carteira...",
+    "transactions": "Carregando transações...",
+    "blocks": "Carregando blocos...",
+    "masternodes": "Carregando masternodes...",
+    "initializing": "Inicializando..."
+  },
+  "explorer": {
+    "title": "Explorador",
+    "blocks": "Blocos",
+    "transactions": "Transações",
+    "addresses": "Endereços",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar por altura do bloco, hash, TxID ou endereço...",
+    "height": "Altura",
+    "hash": "Hash",
+    "time": "Hora",
+    "age": "Idade",
+    "txCount": "Txn",
+    "size": "Tamanho",
+    "confirmations": "Confirmações",
+    "difficulty": "Dificuldade",
+    "noBlocks": "Nenhum bloco encontrado",
+    "noTransactions": "Nenhuma transação encontrada",
+    "blockDetails": "Detalhes do Bloco",
+    "transactionDetails": "Detalhes da Transação",
+    "addressDetails": "Detalhes do Endereço",
+    "inputs": "Entradas",
+    "outputs": "Saídas",
+    "value": "Valor",
+    "from": "De",
+    "to": "Para",
+    "viewAll": "Ver tudo"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking habilitado",
+    "disabled": "Staking desabilitado",
+    "stakingBalance": "Saldo de staking",
+    "immatureBalance": "Saldo imaturo"
+  },
+  "privacy": {
+    "title": "Privacidade",
+    "mint": "Cunhar",
+    "spend": "Gastar",
+    "balance": "Saldo privado",
+    "denominations": "Denominações"
+  },
+  "notifications": {
+    "newTransaction": "Nova transação",
+    "transactionReceived": "Recebidos {{amount}} TWINS",
+    "transactionSent": "Enviados {{amount}} TWINS"
+  }
+}

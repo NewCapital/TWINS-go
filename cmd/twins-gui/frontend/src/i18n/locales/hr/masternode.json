@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Moji masternodovi",
+  "allMasternodes": "Mrežni masternodovi",
+  "count": {
+    "total": "Ukupno: {{count}}",
+    "enabled": "Omogućeno: {{count}}",
+    "missing": "Nedostaje: {{count}}"
+  },
+  "table": {
+    "alias": "Pseudonim",
+    "address": "Adresa",
+    "protocol": "Protokol",
+    "status": "Status",
+    "activeTime": "Aktivno vrijeme",
+    "lastSeen": "Zadnje viđeno",
+    "pubkey": "Javni ključ",
+    "tier": "Razina",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "OMOGUĆENO",
+    "missing": "NEDOSTAJE",
+    "preEnabled": "PRED_OMOGUĆENO",
+    "expired": "ISTEKLO",
+    "newStartRequired": "POTREBAN_NOVI_START",
+    "updateRequired": "POTREBNO_AŽURIRANJE",
+    "watchdogExpired": "WATCHDOG_ISTEKAO",
+    "poseBan": "POSE_BAN",
+    "unknown": "NEPOZNATO"
+  },
+  "tiers": {
+    "bronze": "Bronca",
+    "silver": "Srebro",
+    "gold": "Zlato",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Pokreni",
+    "startAlias": "Pokreni alias",
+    "startAll": "Pokreni sve",
+    "startMissing": "Pokreni NEDOSTAJE",
+    "stop": "Zaustavi",
+    "update": "Ažuriraj status",
+    "edit": "Uredi",
+    "remove": "Ukloni",
+    "copyProTx": "Kopiraj ProTx hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Pokreni masternode",
+      "message": "Jeste li sigurni da želite pokrenuti masternode \"{{alias}}\"?",
+      "messageAll": "Jeste li sigurni da želite pokrenuti sve masternodove?",
+      "messageMissing": "Jeste li sigurni da želite pokrenuti sve masternodove koji NEDOSTAJU?"
+    },
+    "removeConfirm": {
+      "title": "Ukloni masternode",
+      "message": "Jeste li sigurni da želite ukloniti masternode \"{{alias}}\"? Ova radnja se ne može poništiti."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" uspješno pokrenut",
+    "startAllSuccess": "Svi masternodovi uspješno pokrenuti",
+    "startMissingSuccess": "{{count}} masternod(a) koji nedostaju uspješno pokrenuti",
+    "noMissingToStart": "Nema masternodova koji nedostaju za pokretanje",
+    "startFailed": "Pokretanje masternoda nije uspjelo: {{error}}",
+    "startAllFailed": "Pokretanje svih masternodova nije uspjelo: {{error}}",
+    "startMissingFailed": "Pokretanje masternodova koji nedostaju nije uspjelo: {{error}}",
+    "fetchFailed": "Dohvaćanje masternodova nije uspjelo",
+    "updateSuccess": "Status masternoda ažuriran",
+    "removeSuccess": "Masternode \"{{alias}}\" uklonjen"
+  },
+  "note": {
+    "title": "Napomena:",
+    "line1": "Status vaših masternodova u lokalnom novčaniku može biti malo netočan.",
+    "line2": "Uvijek pričekajte da novčanik sinkronizira dodatne podatke, a zatim provjerite s drugog čvora,",
+    "line3": "ako bi vaš čvor trebao raditi, ali još uvijek vidite \"NEDOSTAJE\" u polju \"Status\"."
+  },
+  "autoRefresh": "Automatsko osvježavanje za {{seconds}}s",
+  "autoRefreshStatus": "Status će se automatski ažurirati u (s):",
+  "noMasternodes": "Nema konfiguriranih masternodova",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

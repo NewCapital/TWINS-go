@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Moje masternodes",
+  "allMasternodes": "Sieťové masternodes",
+  "count": {
+    "total": "Celkom: {{count}}",
+    "enabled": "Aktívne: {{count}}",
+    "missing": "Chýbajúce: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adresa",
+    "protocol": "Protokol",
+    "status": "Stav",
+    "activeTime": "Aktívny čas",
+    "lastSeen": "Naposledy videné",
+    "pubkey": "Verejný kľúč",
+    "tier": "Úroveň",
+    "rank": "Poradie"
+  },
+  "status": {
+    "enabled": "AKTÍVNY",
+    "missing": "CHÝBAJÚCI",
+    "preEnabled": "PRE_AKTÍVNY",
+    "expired": "VYPRŠANÝ",
+    "newStartRequired": "VYŽADOVANÝ_NOVÝ_ŠTART",
+    "updateRequired": "VYŽADOVANÁ_AKTUALIZÁCIA",
+    "watchdogExpired": "WATCHDOG_VYPRŠANÝ",
+    "poseBan": "POSE_BAN",
+    "unknown": "NEZNÁMY"
+  },
+  "tiers": {
+    "bronze": "Bronz",
+    "silver": "Striebro",
+    "gold": "Zlato",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Spustiť",
+    "startAlias": "Spustiť alias",
+    "startAll": "Spustiť všetky",
+    "startMissing": "Spustiť CHÝBAJÚCE",
+    "stop": "Zastaviť",
+    "update": "Aktualizovať stav",
+    "edit": "Upraviť",
+    "remove": "Odstrániť",
+    "copyProTx": "Kopírovať hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Spustiť masternode",
+      "message": "Ste si istý, že chcete spustiť masternode \"{{alias}}\"?",
+      "messageAll": "Ste si istý, že chcete spustiť VŠETKY masternodes?",
+      "messageMissing": "Ste si istý, že chcete spustiť všetky CHÝBAJÚCE masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Odstrániť masternode",
+      "message": "Ste si istý, že chcete odstrániť masternode \"{{alias}}\"? Túto akciu nie je možné vrátiť späť."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" úspešne spustený",
+    "startAllSuccess": "Všetky masternodes úspešne spustené",
+    "startMissingSuccess": "{{count}} chýbajúcich masternodov úspešne spustených",
+    "noMissingToStart": "Žiadne chýbajúce masternodes na spustenie",
+    "startFailed": "Spustenie masternode zlyhalo: {{error}}",
+    "startAllFailed": "Spustenie všetkých masternodov zlyhalo: {{error}}",
+    "startMissingFailed": "Spustenie chýbajúcich masternodov zlyhalo: {{error}}",
+    "fetchFailed": "Získanie masternodov zlyhalo",
+    "updateSuccess": "Stav masternode aktualizovaný",
+    "removeSuccess": "Masternode \"{{alias}}\" odstránený"
+  },
+  "note": {
+    "title": "Poznámka:",
+    "line1": "Stav vašich masternodov v lokálnej peňaženke môže byť mierne nepresný.",
+    "line2": "Vždy počkajte, kým peňaženka zosynchronizuje dodatočné údaje, potom overte z iného uzla,",
+    "line3": "ak by váš uzol mal bežať, ale stále vidíte \"CHÝBAJÚCI\" v poli stavu."
+  },
+  "autoRefresh": "Automatické obnovenie za {{seconds}}s",
+  "autoRefreshStatus": "Stav sa automaticky aktualizuje za (sek):",
+  "noMasternodes": "Žiadne nakonfigurované masternodes",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

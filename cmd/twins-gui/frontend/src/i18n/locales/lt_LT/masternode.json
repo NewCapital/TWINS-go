@@ -1,0 +1,92 @@
+{
+  "title": "Masternod'ai",
+  "myMasternodes": "Mano masternod'ai",
+  "allMasternodes": "Tinklo masternod'ai",
+  "count": {
+    "total": "Iš viso: {{count}}",
+    "enabled": "Įjungta: {{count}}",
+    "missing": "Trūksta: {{count}}"
+  },
+  "table": {
+    "alias": "Slapyvardis",
+    "address": "Adresas",
+    "protocol": "Protokolas",
+    "status": "Būsena",
+    "activeTime": "Aktyvumo laikas",
+    "lastSeen": "Paskutinį kartą matytas",
+    "pubkey": "Viešas raktas",
+    "tier": "Lygis",
+    "rank": "Rangas"
+  },
+  "status": {
+    "enabled": "ĮJUNGTA",
+    "missing": "TRŪKSTA",
+    "preEnabled": "PRIEŠ_ĮJUNGIMĄ",
+    "expired": "PASIBAIGĖ",
+    "newStartRequired": "REIKALINGAS_NAUJAS_PALEIDIMAS",
+    "updateRequired": "REIKALINGAS_ATNAUJINIMAS",
+    "watchdogExpired": "WATCHDOG_PASIBAIGĖ",
+    "poseBan": "POSE_BAN",
+    "unknown": "NEŽINOMA"
+  },
+  "tiers": {
+    "bronze": "Bronza",
+    "silver": "Sidabras",
+    "gold": "Auksas",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Paleisti",
+    "startAlias": "Paleisti slapyvardį",
+    "startAll": "Paleisti visus",
+    "startMissing": "Paleisti TRŪKSTAMUS",
+    "stop": "Sustabdyti",
+    "update": "Atnaujinti būseną",
+    "edit": "Redaguoti",
+    "remove": "Pašalinti",
+    "copyProTx": "Kopijuoti ProTx maišą"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Paleisti masternod'ą",
+      "message": "Ar tikrai norite paleisti masternod'ą \"{{alias}}\"?",
+      "messageAll": "Ar tikrai norite paleisti VISUS masternod'us?",
+      "messageMissing": "Ar tikrai norite paleisti visus TRŪKSTAMUS masternod'us?"
+    },
+    "removeConfirm": {
+      "title": "Pašalinti masternod'ą",
+      "message": "Ar tikrai norite pašalinti masternod'ą \"{{alias}}\"? Šio veiksmo negalima anuliuoti."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternod'as \"{{alias}}\" sėkmingai paleistas",
+    "startAllSuccess": "Visi masternod'ai sėkmingai paleisti",
+    "startMissingSuccess": "{{count}} trūkstamas masternod'as sėkmingai paleistas",
+    "noMissingToStart": "Nėra trūkstamų masternod'ų paleidimui",
+    "startFailed": "Nepavyko paleisti masternod'o: {{error}}",
+    "startAllFailed": "Nepavyko paleisti visų masternod'ų: {{error}}",
+    "startMissingFailed": "Nepavyko paleisti trūkstamų masternod'ų: {{error}}",
+    "fetchFailed": "Nepavyko gauti masternod'ų",
+    "updateSuccess": "Masternod'o būsena atnaujinta",
+    "removeSuccess": "Masternod'as \"{{alias}}\" pašalintas"
+  },
+  "note": {
+    "title": "Pastaba:",
+    "line1": "Jūsų masternod'ų būsena vietinėje piniginėje gali būti šiek tiek neteisinga.",
+    "line2": "Visada palaukite, kol piniginė sinchronizuos papildomus duomenis, o po to patikrinkite iš kito nod'o,",
+    "line3": "jei jūsų nod'as turėtų būti paleistas, bet būsenos lauke vis dar matote \"TRŪKSTA\"."
+  },
+  "autoRefresh": "Automatinis atnaujinimas po {{seconds}}s",
+  "autoRefreshStatus": "Būsena bus automatiškai atnaujinta po (sek.):",
+  "noMasternodes": "Nėra sukonfigūruotų masternod'ų",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

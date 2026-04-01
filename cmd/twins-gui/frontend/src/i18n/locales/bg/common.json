@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Портфейл",
+    "version": "Версия {{version}}"
+  },
+  "buttons": {
+    "ok": "ОК",
+    "cancel": "Отказ",
+    "apply": "Приложи",
+    "close": "Затвори",
+    "save": "Запази",
+    "delete": "Изтрий",
+    "edit": "Редактиране",
+    "copy": "Копирай",
+    "copyAddress": "Копиране на адреса",
+    "paste": "Постави от буфера",
+    "addressBook": "Изберете от адресната книга",
+    "max": "Максимум",
+    "export": "Експортиране",
+    "import": "Импортиране",
+    "refresh": "Обнови",
+    "reset": "Ресет",
+    "confirm": "Потвърди",
+    "yes": "Да",
+    "no": "Не",
+    "back": "Назад",
+    "next": "Напред",
+    "done": "Готово",
+    "dismiss": "Отхвърли",
+    "retry": "Опитай отново",
+    "retryConnection": "Опитай връзка отново"
+  },
+  "navigation": {
+    "overview": "Преглед",
+    "send": "Изпрати",
+    "receive": "Получи",
+    "transactions": "Транзакции",
+    "masternodes": "Мастърноудове",
+    "explorer": "Експлорер",
+    "staking": "Стейкване",
+    "privacy": "Поверителност"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Зареждане...",
+    "success": "Успешно",
+    "failed": "Неуспешно",
+    "error": "Грешка",
+    "connected": "Свързан",
+    "connecting": "Свързване...",
+    "disconnected": "Прекъсната връзка",
+    "offline": "Офлайн",
+    "syncing": "Синхронизиране...",
+    "synced": "Синхронизиран",
+    "outOfSync": "(не е синхронизиран)",
+    "upToDate": "Актуален"
+  },
+  "errors": {
+    "generic": "Възникна грешка",
+    "network": "Мрежова грешка",
+    "timeout": "Времето за изчакване изтече",
+    "notFound": "Не е намерено",
+    "invalidInput": "Невалиден вход",
+    "unauthorized": "Неоторизиран"
+  },
+  "time": {
+    "seconds": "{{count}} секунда",
+    "seconds_other": "{{count}} секунди",
+    "minutes": "{{count}} минута",
+    "minutes_other": "{{count}} минути",
+    "hours": "{{count}} час",
+    "hours_other": "{{count}} часа",
+    "days": "{{count}} ден",
+    "days_other": "{{count}} дни",
+    "ago": "преди {{time}}",
+    "never": "Никога"
+  },
+  "confirmDialog": {
+    "areYouSure": "Сигурни ли сте?",
+    "cannotUndo": "Това действие не може да бъде отменено."
+  },
+  "statusBar": {
+    "synchronizing": "Синхронизиране с мрежата...",
+    "scanningBlock": "Сканиране на блок {{height}}",
+    "upToDate": "Актуален",
+    "hdEnabled": "HD Портфейл активиран",
+    "torEnabled": "Tor активиран",
+    "walletEncrypted": "Портфейлът е шифриран",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Портфейлът не е шифриран",
+    "stakingActive": "Стейкването е активно",
+    "stakingInactive": "Стейкването е неактивно",
+    "connections": "{{count}} мрежова връзка",
+    "connections_other": "{{count}} мрежови връзки"
+  },
+  "p2pError": {
+    "title": "Грешка при мрежова връзка",
+    "failedToConnect": "Неуспешно свързване към TWINS мрежата:",
+    "checkConnection": "Моля, проверете интернет връзката и настройките на защитната стена. Портфейлът ще продължи да се опитва да се свърже във фонов режим."
+  },
+  "intro": {
+    "welcome": "Добре дошли в TWINS",
+    "welcomeSubtitle": "Официалният TWINS криптовалутен портфейл",
+    "chooseDataDir": "Изберете директория за данни",
+    "dataDirDescription": "TWINS ще съхранява данните си в директорията по-долу. Това включва данни от блокчейна, файлове на портфейла и конфигурация.",
+    "defaultDir": "Използвай директория по подразбиране",
+    "customDir": "Използвай персонализирана директория",
+    "browse": "Преглед...",
+    "spaceRequired": "Необходими са поне {{size}} GB дисково пространство.",
+    "getStarted": "Започнете",
+    "continue": "Продължи"
+  },
+  "shutdown": {
+    "title": "Изключване",
+    "message": "TWINS Портфейлът се изключва...",
+    "pleaseWait": "Моля, изчакайте портфейлът да се затвори безопасно.",
+    "savingData": "Запазване на данните на портфейла...",
+    "closingConnections": "Затваряне на мрежовите връзки..."
+  },
+  "loading": {
+    "default": "Зареждане...",
+    "wallet": "Зареждане на портфейла...",
+    "transactions": "Зареждане на транзакциите...",
+    "blocks": "Зареждане на блоковете...",
+    "masternodes": "Зареждане на мастърноудовете...",
+    "initializing": "Инициализиране..."
+  },
+  "explorer": {
+    "title": "Експлорер",
+    "blocks": "Блокове",
+    "transactions": "Транзакции",
+    "addresses": "Адреси",
+    "search": "Търсене",
+    "searchPlaceholder": "Търсене по височина на блок, хеш, txid или адрес...",
+    "height": "Височина",
+    "hash": "Хеш",
+    "time": "Време",
+    "age": "Възраст",
+    "txCount": "Транзакции",
+    "size": "Размер",
+    "confirmations": "Потвърждения",
+    "difficulty": "Трудност",
+    "noBlocks": "Няма намерени блокове",
+    "noTransactions": "Няма намерени транзакции",
+    "blockDetails": "Детайли на блока",
+    "transactionDetails": "Детайли на транзакцията",
+    "addressDetails": "Детайли на адреса",
+    "inputs": "Входящи",
+    "outputs": "Изходящи",
+    "value": "Стойност",
+    "from": "От",
+    "to": "До",
+    "viewAll": "Виж всички"
+  },
+  "staking": {
+    "title": "Стейкване",
+    "enabled": "Стейкването е активирано",
+    "disabled": "Стейкването е деактивирано",
+    "stakingBalance": "Баланс за стейкване",
+    "immatureBalance": "Неузрял баланс"
+  },
+  "privacy": {
+    "title": "Поверителност",
+    "mint": "Сечене",
+    "spend": "Харчене",
+    "balance": "Частен баланс",
+    "denominations": "Деноминации"
+  },
+  "notifications": {
+    "newTransaction": "Нова транзакция",
+    "transactionReceived": "Получени {{amount}} TWINS",
+    "transactionSent": "Изпратени {{amount}} TWINS"
+  }
+}

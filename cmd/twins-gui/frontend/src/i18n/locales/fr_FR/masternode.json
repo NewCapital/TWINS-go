@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Mes Masternodes",
+  "allMasternodes": "Masternodes du réseau",
+  "count": {
+    "total": "Total : {{count}}",
+    "enabled": "Activés : {{count}}",
+    "missing": "Manquants : {{count}}"
+  },
+  "table": {
+    "alias": "Pseudonyme",
+    "address": "Adresse",
+    "protocol": "Protocole",
+    "status": "Statut",
+    "activeTime": "Temps actif",
+    "lastSeen": "Dernière vue",
+    "pubkey": "Clé publique",
+    "tier": "Niveau",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "ACTIVÉ",
+    "missing": "MANQUANT",
+    "preEnabled": "PRÉ_ACTIVÉ",
+    "expired": "EXPIRÉ",
+    "newStartRequired": "NOUVEAU_DÉMARRAGE_REQUIS",
+    "updateRequired": "MISE_À_JOUR_REQUISE",
+    "watchdogExpired": "WATCHDOG_EXPIRÉ",
+    "poseBan": "POSE_BAN",
+    "unknown": "INCONNU"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Argent",
+    "gold": "Or",
+    "platinum": "Platine",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Démarrer",
+    "startAlias": "Démarrer le pseudonyme",
+    "startAll": "Tout démarrer",
+    "startMissing": "Démarrer MANQUANTS",
+    "stop": "Arrêter",
+    "update": "Mettre à jour le statut",
+    "edit": "Modifier",
+    "remove": "Supprimer",
+    "copyProTx": "Copier le hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Démarrer le Masternode",
+      "message": "Êtes-vous sûr de vouloir démarrer le masternode \"{{alias}}\" ?",
+      "messageAll": "Êtes-vous sûr de vouloir démarrer tous les masternodes ?",
+      "messageMissing": "Êtes-vous sûr de vouloir démarrer tous les masternodes MANQUANTS ?"
+    },
+    "removeConfirm": {
+      "title": "Supprimer le Masternode",
+      "message": "Êtes-vous sûr de vouloir supprimer le masternode \"{{alias}}\" ? Cette action est irréversible."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" démarré avec succès",
+    "startAllSuccess": "Tous les masternodes démarrés avec succès",
+    "startMissingSuccess": "{{count}} masternode(s) manquant(s) démarré(s) avec succès",
+    "noMissingToStart": "Aucun masternode manquant à démarrer",
+    "startFailed": "Échec du démarrage du masternode : {{error}}",
+    "startAllFailed": "Échec du démarrage de tous les masternodes : {{error}}",
+    "startMissingFailed": "Échec du démarrage des masternodes manquants : {{error}}",
+    "fetchFailed": "Échec de la récupération des masternodes",
+    "updateSuccess": "Statut du masternode mis à jour",
+    "removeSuccess": "Masternode \"{{alias}}\" supprimé"
+  },
+  "note": {
+    "title": "Note :",
+    "line1": "Le statut de vos masternodes dans le portefeuille local peut être légèrement inexact.",
+    "line2": "Attendez toujours que le portefeuille synchronise les données supplémentaires, puis vérifiez depuis un autre nœud",
+    "line3": "si votre nœud devrait fonctionner mais affiche toujours \"MANQUANT\" dans le champ \"Statut\"."
+  },
+  "autoRefresh": "Actualisation automatique dans {{seconds}}s",
+  "autoRefreshStatus": "Le statut sera automatiquement mis à jour dans (sec) :",
+  "noMasternodes": "Aucun masternode configuré",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

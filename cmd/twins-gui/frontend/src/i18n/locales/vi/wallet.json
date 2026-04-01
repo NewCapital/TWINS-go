@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "TỔNG QUAN",
+    "recentTransactions": "Giao dịch gần đây"
+  },
+  "balance": {
+    "title": "Số dư",
+    "combined": "Số dư kết hợp",
+    "twins": "Số dư TWINS",
+    "total": "Tổng",
+    "totalBalance": "Tổng số dư",
+    "available": "Khả dụng",
+    "pending": "Đang chờ",
+    "immature": "Chưa trưởng thành",
+    "locked": "Đã khóa",
+    "watchOnly": "Chỉ xem",
+    "spendable": "Có thể chi"
+  },
+  "send": {
+    "title": "Gửi",
+    "payTo": "Thanh toán cho",
+    "payToPlaceholder": "Nhập địa chỉ TWINS (ví dụ D...)",
+    "label": "Nhãn",
+    "labelPlaceholder": "Nhập nhãn cho địa chỉ này",
+    "amount": "Số lượng",
+    "amountPlaceholder": "0,00",
+    "message": "Tin nhắn",
+    "messagePlaceholder": "Nhập tin nhắn (tùy chọn)",
+    "coinControl": {
+      "title": "Tính năng kiểm soát coin",
+      "inputs": "Đầu vào",
+      "customChangeAddress": "Địa chỉ thay đổi tùy chỉnh",
+      "customChangePlaceholder": "Nhập địa chỉ thay đổi tùy chỉnh",
+      "splitUtxo": "Chia khối",
+      "splitThreshold": "sau",
+      "utxoSize": "Kích thước UTXO"
+    },
+    "recipients": {
+      "add": "Thêm người nhận",
+      "remove": "Xóa mục này",
+      "useMaximum": "Sử dụng số dư khả dụng",
+      "subtractFee": "Trừ phí từ số lượng"
+    },
+    "fee": {
+      "label": "Phí giao dịch",
+      "normal": "Bình thường",
+      "fast": "Nhanh",
+      "recommended": "Khuyến nghị",
+      "custom": "Tùy chỉnh",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Tổng phí: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Tổng người nhận",
+      "estimatedFee": "Phí ước tính",
+      "afterFee": "Sau phí",
+      "balance": "Số dư: {{amount}}"
+    },
+    "buttons": {
+      "send": "Gửi",
+      "clearAll": "Xóa tất cả"
+    },
+    "errors": {
+      "invalidAddress": "Định dạng địa chỉ TWINS không hợp lệ",
+      "amountRequired": "Yêu cầu số lượng",
+      "amountTooLow": "Số lượng phải ít nhất {{min}} TWINS để tránh bụi",
+      "insufficientFunds": "Không đủ tiền",
+      "noRecipients": "Thêm ít nhất một người nhận"
+    },
+    "confirmation": {
+      "title": "Xác nhận giao dịch",
+      "recipient": "Đến",
+      "recipients": "Người nhận",
+      "amount": "Số lượng",
+      "totalAmount": "Tổng số lượng",
+      "fee": "Phí",
+      "transactionFee": "Phí giao dịch",
+      "total": "Tổng",
+      "grandTotal": "Tổng cộng",
+      "walletPassphrase": "Mật khẩu ví",
+      "passphrasePlaceholder": "Nhập mật khẩu ví",
+      "passphraseRequired": "Mật khẩu yêu cầu cho ví được mã hóa",
+      "showPassphrase": "Hiện mật khẩu",
+      "hidePassphrase": "Ẩn mật khẩu",
+      "capsLockOn": "Caps Lock đang BẬT",
+      "largeTransactionWarning": "Cảnh báo: Đây là giao dịch lớn. Vui lòng kiểm tra tất cả chi tiết cẩn thận.",
+      "confirmSend": "Xác nhận gửi",
+      "sending": "Đang gửi..."
+    },
+    "success": {
+      "title": "Giao dịch đã gửi",
+      "message": "Giao dịch đã được gửi đến mạng.",
+      "txid": "ID giao dịch",
+      "copyTxid": "Sao chép TXID",
+      "viewInExplorer": "Xem trong explorer",
+      "copiedToClipboard": "Đã sao chép vào clipboard!",
+      "copyFailed": "Sao chép thất bại - sao chép thủ công"
+    }
+  },
+  "receive": {
+    "title": "Nhận",
+    "currentAddress": "Địa chỉ nhận hiện tại",
+    "requestPayment": "Yêu cầu thanh toán",
+    "requestingPayment": "Đang tạo...",
+    "newAddress": "Tạo địa chỉ mới",
+    "addressList": "Địa chỉ nhận",
+    "copyAddress": "Sao chép địa chỉ vào clipboard",
+    "showQR": "Hiển thị mã QR",
+    "qrCode": "Mã QR",
+    "amount": "Số lượng",
+    "label": "Nhãn",
+    "message": "Tin nhắn",
+    "address": "Địa chỉ",
+    "reusePrevious": "Sử dụng lại địa chỉ nhận hiện có (không khuyến nghị)",
+    "formInfo": "Sử dụng biểu mẫu này để yêu cầu thanh toán. Tất cả các trường là <1>tùy chọn</1>.",
+    "clear": "Xóa",
+    "receivingAddresses": "Địa chỉ nhận",
+    "requestedHistory": "Lịch sử yêu cầu thanh toán",
+    "noRequests": "Chưa có yêu cầu thanh toán",
+    "show": "Hiển thị",
+    "remove": "Xóa",
+    "contextMenu": {
+      "copyLabel": "Sao chép nhãn",
+      "copyAddress": "Sao chép địa chỉ",
+      "copyMessage": "Sao chép tin nhắn",
+      "copyAmount": "Sao chép số lượng"
+    },
+    "table": {
+      "date": "Ngày",
+      "label": "Nhãn",
+      "address": "Địa chỉ",
+      "message": "Tin nhắn",
+      "amountTwins": "Số lượng (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "LỊCH SỬ",
+    "recent": "Giao dịch gần đây",
+    "all": "Tất cả giao dịch",
+    "noTransactions": "Không tìm thấy giao dịch",
+    "loading": "Đang tải giao dịch...",
+    "error": "Lỗi: {{message}}",
+    "type": {
+      "all": "Tất cả",
+      "mostCommon": "Phổ biến nhất",
+      "sent": "Đã gửi đến",
+      "received": "Đã nhận từ",
+      "toYourself": "Đến chính mình",
+      "mined": "Đã đào",
+      "minted": "Đã đúc",
+      "masternode": "Phần thưởng Masternode",
+      "other": "Khác"
+    },
+    "status": {
+      "confirmed": "Đã xác nhận",
+      "unconfirmed": "Chưa xác nhận",
+      "pending": "Đang chờ",
+      "conflicted": "Xung đột",
+      "abandoned": "Đã bỏ",
+      "confirmations": "{{count}} xác nhận",
+      "confirmations_other": "{{count}} xác nhận"
+    },
+    "details": {
+      "title": "Chi tiết giao dịch",
+      "txid": "ID giao dịch",
+      "date": "Ngày",
+      "status": "Trạng thái",
+      "amount": "Số lượng",
+      "fee": "Phí",
+      "from": "Từ",
+      "to": "Đến",
+      "confirmations": "Xác nhận",
+      "blockHash": "Hash khối",
+      "blockHeight": "Chiều cao khối"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "today": "Hôm nay",
+      "thisWeek": "Tuần này",
+      "thisMonth": "Tháng này",
+      "lastMonth": "Tháng trước",
+      "thisYear": "Năm nay",
+      "range": "Khoảng...",
+      "dateRange": "Khoảng ngày",
+      "type": "Loại",
+      "minAmount": "Số lượng tối thiểu",
+      "search": "Nhập địa chỉ hoặc nhãn để tìm kiếm",
+      "rangeTo": "đến"
+    },
+    "table": {
+      "date": "Ngày",
+      "type": "Loại",
+      "address": "Địa chỉ",
+      "amount": "Số lượng"
+    },
+    "contextMenu": {
+      "copyAddress": "Sao chép địa chỉ",
+      "copyLabel": "Sao chép nhãn",
+      "copyAmount": "Sao chép số lượng",
+      "copyTxId": "Sao chép ID giao dịch",
+      "editLabel": "Sửa nhãn",
+      "showDetails": "Hiển thị chi tiết giao dịch",
+      "hideOrphanStakes": "Ẩn stake mồ côi"
+    },
+    "footer": {
+      "selectedAmount": "Số lượng đã chọn:",
+      "transactions": "{{count}} giao dịch",
+      "transactions_other": "{{count}} giao dịch",
+      "export": "Xuất"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Không có giao dịch để xuất",
+      "noTransactionsMessage": "Không có giao dịch phù hợp với bộ lọc hiện tại.",
+      "exportSuccess": "Xuất thành công",
+      "exportedCount": "{{count}} giao dịch đã xuất sang tệp CSV",
+      "exportedCount_other": "{{count}} giao dịch đã xuất sang tệp CSV",
+      "exportFailed": "Xuất thất bại"
+    }
+  },
+  "addressBook": {
+    "title": "Sổ địa chỉ",
+    "add": "Thêm địa chỉ",
+    "edit": "Sửa địa chỉ",
+    "delete": "Xóa địa chỉ",
+    "label": "Nhãn",
+    "address": "Địa chỉ",
+    "noAddresses": "Không có địa chỉ đã lưu"
+  }
+}

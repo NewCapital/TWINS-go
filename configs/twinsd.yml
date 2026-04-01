@@ -1,0 +1,270 @@
+# TWINS Daemon Default Configuration
+# ==================================
+#
+# This is the default configuration file for twinsd.
+# Copy this file to ~/.twins/twinsd.yml and edit as needed.
+#
+# The daemon reads configuration in this order (later overrides earlier):
+#   1. Built-in defaults
+#   2. ~/.twins/twinsd.yml (this file)
+#   3. Environment variables (TWINS_* prefix)
+#   4. Command-line flags
+#
+# For full configuration options, see configs/mainnet.yml
+#
+
+# Data directory (default: ~/.twins)
+# All paths below are relative to this directory unless absolute
+dataDir: "~/.twins"
+
+# ==========================================
+# RPC Server Settings
+# ==========================================
+rpc:
+  # Enable JSON-RPC server (default: true)
+  enabled: true
+
+  # RPC server port (default: 37818)
+  port: 37818
+
+  # RPC server bind address (127.0.0.1 = localhost only)
+  host: "127.0.0.1"
+
+  # RPC authentication username (REQUIRED for production)
+  # Generate secure credentials and store in environment variables
+  username: ""
+
+  # RPC authentication password (REQUIRED for production)
+  password: ""
+
+  # IP addresses allowed to connect to RPC
+  allowedIPs:
+    - "127.0.0.1"
+    - "::1"
+
+  # Maximum concurrent RPC connections (default: 100)
+  maxClients: 100
+
+  # RPC request timeout in seconds (default: 30)
+  timeout: 30
+
+  # Number of RPC worker threads (default: 4)
+  threads: 4
+
+# ==========================================
+# Network Settings
+# ==========================================
+network:
+  # P2P port for peer connections (default: 37817)
+  port: 37817
+
+  # DNS seed nodes for initial peer discovery
+  seeds:
+    - 159.65.195.97:37817
+    - 134.209.146.52:37817
+    - 46.101.113.6:37817
+    - 138.68.154.249:37817
+    - 137.184.217.142:37817
+    - 165.22.149.70:37817
+    - 170.64.157.157:37817
+    - 134.122.38.24:37817
+    - 45.77.64.171:37817
+    - 45.32.36.145:37817
+    - 45.77.206.161:37817
+    - 207.148.67.25:37817
+
+  # Maximum number of peer connections (default: 125, legacy: -maxconnections)
+  maxPeers: 125
+
+  # Run on testnet (default: false)
+  testNet: false
+
+  # Address to listen for P2P connections (0.0.0.0 = all interfaces, legacy: -bind)
+  listenAddr: "0.0.0.0"
+
+  # External IP address (leave empty for auto-detection, legacy: -externalip)
+  externalIP: ""
+
+  # Connection timeout in seconds (default: 5, legacy: DEFAULT_CONNECT_TIMEOUT)
+  timeout: 5
+
+  # Keep-alive/ping interval in seconds (default: 120, legacy: PING_INTERVAL)
+  keepAlive: 120
+
+  # Maximum bandwidth in bytes/sec (0 = unlimited)
+  maxBandwidth: 0
+
+  # ------------------------------------------
+  # Core Connection Settings (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Accept inbound connections (default: true, legacy: -listen)
+  listen: true
+
+  # Allow DNS lookups for -addnode, -seednode, -connect (default: true, legacy: -dns)
+  dns: true
+
+  # Query DNS seeds for peer addresses (default: true, legacy: -dnsseed)
+  dnsSeed: true
+
+  # Discover own IP address (default: true, legacy: -discover)
+  discover: true
+
+  # ------------------------------------------
+  # Peer Management (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Nodes to connect to and keep connection open (legacy: -addnode)
+  addNodes: []
+
+  # Connect to node for peer addresses only (legacy: -seednode)
+  seedNodes: []
+
+  # Connect ONLY to specified nodes - disables listen and dnsseed (legacy: -connect)
+  connectOnly: []
+
+  # ------------------------------------------
+  # Ban Settings (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Misbehavior score threshold for disconnect (default: 100, legacy: -banscore)
+  banScore: 100
+
+  # Ban duration in seconds (default: 86400 = 24 hours, legacy: -bantime)
+  banTime: 86400
+
+  # ------------------------------------------
+  # Proxy/Tor Settings (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # SOCKS5 proxy for all connections (empty = disabled, legacy: -proxy)
+  proxy: ""
+
+  # Separate SOCKS5 proxy for Tor connections (empty = use proxy, legacy: -onion)
+  onionProxy: ""
+
+  # Tor control port for hidden service (default: 127.0.0.1:9051, legacy: -torcontrol)
+  torControl: "127.0.0.1:9051"
+
+  # Tor control port password (legacy: -torpassword)
+  torPassword: ""
+
+  # Automatically create Tor hidden service (default: true, legacy: -listenonion)
+  listenOnion: true
+
+  # Randomize credentials for every proxy connection (default: true, legacy: -proxyrandomize)
+  proxyRandomize: true
+
+  # ------------------------------------------
+  # UPnP Settings (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Use UPnP to map listening port (default: true, legacy: -upnp)
+  upnp: true
+
+  # ------------------------------------------
+  # Buffer Settings (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Per-connection receive buffer size x1000 bytes (default: 5000 = 5MB, legacy: -maxreceivebuffer)
+  maxReceiveBuffer: 5000
+
+  # Per-connection send buffer size x1000 bytes (default: 1000 = 1MB, legacy: -maxsendbuffer)
+  maxSendBuffer: 1000
+
+  # ------------------------------------------
+  # Network Filtering (Legacy C++ Compatible)
+  # ------------------------------------------
+
+  # Bind to specific addresses and always listen (legacy: -bind)
+  bindAddresses: []
+
+  # Bind to address and whitelist peers (legacy: -whitebind)
+  whiteBind: []
+
+  # Whitelist peers by IP or netmask (legacy: -whitelist)
+  whitelist: []
+
+  # Only connect via specific network: ipv4, ipv6, onion (empty = all, legacy: -onlynet)
+  onlyNet: ""
+
+# ==========================================
+# Wallet Settings
+# ==========================================
+wallet:
+  # Enable wallet functionality (default: true)
+  enabled: true
+
+  # Wallet file name (default: wallet.dat)
+  file: "wallet.dat"
+
+  # Pre-generated key pool size (default: 100)
+  keyPool: 100
+
+  # Default transaction fee per kB in TWINS (default: 0.0001)
+  txFee: 0.0001
+
+  # Maximum transaction fee in TWINS (default: 0.10)
+  maxTxFee: 0.10
+
+  # Spend unconfirmed change (default: true)
+  spendUnconfirmedChange: true
+
+  # Use HD wallet (BIP32/44) (default: true)
+  useHD: true
+
+  # Rescan blockchain on startup (default: false)
+  rescan: false
+
+# ==========================================
+# Staking Settings
+# ==========================================
+staking:
+  # Enable staking (default: false)
+  enabled: false
+
+  # Reserve balance not used for staking in TWINS (default: 0)
+  reserveBalance: 0
+
+  # Minimum stake amount in satoshis (default: 1200000000000 = 12000 TWINS)
+  minAmount: 1200000000000
+
+# ==========================================
+# Masternode Settings
+# ==========================================
+# Masternode tiers and collateral requirements:
+#   Bronze:   1,000,000 TWINS   (10% block reward)
+#   Silver:   5,000,000 TWINS   (20% block reward)
+#   Gold:    20,000,000 TWINS   (30% block reward)
+#   Platinum: 100,000,000 TWINS (40% block reward)
+masternode:
+  # Enable masternode mode (default: false)
+  enabled: false
+
+  # Masternode private key (generate with: twins-cli createmasternodekey)
+  privateKey: ""
+
+  # External service address (IP:port) for masternode
+  serviceAddr: ""
+
+  # Path to masternode.conf for remote MN entries (default: masternode.conf)
+  mnConf: "masternode.conf"
+
+  # Lock UTXOs from masternode.conf (default: true)
+  mnConfLock: true
+
+# ==========================================
+# Logging Settings
+# ==========================================
+logging:
+  # Log level (debug, info, warn, error)
+  level: "error"
+
+  # Log format (text, json)
+  format: "text"
+
+  # Log output file path
+  output: "./twins.log"
+
+  # Debug categories (comma-separated): net, rpc, mempool, consensus, p2p, wallet
+  debugCategories: ""

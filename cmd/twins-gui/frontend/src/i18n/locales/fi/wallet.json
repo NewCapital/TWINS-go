@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "YLEISKATSAUS",
+    "recentTransactions": "Viimeaikaiset tapahtumat"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Yhdistetty saldo",
+    "twins": "TWINS saldo",
+    "total": "Yhteensä",
+    "totalBalance": "Kokonaissaldo",
+    "available": "Saatavilla",
+    "pending": "Odottaa",
+    "immature": "Epäkypsä",
+    "locked": "Lukittu",
+    "watchOnly": "Vain katselu",
+    "spendable": "Käytettävissä"
+  },
+  "send": {
+    "title": "Lähetä",
+    "payTo": "Maksa",
+    "payToPlaceholder": "Syötä TWINS osoite (esim. D...)",
+    "label": "Nimike",
+    "labelPlaceholder": "Syötä nimike tälle osoitteelle",
+    "amount": "Määrä",
+    "amountPlaceholder": "0.00",
+    "message": "Viesti",
+    "messagePlaceholder": "Syötä viesti (valinnainen)",
+    "coinControl": {
+      "title": "Kolikon Hallintatoiminnot",
+      "inputs": "Syötteet",
+      "customChangeAddress": "Mukautettu vaihto-osoite",
+      "customChangePlaceholder": "Syötä mukautettu vaihto-osoite",
+      "splitUtxo": "Jaa lohko",
+      "splitThreshold": "jälkeen",
+      "utxoSize": "UTXO koko"
+    },
+    "recipients": {
+      "add": "Lisää vastaanottaja",
+      "remove": "Poista tämä merkintä",
+      "useMaximum": "Käytä saatavilla oleva saldo",
+      "subtractFee": "Vähennä taksa määrästä"
+    },
+    "fee": {
+      "label": "Tapahtuman taksa",
+      "normal": "Normaali",
+      "fast": "Nopea",
+      "recommended": "Suositeltu",
+      "custom": "Mukautettu",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Taksa yhteensä: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Vastaanottajat yhteensä",
+      "estimatedFee": "Arvioitu taksa",
+      "afterFee": "Taksan jälkeen",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Lähetä",
+      "clearAll": "Tyhjennä kaikki"
+    },
+    "errors": {
+      "invalidAddress": "Virheellinen TWINS osoitemuoto",
+      "amountRequired": "Määrä vaaditaan",
+      "amountTooLow": "Määrän on oltava vähintään {{min}} TWINS välttääksesi pölyä",
+      "insufficientFunds": "Riittämättömät varat",
+      "noRecipients": "Lisää vähintään yksi vastaanottaja"
+    },
+    "confirmation": {
+      "title": "Vahvista Tapahtuma",
+      "recipient": "Vastaanottaja",
+      "recipients": "Vastaanottajat",
+      "amount": "Määrä",
+      "totalAmount": "Kokonaismäärä",
+      "fee": "Taksa",
+      "transactionFee": "Tapahtuman taksa",
+      "total": "Yhteensä",
+      "grandTotal": "Loppusumma",
+      "walletPassphrase": "Lompakon salausavain",
+      "passphrasePlaceholder": "Syötä lompakon salausavain",
+      "passphraseRequired": "Salausavain vaaditaan salatuille lompakoille",
+      "showPassphrase": "Näytä salausavain",
+      "hidePassphrase": "Piilota salausavain",
+      "capsLockOn": "Caps Lock on PÄÄLLÄ",
+      "largeTransactionWarning": "Varoitus: Tämä on suuri tapahtuma. Tarkista kaikki tiedot huolellisesti.",
+      "confirmSend": "Vahvista lähetys",
+      "sending": "Lähetetään..."
+    },
+    "success": {
+      "title": "Tapahtuma lähetetty onnistuneesti",
+      "message": "Tapahtuma on lähetetty verkkoon.",
+      "txid": "Tapahtuman ID",
+      "copyTxid": "Kopioi TXID",
+      "viewInExplorer": "Näytä selaimessa",
+      "copiedToClipboard": "Kopioitu leikepöydälle!",
+      "copyFailed": "Kopiointi epäonnistui - kopioi manuaalisesti"
+    }
+  },
+  "receive": {
+    "title": "Vastaanota",
+    "currentAddress": "Nykyinen vastaanotto-osoite",
+    "requestPayment": "Pyydä maksua",
+    "requestingPayment": "Luodaan...",
+    "newAddress": "Luo uusi osoite",
+    "addressList": "Vastaanotto-osoitteet",
+    "copyAddress": "Kopioi osoite leikepöydälle",
+    "showQR": "Näytä QR-koodi",
+    "qrCode": "QR-koodi",
+    "amount": "Määrä",
+    "label": "Nimike",
+    "message": "Viesti",
+    "address": "Osoite",
+    "reusePrevious": "Käytä olemassa olevaa vastaanotto-osoitetta (ei suositeltu)",
+    "formInfo": "Käytä tätä lomaketta pyytääksesi maksuja. Kaikki kentät ovat <1>valinnaisia</1>.",
+    "clear": "Tyhjennä",
+    "receivingAddresses": "Vastaanotto-osoitteet",
+    "requestedHistory": "Maksupyyntöjen historia",
+    "noRequests": "Ei maksupyyntöjä vielä",
+    "show": "Näytä",
+    "remove": "Poista",
+    "contextMenu": {
+      "copyLabel": "Kopioi nimike",
+      "copyAddress": "Kopioi osoite",
+      "copyMessage": "Kopioi viesti",
+      "copyAmount": "Kopioi määrä"
+    },
+    "table": {
+      "date": "Päivämäärä",
+      "label": "Nimike",
+      "address": "Osoite",
+      "message": "Viesti",
+      "amountTwins": "Määrä (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIA",
+    "recent": "Viimeaikaiset tapahtumat",
+    "all": "Kaikki tapahtumat",
+    "noTransactions": "Tapahtumia ei löytynyt",
+    "loading": "Ladataan tapahtumia...",
+    "error": "Virhe: {{message}}",
+    "type": {
+      "all": "Kaikki",
+      "mostCommon": "Yleisimmät",
+      "sent": "Lähetetty",
+      "received": "Vastaanotettu",
+      "toYourself": "Itsellesi",
+      "mined": "Mainattu",
+      "minted": "Lyöty",
+      "masternode": "Masternode-palkkio",
+      "other": "Muu"
+    },
+    "status": {
+      "confirmed": "Vahvistettu",
+      "unconfirmed": "Vahvistamaton",
+      "pending": "Odottaa",
+      "conflicted": "Ristiriidassa",
+      "abandoned": "Hylätty",
+      "confirmations": "{{count}} vahvistus",
+      "confirmations_other": "{{count}} vahvistusta"
+    },
+    "details": {
+      "title": "Tapahtuman Tiedot",
+      "txid": "Tapahtuman ID",
+      "date": "Päivämäärä",
+      "status": "Tila",
+      "amount": "Määrä",
+      "fee": "Taksa",
+      "from": "Lähettäjä",
+      "to": "Vastaanottaja",
+      "confirmations": "Vahvistukset",
+      "blockHash": "Lohkon hash",
+      "blockHeight": "Lohkon korkeus"
+    },
+    "filters": {
+      "all": "Kaikki",
+      "today": "Tänään",
+      "thisWeek": "Tällä viikolla",
+      "thisMonth": "Tässä kuussa",
+      "lastMonth": "Viime kuussa",
+      "thisYear": "Tänä vuonna",
+      "range": "Aikaväli...",
+      "dateRange": "Päivämääräväli",
+      "type": "Tyyppi",
+      "minAmount": "Minimäärä",
+      "search": "Syötä osoite tai nimike etsiäksesi",
+      "rangeTo": "–"
+    },
+    "table": {
+      "date": "Päivämäärä",
+      "type": "Tyyppi",
+      "address": "Osoite",
+      "amount": "Määrä"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopioi osoite",
+      "copyLabel": "Kopioi nimike",
+      "copyAmount": "Kopioi määrä",
+      "copyTxId": "Kopioi tapahtuman ID",
+      "editLabel": "Muokkaa nimikettä",
+      "showDetails": "Näytä tapahtuman tiedot",
+      "hideOrphanStakes": "Piilota orvot panokset"
+    },
+    "footer": {
+      "selectedAmount": "Valittu määrä:",
+      "transactions": "{{count}} tapahtuma",
+      "transactions_other": "{{count}} tapahtumaa",
+      "export": "Vie"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Ei tapahtumia vietäväksi",
+      "noTransactionsMessage": "Mikään tapahtuma ei vastaa nykyisiä suodattimia.",
+      "exportSuccess": "Vienti onnistui",
+      "exportedCount": "Viety {{count}} tapahtuma CSV-tiedostoon",
+      "exportedCount_other": "Viety {{count}} tapahtumaa CSV-tiedostoon",
+      "exportFailed": "Vienti epäonnistui"
+    }
+  },
+  "addressBook": {
+    "title": "Osoitekirja",
+    "add": "Lisää osoite",
+    "edit": "Muokkaa osoitetta",
+    "delete": "Poista osoite",
+    "label": "Nimike",
+    "address": "Osoite",
+    "noAddresses": "Ei tallennettuja osoitteita"
+  }
+}

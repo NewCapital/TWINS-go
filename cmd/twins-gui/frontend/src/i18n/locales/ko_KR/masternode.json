@@ -1,0 +1,92 @@
+{
+  "title": "마스터노드",
+  "myMasternodes": "내 마스터노드",
+  "allMasternodes": "네트워크 마스터노드",
+  "count": {
+    "total": "총: {{count}}",
+    "enabled": "활성화: {{count}}",
+    "missing": "누락: {{count}}"
+  },
+  "table": {
+    "alias": "이름",
+    "address": "주소",
+    "protocol": "프로토콜",
+    "status": "상태",
+    "activeTime": "활성 시간",
+    "lastSeen": "마지막 확인",
+    "pubkey": "공개키",
+    "tier": "등급",
+    "rank": "순위"
+  },
+  "status": {
+    "enabled": "활성화됨",
+    "missing": "누락됨",
+    "preEnabled": "사전_활성화",
+    "expired": "만료됨",
+    "newStartRequired": "새_시작_필요",
+    "updateRequired": "업데이트_필요",
+    "watchdogExpired": "워치독_만료",
+    "poseBan": "POSE_BAN",
+    "unknown": "알 수 없음"
+  },
+  "tiers": {
+    "bronze": "브론즈",
+    "silver": "실버",
+    "gold": "골드",
+    "platinum": "플래티넘",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "시작",
+    "startAlias": "별칭 시작",
+    "startAll": "모두 시작",
+    "startMissing": "누락된 것 시작",
+    "stop": "중지",
+    "update": "상태 업데이트",
+    "edit": "수정",
+    "remove": "삭제",
+    "copyProTx": "ProTx 해시 복사"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "마스터노드 시작",
+      "message": "마스터노드 \"{{alias}}\"를 시작하시겠습니까?",
+      "messageAll": "모든 마스터노드를 시작하시겠습니까?",
+      "messageMissing": "모든 누락된 마스터노드를 시작하시겠습니까?"
+    },
+    "removeConfirm": {
+      "title": "마스터노드 삭제",
+      "message": "마스터노드 \"{{alias}}\"를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
+    }
+  },
+  "messages": {
+    "startSuccess": "마스터노드 \"{{alias}}\"가 성공적으로 시작되었습니다",
+    "startAllSuccess": "모든 마스터노드가 성공적으로 시작되었습니다",
+    "startMissingSuccess": "{{count}}개의 누락된 마스터노드가 성공적으로 시작되었습니다",
+    "noMissingToStart": "시작할 누락된 마스터노드가 없습니다",
+    "startFailed": "마스터노드 시작 실패: {{error}}",
+    "startAllFailed": "모든 마스터노드 시작 실패: {{error}}",
+    "startMissingFailed": "누락된 마스터노드 시작 실패: {{error}}",
+    "fetchFailed": "마스터노드를 가져오지 못했습니다",
+    "updateSuccess": "마스터노드 상태가 업데이트되었습니다",
+    "removeSuccess": "마스터노드 \"{{alias}}\"가 삭제되었습니다"
+  },
+  "note": {
+    "title": "참고:",
+    "line1": "로컬 지갑에서 마스터노드 상태가 약간 부정확할 수 있습니다.",
+    "line2": "항상 지갑이 추가 데이터를 동기화할 때까지 기다린 후 다른 노드에서 확인하세요,",
+    "line3": "노드가 실행 중이어야 하는데 \"상태\" 필드에 \"누락됨\"이 계속 표시되는 경우."
+  },
+  "autoRefresh": "{{seconds}}초 후 자동 새로고침",
+  "autoRefreshStatus": "상태가 자동으로 업데이트됩니다 (초):",
+  "noMasternodes": "구성된 마스터노드가 없습니다",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

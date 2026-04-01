@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "PREZENTARE",
+    "recentTransactions": "Tranzacții recente"
+  },
+  "balance": {
+    "title": "Sold",
+    "combined": "Sold combinat",
+    "twins": "Sold TWINS",
+    "total": "Total",
+    "totalBalance": "Sold total",
+    "available": "Disponibil",
+    "pending": "În așteptare",
+    "immature": "Imatur",
+    "locked": "Blocat",
+    "watchOnly": "Doar vizualizare",
+    "spendable": "Cheltuibil"
+  },
+  "send": {
+    "title": "Trimite",
+    "payTo": "Plătește către",
+    "payToPlaceholder": "Introdu adresa TWINS (ex: D...)",
+    "label": "Etichetă",
+    "labelPlaceholder": "Introdu o etichetă pentru această adresă",
+    "amount": "Sumă",
+    "amountPlaceholder": "0,00",
+    "message": "Mesaj",
+    "messagePlaceholder": "Introdu un mesaj (opțional)",
+    "coinControl": {
+      "title": "Funcții control monede",
+      "inputs": "Intrări",
+      "customChangeAddress": "Adresă rest personalizată",
+      "customChangePlaceholder": "Introdu adresa rest personalizată",
+      "splitUtxo": "Împarte blocul",
+      "splitThreshold": "după",
+      "utxoSize": "Dimensiune UTXO"
+    },
+    "recipients": {
+      "add": "Adaugă destinatar",
+      "remove": "Elimină această intrare",
+      "useMaximum": "Folosește soldul disponibil",
+      "subtractFee": "Scade taxa din sumă"
+    },
+    "fee": {
+      "label": "Taxă tranzacție",
+      "normal": "Normal",
+      "fast": "Rapid",
+      "recommended": "Recomandat",
+      "custom": "Personalizat",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Taxă totală: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Total destinatari",
+      "estimatedFee": "Taxă estimată",
+      "afterFee": "După taxă",
+      "balance": "Sold: {{amount}}"
+    },
+    "buttons": {
+      "send": "Trimite",
+      "clearAll": "Șterge tot"
+    },
+    "errors": {
+      "invalidAddress": "Format adresă TWINS invalid",
+      "amountRequired": "Suma este obligatorie",
+      "amountTooLow": "Suma trebuie să fie cel puțin {{min}} TWINS pentru a evita praful",
+      "insufficientFunds": "Fonduri insuficiente",
+      "noRecipients": "Adaugă cel puțin un destinatar"
+    },
+    "confirmation": {
+      "title": "Confirmă Tranzacția",
+      "recipient": "Către",
+      "recipients": "Destinatari",
+      "amount": "Sumă",
+      "totalAmount": "Sumă totală",
+      "fee": "Taxă",
+      "transactionFee": "Taxă tranzacție",
+      "total": "Total",
+      "grandTotal": "Total general",
+      "walletPassphrase": "Parolă portofel",
+      "passphrasePlaceholder": "Introdu parola portofelului",
+      "passphraseRequired": "Parolă necesară pentru portofelele criptate",
+      "showPassphrase": "Arată parola",
+      "hidePassphrase": "Ascunde parola",
+      "capsLockOn": "Caps Lock este ACTIVAT",
+      "largeTransactionWarning": "Avertisment: Aceasta este o tranzacție mare. Te rugăm să verifici toate detaliile cu atenție.",
+      "confirmSend": "Confirmă trimiterea",
+      "sending": "Se trimite..."
+    },
+    "success": {
+      "title": "Tranzacție Trimisă cu Succes",
+      "message": "Tranzacția a fost transmisă în rețea.",
+      "txid": "ID Tranzacție",
+      "copyTxid": "Copiază TXID",
+      "viewInExplorer": "Vezi în explorer",
+      "copiedToClipboard": "Copiat în clipboard!",
+      "copyFailed": "Copierea a eșuat - copiază manual"
+    }
+  },
+  "receive": {
+    "title": "Primește",
+    "currentAddress": "Adresa curentă de primire",
+    "requestPayment": "Solicită plată",
+    "requestingPayment": "Se creează...",
+    "newAddress": "Generează adresă nouă",
+    "addressList": "Adrese de primire",
+    "copyAddress": "Copiază adresa în clipboard",
+    "showQR": "Arată codul QR",
+    "qrCode": "Cod QR",
+    "amount": "Sumă",
+    "label": "Etichetă",
+    "message": "Mesaj",
+    "address": "Adresă",
+    "reusePrevious": "Reutilizează adresa de primire existentă (nerecomandat)",
+    "formInfo": "Folosește acest formular pentru a solicita plăți. Toate câmpurile sunt <1>opționale</1>.",
+    "clear": "Șterge",
+    "receivingAddresses": "Adrese de primire",
+    "requestedHistory": "Istoric solicitări de plată",
+    "noRequests": "Încă nu există solicitări de plată",
+    "show": "Arată",
+    "remove": "Elimină",
+    "contextMenu": {
+      "copyLabel": "Copiază eticheta",
+      "copyAddress": "Copiază adresa",
+      "copyMessage": "Copiază mesajul",
+      "copyAmount": "Copiază suma"
+    },
+    "table": {
+      "date": "Data",
+      "label": "Etichetă",
+      "address": "Adresă",
+      "message": "Mesaj",
+      "amountTwins": "Sumă (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "ISTORIC",
+    "recent": "Tranzacții recente",
+    "all": "Toate tranzacțiile",
+    "noTransactions": "Nu au fost găsite tranzacții",
+    "loading": "Se încarcă tranzacțiile...",
+    "error": "Eroare: {{message}}",
+    "type": {
+      "all": "Toate",
+      "mostCommon": "Cele mai comune",
+      "sent": "Trimis către",
+      "received": "Primit de la",
+      "toYourself": "Către tine",
+      "mined": "Minat",
+      "minted": "Emis",
+      "masternode": "Recompensă masternode",
+      "other": "Altele"
+    },
+    "status": {
+      "confirmed": "Confirmat",
+      "unconfirmed": "Neconfirmat",
+      "pending": "În așteptare",
+      "conflicted": "În conflict",
+      "abandoned": "Abandonat",
+      "confirmations": "{{count}} confirmare",
+      "confirmations_other": "{{count}} confirmări"
+    },
+    "details": {
+      "title": "Detalii Tranzacție",
+      "txid": "ID Tranzacție",
+      "date": "Data",
+      "status": "Status",
+      "amount": "Sumă",
+      "fee": "Taxă",
+      "from": "De la",
+      "to": "Către",
+      "confirmations": "Confirmări",
+      "blockHash": "Hash bloc",
+      "blockHeight": "Înălțime bloc"
+    },
+    "filters": {
+      "all": "Toate",
+      "today": "Azi",
+      "thisWeek": "Săptămâna aceasta",
+      "thisMonth": "Luna aceasta",
+      "lastMonth": "Luna trecută",
+      "thisYear": "Anul acesta",
+      "range": "Interval...",
+      "dateRange": "Interval de date",
+      "type": "Tip",
+      "minAmount": "Sumă min",
+      "search": "Introdu adresa sau eticheta pentru căutare",
+      "rangeTo": "până la"
+    },
+    "table": {
+      "date": "Data",
+      "type": "Tip",
+      "address": "Adresă",
+      "amount": "Sumă"
+    },
+    "contextMenu": {
+      "copyAddress": "Copiază adresa",
+      "copyLabel": "Copiază eticheta",
+      "copyAmount": "Copiază suma",
+      "copyTxId": "Copiază ID tranzacție",
+      "editLabel": "Editează eticheta",
+      "showDetails": "Arată detaliile tranzacției",
+      "hideOrphanStakes": "Ascunde stake-urile orfane"
+    },
+    "footer": {
+      "selectedAmount": "Sumă selectată:",
+      "transactions": "{{count}} tranzacție",
+      "transactions_other": "{{count}} tranzacții",
+      "export": "Exportă"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Nu există tranzacții de exportat",
+      "noTransactionsMessage": "Nicio tranzacție nu corespunde filtrelor curente.",
+      "exportSuccess": "Export reușit",
+      "exportedCount": "{{count}} tranzacție exportată în fișier CSV",
+      "exportedCount_other": "{{count}} tranzacții exportate în fișier CSV",
+      "exportFailed": "Exportul a eșuat"
+    }
+  },
+  "addressBook": {
+    "title": "Agendă de adrese",
+    "add": "Adaugă adresă",
+    "edit": "Editează adresa",
+    "delete": "Șterge adresa",
+    "label": "Etichetă",
+    "address": "Adresă",
+    "noAddresses": "Nicio adresă salvată"
+  }
+}

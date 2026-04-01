@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Гаманець",
+    "version": "Версія {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Скасувати",
+    "apply": "Застосувати",
+    "close": "Закрити",
+    "save": "Зберегти",
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "copy": "Копіювати",
+    "copyAddress": "Копіювати адресу",
+    "paste": "Вставити з буфера обміну",
+    "addressBook": "Вибрати з адресної книги",
+    "max": "Макс",
+    "export": "Експорт",
+    "import": "Імпорт",
+    "refresh": "Оновити",
+    "reset": "Скинути",
+    "confirm": "Підтвердити",
+    "yes": "Так",
+    "no": "Ні",
+    "back": "Назад",
+    "next": "Далі",
+    "done": "Готово",
+    "dismiss": "Закрити",
+    "retry": "Повторити",
+    "retryConnection": "Повторити підключення"
+  },
+  "navigation": {
+    "overview": "Огляд",
+    "send": "Надіслати",
+    "receive": "Отримати",
+    "transactions": "Транзакції",
+    "masternodes": "Мастерноди",
+    "explorer": "Оглядач",
+    "staking": "Стейкінг",
+    "privacy": "Конфіденційність"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Завантаження...",
+    "success": "Успішно",
+    "failed": "Помилка",
+    "error": "Помилка",
+    "connected": "Підключено",
+    "connecting": "Підключення...",
+    "disconnected": "Відключено",
+    "offline": "Офлайн",
+    "syncing": "Синхронізація...",
+    "synced": "Синхронізовано",
+    "outOfSync": "(не синхронізовано)",
+    "upToDate": "Актуально"
+  },
+  "errors": {
+    "generic": "Сталася помилка",
+    "network": "Помилка мережі",
+    "timeout": "Час очікування вичерпано",
+    "notFound": "Не знайдено",
+    "invalidInput": "Невірний ввід",
+    "unauthorized": "Не авторизовано"
+  },
+  "time": {
+    "seconds": "{{count}} секунда",
+    "seconds_other": "{{count}} секунд",
+    "minutes": "{{count}} хвилина",
+    "minutes_other": "{{count}} хвилин",
+    "hours": "{{count}} година",
+    "hours_other": "{{count}} годин",
+    "days": "{{count}} день",
+    "days_other": "{{count}} днів",
+    "ago": "{{time}} тому",
+    "never": "Ніколи"
+  },
+  "confirmDialog": {
+    "areYouSure": "Ви впевнені?",
+    "cannotUndo": "Цю дію неможливо скасувати."
+  },
+  "statusBar": {
+    "synchronizing": "Синхронізація з мережею...",
+    "scanningBlock": "Сканування блоку {{height}}",
+    "upToDate": "Актуально",
+    "hdEnabled": "HD-гаманець увімкнено",
+    "torEnabled": "Tor увімкнено",
+    "walletEncrypted": "Гаманець зашифровано",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Гаманець не зашифровано",
+    "stakingActive": "Стейкінг активний",
+    "stakingInactive": "Стейкінг неактивний",
+    "connections": "{{count}} мережеве підключення",
+    "connections_other": "{{count}} мережевих підключень"
+  },
+  "p2pError": {
+    "title": "Помилка мережевого підключення",
+    "failedToConnect": "Не вдалося підключитися до мережі TWINS:",
+    "checkConnection": "Будь ласка, перевірте підключення до інтернету та налаштування брандмауера. Гаманець продовжить спроби підключення у фоновому режимі."
+  },
+  "intro": {
+    "welcome": "Ласкаво просимо до TWINS",
+    "welcomeSubtitle": "Офіційний криптовалютний гаманець TWINS",
+    "chooseDataDir": "Виберіть каталог даних",
+    "dataDirDescription": "TWINS зберігатиме дані у вказаному нижче каталозі. Сюди входять дані блокчейну, файли гаманця та конфігурація.",
+    "defaultDir": "Використовувати каталог за замовчуванням",
+    "customDir": "Використовувати власний каталог",
+    "browse": "Огляд...",
+    "spaceRequired": "Потрібно щонайменше {{size}} ГБ дискового простору.",
+    "getStarted": "Почати",
+    "continue": "Продовжити"
+  },
+  "shutdown": {
+    "title": "Завершення роботи",
+    "message": "Гаманець TWINS завершує роботу...",
+    "pleaseWait": "Будь ласка, зачекайте, поки гаманець безпечно закриється.",
+    "savingData": "Збереження даних гаманця...",
+    "closingConnections": "Закриття мережевих підключень..."
+  },
+  "loading": {
+    "default": "Завантаження...",
+    "wallet": "Завантаження гаманця...",
+    "transactions": "Завантаження транзакцій...",
+    "blocks": "Завантаження блоків...",
+    "masternodes": "Завантаження мастернод...",
+    "initializing": "Ініціалізація..."
+  },
+  "explorer": {
+    "title": "Оглядач",
+    "blocks": "Блоки",
+    "transactions": "Транзакції",
+    "addresses": "Адреси",
+    "search": "Пошук",
+    "searchPlaceholder": "Пошук за висотою блоку, хешем, TxID або адресою...",
+    "height": "Висота",
+    "hash": "Хеш",
+    "time": "Час",
+    "age": "Вік",
+    "txCount": "Txn",
+    "size": "Розмір",
+    "confirmations": "Підтвердження",
+    "difficulty": "Складність",
+    "noBlocks": "Блоки не знайдено",
+    "noTransactions": "Транзакції не знайдено",
+    "blockDetails": "Деталі блоку",
+    "transactionDetails": "Деталі транзакції",
+    "addressDetails": "Деталі адреси",
+    "inputs": "Входи",
+    "outputs": "Виходи",
+    "value": "Значення",
+    "from": "Від",
+    "to": "Кому",
+    "viewAll": "Показати все"
+  },
+  "staking": {
+    "title": "Стейкінг",
+    "enabled": "Стейкінг увімкнено",
+    "disabled": "Стейкінг вимкнено",
+    "stakingBalance": "Баланс стейкінгу",
+    "immatureBalance": "Незрілий баланс"
+  },
+  "privacy": {
+    "title": "Конфіденційність",
+    "mint": "Карбування",
+    "spend": "Витратити",
+    "balance": "Приватний баланс",
+    "denominations": "Номінали"
+  },
+  "notifications": {
+    "newTransaction": "Нова транзакція",
+    "transactionReceived": "Отримано {{amount}} TWINS",
+    "transactionSent": "Надіслано {{amount}} TWINS"
+  }
+}

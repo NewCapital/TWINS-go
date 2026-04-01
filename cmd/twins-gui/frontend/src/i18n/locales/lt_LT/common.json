@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Piniginė",
+    "version": "Versija {{version}}"
+  },
+  "buttons": {
+    "ok": "Gerai",
+    "cancel": "Atšaukti",
+    "apply": "Taikyti",
+    "close": "Uždaryti",
+    "save": "Išsaugoti",
+    "delete": "Ištrinti",
+    "edit": "Redaguoti",
+    "copy": "Kopijuoti",
+    "copyAddress": "Kopijuoti adresą",
+    "paste": "Įklijuoti iš mainų srities",
+    "addressBook": "Pasirinkti iš adresų knygos",
+    "max": "Maks",
+    "export": "Eksportuoti",
+    "import": "Importuoti",
+    "refresh": "Atnaujinti",
+    "reset": "Atstatyti",
+    "confirm": "Patvirtinti",
+    "yes": "Taip",
+    "no": "Ne",
+    "back": "Atgal",
+    "next": "Toliau",
+    "done": "Atlikta",
+    "dismiss": "Atmesti",
+    "retry": "Bandyti dar kartą",
+    "retryConnection": "Bandyti prisijungti iš naujo"
+  },
+  "navigation": {
+    "overview": "Apžvalga",
+    "send": "Siųsti",
+    "receive": "Gauti",
+    "transactions": "Sandoriai",
+    "masternodes": "Masternod'ai",
+    "explorer": "Naršyklė",
+    "staking": "Stake'inimas",
+    "privacy": "Privatumas"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Kraunama...",
+    "success": "Sėkminga",
+    "failed": "Nepavyko",
+    "error": "Klaida",
+    "connected": "Prisijungta",
+    "connecting": "Jungiamasi...",
+    "disconnected": "Atjungta",
+    "offline": "Neprisijungęs",
+    "syncing": "Sinchronizuojama...",
+    "synced": "Sinchronizuota",
+    "outOfSync": "(nesinchronizuotas)",
+    "upToDate": "Atnaujinta"
+  },
+  "errors": {
+    "generic": "Įvyko klaida",
+    "network": "Tinklo klaida",
+    "timeout": "Užklausos laikas baigėsi",
+    "notFound": "Nerasta",
+    "invalidInput": "Neteisinga įvestis",
+    "unauthorized": "Neautorizuota"
+  },
+  "time": {
+    "seconds": "{{count}} sekundė",
+    "seconds_other": "{{count}} sekundžių",
+    "minutes": "{{count}} minutė",
+    "minutes_other": "{{count}} minučių",
+    "hours": "{{count}} valanda",
+    "hours_other": "{{count}} valandų",
+    "days": "{{count}} diena",
+    "days_other": "{{count}} dienų",
+    "ago": "prieš {{time}}",
+    "never": "Niekada"
+  },
+  "confirmDialog": {
+    "areYouSure": "Ar tikrai?",
+    "cannotUndo": "Šio veiksmo negalima anuliuoti."
+  },
+  "statusBar": {
+    "synchronizing": "Sinchronizuojama su tinklu...",
+    "scanningBlock": "Nuskaitomas blokas {{height}}",
+    "upToDate": "Atnaujinta",
+    "hdEnabled": "HD piniginė įjungta",
+    "torEnabled": "Tor įjungtas",
+    "walletEncrypted": "Piniginė užšifruota",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Piniginė neužšifruota",
+    "stakingActive": "Stake'inimas aktyvuotas",
+    "stakingInactive": "Stake'inimas neaktyvuotas",
+    "connections": "{{count}} tinklo prisijungimas",
+    "connections_other": "{{count}} tinklo prisijungimų"
+  },
+  "p2pError": {
+    "title": "Tinklo prisijungimo klaida",
+    "failedToConnect": "Nepavyko prisijungti prie TWINS tinklo:",
+    "checkConnection": "Patikrinkite savo interneto ryšį ir ugniasienės nustatymus. Piniginė toliau bandys prisijungti fone."
+  },
+  "intro": {
+    "welcome": "Sveiki atvykę į TWINS",
+    "welcomeSubtitle": "Oficiali TWINS kriptovaliutų piniginė",
+    "chooseDataDir": "Pasirinkite duomenų katalogą",
+    "dataDirDescription": "TWINS saugos jūsų duomenis žemiau nurodytame kataloge. Tai apima blockchain duomenis, piniginės failus ir konfigūraciją.",
+    "defaultDir": "Naudoti numatytąjį duomenų katalogą",
+    "customDir": "Naudoti pasirinktą duomenų katalogą",
+    "browse": "Naršyti...",
+    "spaceRequired": "Reikalinga bent {{size}} GB disko vietos.",
+    "getStarted": "Pradėti",
+    "continue": "Tęsti"
+  },
+  "shutdown": {
+    "title": "Išjungiama",
+    "message": "TWINS piniginė išjungiama...",
+    "pleaseWait": "Palaukite, kol piniginė saugiai užsidarys.",
+    "savingData": "Išsaugomi piniginės duomenys...",
+    "closingConnections": "Uždaromi tinklo prisijungimai..."
+  },
+  "loading": {
+    "default": "Kraunama...",
+    "wallet": "Kraunama piniginė...",
+    "transactions": "Kraunami sandoriai...",
+    "blocks": "Kraunami blokai...",
+    "masternodes": "Kraunami masternod'ai...",
+    "initializing": "Inicijuojama..."
+  },
+  "explorer": {
+    "title": "Naršyklė",
+    "blocks": "Blokai",
+    "transactions": "Sandoriai",
+    "addresses": "Adresai",
+    "search": "Ieškoti",
+    "searchPlaceholder": "Ieškoti pagal bloko aukštį, maišą, txid arba adresą...",
+    "height": "Aukštis",
+    "hash": "Maiša",
+    "time": "Laikas",
+    "age": "Amžius",
+    "txCount": "Sand. sk.",
+    "size": "Dydis",
+    "confirmations": "Patvirtinimai",
+    "difficulty": "Sudėtingumas",
+    "noBlocks": "Blokų nerasta",
+    "noTransactions": "Sandorių nerasta",
+    "blockDetails": "Bloko detalės",
+    "transactionDetails": "Sandorio detalės",
+    "addressDetails": "Adreso detalės",
+    "inputs": "Įvestys",
+    "outputs": "Išvestys",
+    "value": "Vertė",
+    "from": "Nuo",
+    "to": "Kam",
+    "viewAll": "Rodyti visus"
+  },
+  "staking": {
+    "title": "Stake'inimas",
+    "enabled": "Stake'inimas įjungtas",
+    "disabled": "Stake'inimas išjungtas",
+    "stakingBalance": "Stake'inimo balansas",
+    "immatureBalance": "Nesubrendęs balansas"
+  },
+  "privacy": {
+    "title": "Privatumas",
+    "mint": "Konvertuoti",
+    "spend": "Išleisti",
+    "balance": "Privatus balansas",
+    "denominations": "Nominalai"
+  },
+  "notifications": {
+    "newTransaction": "Naujas sandoris",
+    "transactionReceived": "Gauta {{amount}} TWINS",
+    "transactionSent": "Išsiųsta {{amount}} TWINS"
+  }
+}

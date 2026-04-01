@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "PŘEHLED",
+    "recentTransactions": "Poslední transakce"
+  },
+  "balance": {
+    "title": "Zůstatek",
+    "combined": "Kombinovaný zůstatek",
+    "twins": "TWINS zůstatek",
+    "total": "Celkem",
+    "totalBalance": "Celkový zůstatek",
+    "available": "Dostupné",
+    "pending": "Čeká na potvrzení",
+    "immature": "Nezralé",
+    "locked": "Zamčeno",
+    "watchOnly": "Pouze sledování",
+    "spendable": "K útratě"
+  },
+  "send": {
+    "title": "Odeslat",
+    "payTo": "Zaplatit na",
+    "payToPlaceholder": "Zadejte TWINS adresu (např. D...)",
+    "label": "Popisek",
+    "labelPlaceholder": "Zadejte popisek pro tuto adresu",
+    "amount": "Částka",
+    "amountPlaceholder": "0,00",
+    "message": "Zpráva",
+    "messagePlaceholder": "Zadejte zprávu (volitelné)",
+    "coinControl": {
+      "title": "Funkce kontroly mincí",
+      "inputs": "Vstupy",
+      "customChangeAddress": "Vlastní adresa pro drobné",
+      "customChangePlaceholder": "Zadejte vlastní adresu pro drobné",
+      "splitUtxo": "Rozdělit blok",
+      "splitThreshold": "po",
+      "utxoSize": "Velikost UTXO"
+    },
+    "recipients": {
+      "add": "Přidat příjemce",
+      "remove": "Odstranit tento záznam",
+      "useMaximum": "Použít dostupný zůstatek",
+      "subtractFee": "Odečíst poplatek z částky"
+    },
+    "fee": {
+      "label": "Transakční poplatek",
+      "normal": "Normální",
+      "fast": "Rychlý",
+      "recommended": "Doporučený",
+      "custom": "Vlastní",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Celkový poplatek: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Celkem příjemci",
+      "estimatedFee": "Odhadovaný poplatek",
+      "afterFee": "Po poplatku",
+      "balance": "Zůstatek: {{amount}}"
+    },
+    "buttons": {
+      "send": "Odeslat",
+      "clearAll": "Vymazat vše"
+    },
+    "errors": {
+      "invalidAddress": "Neplatný formát TWINS adresy",
+      "amountRequired": "Částka je povinná",
+      "amountTooLow": "Částka musí být alespoň {{min}} TWINS, aby se zabránilo prachu",
+      "insufficientFunds": "Nedostatečný zůstatek",
+      "noRecipients": "Přidejte prosím alespoň jednoho příjemce"
+    },
+    "confirmation": {
+      "title": "Potvrdit transakci",
+      "recipient": "Komu",
+      "recipients": "Příjemci",
+      "amount": "Částka",
+      "totalAmount": "Celková částka",
+      "fee": "Poplatek",
+      "transactionFee": "Transakční poplatek",
+      "total": "Celkem",
+      "grandTotal": "Celkem celkem",
+      "walletPassphrase": "Heslo peněženky",
+      "passphrasePlaceholder": "Zadejte heslo peněženky",
+      "passphraseRequired": "Heslo je vyžadováno pro šifrované peněženky",
+      "showPassphrase": "Zobrazit heslo",
+      "hidePassphrase": "Skrýt heslo",
+      "capsLockOn": "Caps Lock je ZAPNUTÝ",
+      "largeTransactionWarning": "Varování: Toto je velká transakce. Pečlivě ověřte všechny údaje.",
+      "confirmSend": "Potvrdit odeslání",
+      "sending": "Odesílání..."
+    },
+    "success": {
+      "title": "Transakce úspěšně odeslána",
+      "message": "Transakce byla odeslána do sítě.",
+      "txid": "ID transakce",
+      "copyTxid": "Kopírovat TXID",
+      "viewInExplorer": "Zobrazit v průzkumníku",
+      "copiedToClipboard": "Zkopírováno do schránky!",
+      "copyFailed": "Kopírování selhalo - zkopírujte prosím ručně"
+    }
+  },
+  "receive": {
+    "title": "Přijmout",
+    "currentAddress": "Aktuální přijímací adresa",
+    "requestPayment": "Požádat o platbu",
+    "requestingPayment": "Vytváření...",
+    "newAddress": "Vygenerovat novou adresu",
+    "addressList": "Přijímací adresy",
+    "copyAddress": "Kopírovat adresu do schránky",
+    "showQR": "Zobrazit QR kód",
+    "qrCode": "QR kód",
+    "amount": "Částka",
+    "label": "Popisek",
+    "message": "Zpráva",
+    "address": "Adresa",
+    "reusePrevious": "Znovu použít existující přijímací adresu (nedoporučeno)",
+    "formInfo": "Použijte tento formulář k vyžádání platby. Všechna pole jsou <1>volitelná</1>.",
+    "clear": "Vymazat",
+    "receivingAddresses": "Přijímací adresy",
+    "requestedHistory": "Historie vyžádaných plateb",
+    "noRequests": "Zatím žádné žádosti o platbu",
+    "show": "Zobrazit",
+    "remove": "Odstranit",
+    "contextMenu": {
+      "copyLabel": "Kopírovat popisek",
+      "copyAddress": "Kopírovat adresu",
+      "copyMessage": "Kopírovat zprávu",
+      "copyAmount": "Kopírovat částku"
+    },
+    "table": {
+      "date": "Datum",
+      "label": "Popisek",
+      "address": "Adresa",
+      "message": "Zpráva",
+      "amountTwins": "Částka (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIE",
+    "recent": "Poslední transakce",
+    "all": "Všechny transakce",
+    "noTransactions": "Žádné transakce nenalezeny",
+    "loading": "Načítání transakcí...",
+    "error": "Chyba: {{message}}",
+    "type": {
+      "all": "Všechny",
+      "mostCommon": "Nejčastější",
+      "sent": "Odesláno na",
+      "received": "Přijato s",
+      "toYourself": "Sobě",
+      "mined": "Vytěženo",
+      "minted": "Vyraženo",
+      "masternode": "Odměna masternode",
+      "other": "Ostatní"
+    },
+    "status": {
+      "confirmed": "Potvrzeno",
+      "unconfirmed": "Nepotvrzeno",
+      "pending": "Čeká",
+      "conflicted": "Konflikt",
+      "abandoned": "Opuštěno",
+      "confirmations": "{{count}} potvrzení",
+      "confirmations_other": "{{count}} potvrzení"
+    },
+    "details": {
+      "title": "Detail transakce",
+      "txid": "ID transakce",
+      "date": "Datum",
+      "status": "Stav",
+      "amount": "Částka",
+      "fee": "Poplatek",
+      "from": "Od",
+      "to": "Komu",
+      "confirmations": "Potvrzení",
+      "blockHash": "Hash bloku",
+      "blockHeight": "Výška bloku"
+    },
+    "filters": {
+      "all": "Všechny",
+      "today": "Dnes",
+      "thisWeek": "Tento týden",
+      "thisMonth": "Tento měsíc",
+      "lastMonth": "Minulý měsíc",
+      "thisYear": "Tento rok",
+      "range": "Rozsah...",
+      "dateRange": "Rozsah dat",
+      "type": "Typ",
+      "minAmount": "Minimální částka",
+      "search": "Zadejte adresu nebo popisek k vyhledání",
+      "rangeTo": "do"
+    },
+    "table": {
+      "date": "Datum",
+      "type": "Typ",
+      "address": "Adresa",
+      "amount": "Částka"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopírovat adresu",
+      "copyLabel": "Kopírovat popisek",
+      "copyAmount": "Kopírovat částku",
+      "copyTxId": "Kopírovat ID transakce",
+      "editLabel": "Upravit popisek",
+      "showDetails": "Zobrazit detail transakce",
+      "hideOrphanStakes": "Skrýt osiřelé stake"
+    },
+    "footer": {
+      "selectedAmount": "Vybraná částka:",
+      "transactions": "{{count}} transakce",
+      "transactions_other": "{{count}} transakcí",
+      "export": "Exportovat"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Žádné transakce k exportu",
+      "noTransactionsMessage": "Žádné transakce neodpovídají aktuálním filtrům.",
+      "exportSuccess": "Export úspěšný",
+      "exportedCount": "Exportována {{count}} transakce do CSV souboru",
+      "exportedCount_other": "Exportováno {{count}} transakcí do CSV souboru",
+      "exportFailed": "Export selhal"
+    }
+  },
+  "addressBook": {
+    "title": "Adresář",
+    "add": "Přidat adresu",
+    "edit": "Upravit adresu",
+    "delete": "Smazat adresu",
+    "label": "Popisek",
+    "address": "Adresa",
+    "noAddresses": "Žádné uložené adresy"
+  }
+}

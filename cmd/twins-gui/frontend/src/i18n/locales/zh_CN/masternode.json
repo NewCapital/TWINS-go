@@ -1,0 +1,92 @@
+{
+  "title": "主节点",
+  "myMasternodes": "我的主节点",
+  "allMasternodes": "网络主节点",
+  "count": {
+    "total": "总计：{{count}}",
+    "enabled": "已启用：{{count}}",
+    "missing": "缺失：{{count}}"
+  },
+  "table": {
+    "alias": "别名",
+    "address": "地址",
+    "protocol": "协议",
+    "status": "状态",
+    "activeTime": "活跃时间",
+    "lastSeen": "最后在线",
+    "pubkey": "公钥",
+    "tier": "等级",
+    "rank": "排名"
+  },
+  "status": {
+    "enabled": "已启用",
+    "missing": "缺失",
+    "preEnabled": "预启用",
+    "expired": "已过期",
+    "newStartRequired": "需要重新启动",
+    "updateRequired": "需要更新",
+    "watchdogExpired": "看门狗过期",
+    "poseBan": "POSE封禁",
+    "unknown": "未知"
+  },
+  "tiers": {
+    "bronze": "青铜",
+    "silver": "白银",
+    "gold": "黄金",
+    "platinum": "铂金",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "启动",
+    "startAlias": "启动别名",
+    "startAll": "全部启动",
+    "startMissing": "启动缺失节点",
+    "stop": "停止",
+    "update": "更新状态",
+    "edit": "编辑",
+    "remove": "删除",
+    "copyProTx": "复制ProTx哈希"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "启动主节点",
+      "message": "您确定要启动主节点 \"{{alias}}\" 吗？",
+      "messageAll": "您确定要启动所有主节点吗？",
+      "messageMissing": "您确定要启动所有缺失的主节点吗？"
+    },
+    "removeConfirm": {
+      "title": "删除主节点",
+      "message": "您确定要删除主节点 \"{{alias}}\" 吗？此操作无法撤销。"
+    }
+  },
+  "messages": {
+    "startSuccess": "主节点 \"{{alias}}\" 启动成功",
+    "startAllSuccess": "所有主节点启动成功",
+    "startMissingSuccess": "成功启动 {{count}} 个缺失的主节点",
+    "noMissingToStart": "没有需要启动的缺失主节点",
+    "startFailed": "主节点启动失败：{{error}}",
+    "startAllFailed": "所有主节点启动失败：{{error}}",
+    "startMissingFailed": "缺失主节点启动失败：{{error}}",
+    "fetchFailed": "获取主节点失败",
+    "updateSuccess": "主节点状态已更新",
+    "removeSuccess": "主节点 \"{{alias}}\" 已删除"
+  },
+  "note": {
+    "title": "注意：",
+    "line1": "本地钱包中您的主节点状态可能略有不准确。",
+    "line2": "请等待钱包同步额外数据，然后从其他节点验证",
+    "line3": "如果您的节点应该在运行但仍显示「缺失」状态。"
+  },
+  "autoRefresh": "{{seconds}}秒后自动刷新",
+  "autoRefreshStatus": "状态将在以下秒数后自动更新：",
+  "noMasternodes": "未配置主节点",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

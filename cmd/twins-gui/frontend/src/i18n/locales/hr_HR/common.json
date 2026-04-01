@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Novčanik",
+    "version": "Verzija {{version}}"
+  },
+  "buttons": {
+    "ok": "U redu",
+    "cancel": "Odustani",
+    "apply": "Primijeni",
+    "close": "Zatvori",
+    "save": "Spremi",
+    "delete": "Izbriši",
+    "edit": "Uredi",
+    "copy": "Kopiraj",
+    "copyAddress": "Kopiraj adresu",
+    "paste": "Zalijepi iz međuspremnika",
+    "addressBook": "Odaberi iz adresara",
+    "max": "Maks",
+    "export": "Izvezi",
+    "import": "Uvezi",
+    "refresh": "Osvježi",
+    "reset": "Resetiraj",
+    "confirm": "Potvrdi",
+    "yes": "Da",
+    "no": "Ne",
+    "back": "Natrag",
+    "next": "Dalje",
+    "done": "Gotovo",
+    "dismiss": "Odbaci",
+    "retry": "Pokušaj ponovno",
+    "retryConnection": "Pokušaj ponovno povezivanje"
+  },
+  "navigation": {
+    "overview": "Pregled",
+    "send": "Pošalji",
+    "receive": "Primi",
+    "transactions": "Transakcije",
+    "masternodes": "Masternodes",
+    "explorer": "Explorer",
+    "staking": "Staking",
+    "privacy": "Privatnost"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Učitavanje...",
+    "success": "Uspješno",
+    "failed": "Neuspješno",
+    "error": "Greška",
+    "connected": "Povezano",
+    "connecting": "Povezivanje...",
+    "disconnected": "Odspojeno",
+    "offline": "Izvan mreže",
+    "syncing": "Sinkronizacija...",
+    "synced": "Sinkronizirano",
+    "outOfSync": "(nije sinkronizirano)",
+    "upToDate": "Ažurirano"
+  },
+  "errors": {
+    "generic": "Došlo je do greške",
+    "network": "Mrežna greška",
+    "timeout": "Zahtjev je istekao",
+    "notFound": "Nije pronađeno",
+    "invalidInput": "Nevažeći unos",
+    "unauthorized": "Neautorizirano"
+  },
+  "time": {
+    "seconds": "{{count}} sekunda",
+    "seconds_other": "{{count}} sekundi",
+    "minutes": "{{count}} minuta",
+    "minutes_other": "{{count}} minuta",
+    "hours": "{{count}} sat",
+    "hours_other": "{{count}} sati",
+    "days": "{{count}} dan",
+    "days_other": "{{count}} dana",
+    "ago": "prije {{time}}",
+    "never": "Nikada"
+  },
+  "confirmDialog": {
+    "areYouSure": "Jeste li sigurni?",
+    "cannotUndo": "Ova radnja se ne može poništiti."
+  },
+  "statusBar": {
+    "synchronizing": "Sinkronizacija s mrežom...",
+    "scanningBlock": "Skeniranje bloka {{height}}",
+    "upToDate": "Ažurirano",
+    "hdEnabled": "HD novčanik omogućen",
+    "torEnabled": "Tor omogućen",
+    "walletEncrypted": "Novčanik šifriran",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Novčanik nije šifriran",
+    "stakingActive": "Staking aktivan",
+    "stakingInactive": "Staking neaktivan",
+    "connections": "{{count}} mrežna veza",
+    "connections_other": "{{count}} mrežnih veza"
+  },
+  "p2pError": {
+    "title": "Greška mrežne veze",
+    "failedToConnect": "Nije moguće spojiti se na TWINS mrežu:",
+    "checkConnection": "Molimo provjerite vašu internet vezu i postavke vatrozida. Novčanik će nastaviti pokušavati se spojiti u pozadini."
+  },
+  "intro": {
+    "welcome": "Dobrodošli u TWINS",
+    "welcomeSubtitle": "Službeni TWINS novčanik za kriptovalute",
+    "chooseDataDir": "Odaberite direktorij podataka",
+    "dataDirDescription": "TWINS će pohraniti vaše podatke u donji direktorij. To uključuje podatke blockchaina, datoteke novčanika i konfiguraciju.",
+    "defaultDir": "Koristi zadani direktorij podataka",
+    "customDir": "Koristi prilagođeni direktorij podataka",
+    "browse": "Pregledaj...",
+    "spaceRequired": "Potrebno je najmanje {{size}} GB prostora na disku.",
+    "getStarted": "Započni",
+    "continue": "Nastavi"
+  },
+  "shutdown": {
+    "title": "Gašenje",
+    "message": "TWINS novčanik se gasi...",
+    "pleaseWait": "Molimo pričekajte dok se novčanik sigurno zatvori.",
+    "savingData": "Spremanje podataka novčanika...",
+    "closingConnections": "Zatvaranje mrežnih veza..."
+  },
+  "loading": {
+    "default": "Učitavanje...",
+    "wallet": "Učitavanje novčanika...",
+    "transactions": "Učitavanje transakcija...",
+    "blocks": "Učitavanje blokova...",
+    "masternodes": "Učitavanje masternodova...",
+    "initializing": "Inicijalizacija..."
+  },
+  "explorer": {
+    "title": "Explorer",
+    "blocks": "Blokovi",
+    "transactions": "Transakcije",
+    "addresses": "Adrese",
+    "search": "Traži",
+    "searchPlaceholder": "Traži po visini bloka, hashu, txid-u ili adresi...",
+    "height": "Visina",
+    "hash": "Hash",
+    "time": "Vrijeme",
+    "age": "Starost",
+    "txCount": "Txs",
+    "size": "Veličina",
+    "confirmations": "Potvrde",
+    "difficulty": "Težina",
+    "noBlocks": "Nema pronađenih blokova",
+    "noTransactions": "Nema pronađenih transakcija",
+    "blockDetails": "Detalji bloka",
+    "transactionDetails": "Detalji transakcije",
+    "addressDetails": "Detalji adrese",
+    "inputs": "Unosi",
+    "outputs": "Izlazi",
+    "value": "Vrijednost",
+    "from": "Od",
+    "to": "Za",
+    "viewAll": "Prikaži sve"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking omogućen",
+    "disabled": "Staking onemogućen",
+    "stakingBalance": "Staking saldo",
+    "immatureBalance": "Nezreli saldo"
+  },
+  "privacy": {
+    "title": "Privatnost",
+    "mint": "Mint",
+    "spend": "Potroši",
+    "balance": "Privatni saldo",
+    "denominations": "Denominacije"
+  },
+  "notifications": {
+    "newTransaction": "Nova transakcija",
+    "transactionReceived": "Primljeno {{amount}} TWINS",
+    "transactionSent": "Poslano {{amount}} TWINS"
+  }
+}

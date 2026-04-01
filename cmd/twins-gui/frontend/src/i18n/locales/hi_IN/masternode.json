@@ -1,0 +1,92 @@
+{
+  "title": "मास्टरनोड्स",
+  "myMasternodes": "मेरे मास्टरनोड्स",
+  "allMasternodes": "नेटवर्क मास्टरनोड्स",
+  "count": {
+    "total": "कुल: {{count}}",
+    "enabled": "सक्षम: {{count}}",
+    "missing": "अनुपस्थित: {{count}}"
+  },
+  "table": {
+    "alias": "उपनाम",
+    "address": "पता",
+    "protocol": "प्रोटोकॉल",
+    "status": "स्थिति",
+    "activeTime": "सक्रिय समय",
+    "lastSeen": "अंतिम बार देखा",
+    "pubkey": "सार्वजनिक कुंजी",
+    "tier": "स्तर",
+    "rank": "रैंक"
+  },
+  "status": {
+    "enabled": "सक्षम",
+    "missing": "अनुपस्थित",
+    "preEnabled": "पूर्व_सक्षम",
+    "expired": "समाप्त",
+    "newStartRequired": "नया_प्रारंभ_आवश्यक",
+    "updateRequired": "अपडेट_आवश्यक",
+    "watchdogExpired": "वॉचडॉग_समाप्त",
+    "poseBan": "POSE_BAN",
+    "unknown": "अज्ञात"
+  },
+  "tiers": {
+    "bronze": "कांस्य",
+    "silver": "रजत",
+    "gold": "स्वर्ण",
+    "platinum": "प्लैटिनम",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "प्रारंभ करें",
+    "startAlias": "उपनाम प्रारंभ करें",
+    "startAll": "सभी प्रारंभ करें",
+    "startMissing": "अनुपस्थित प्रारंभ करें",
+    "stop": "रोकें",
+    "update": "स्थिति अपडेट करें",
+    "edit": "संपादित करें",
+    "remove": "हटाएँ",
+    "copyProTx": "ProTx हैश कॉपी करें"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "मास्टरनोड प्रारंभ करें",
+      "message": "क्या आप वाकई मास्टरनोड \"{{alias}}\" प्रारंभ करना चाहते हैं?",
+      "messageAll": "क्या आप वाकई सभी मास्टरनोड्स प्रारंभ करना चाहते हैं?",
+      "messageMissing": "क्या आप वाकई सभी अनुपस्थित मास्टरनोड्स प्रारंभ करना चाहते हैं?"
+    },
+    "removeConfirm": {
+      "title": "मास्टरनोड हटाएँ",
+      "message": "क्या आप वाकई मास्टरनोड \"{{alias}}\" हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।"
+    }
+  },
+  "messages": {
+    "startSuccess": "मास्टरनोड \"{{alias}}\" सफलतापूर्वक प्रारंभ हुआ",
+    "startAllSuccess": "सभी मास्टरनोड्स सफलतापूर्वक प्रारंभ हुए",
+    "startMissingSuccess": "{{count}} अनुपस्थित मास्टरनोड सफलतापूर्वक प्रारंभ हुआ",
+    "noMissingToStart": "प्रारंभ करने के लिए कोई अनुपस्थित मास्टरनोड नहीं",
+    "startFailed": "मास्टरनोड प्रारंभ करने में विफल: {{error}}",
+    "startAllFailed": "सभी मास्टरनोड्स प्रारंभ करने में विफल: {{error}}",
+    "startMissingFailed": "अनुपस्थित मास्टरनोड्स प्रारंभ करने में विफल: {{error}}",
+    "fetchFailed": "मास्टरनोड्स प्राप्त करने में विफल",
+    "updateSuccess": "मास्टरनोड स्थिति अपडेट हुई",
+    "removeSuccess": "मास्टरनोड \"{{alias}}\" हटाया गया"
+  },
+  "note": {
+    "title": "नोट:",
+    "line1": "आपके स्थानीय वॉलेट में आपके मास्टरनोड्स की स्थिति थोड़ी गलत हो सकती है।",
+    "line2": "हमेशा वॉलेट द्वारा अतिरिक्त डेटा सिंक करने की प्रतीक्षा करें और फिर किसी अन्य नोड से जाँचें,",
+    "line3": "यदि आपका नोड चलना चाहिए लेकिन आप अभी भी \"स्थिति\" फ़ील्ड में \"अनुपस्थित\" देखते हैं।"
+  },
+  "autoRefresh": "स्वचालित रिफ्रेश {{seconds}}s में",
+  "autoRefreshStatus": "स्थिति स्वचालित रूप से अपडेट होगी (सेकंड):",
+  "noMasternodes": "कोई मास्टरनोड कॉन्फ़िगर नहीं है",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

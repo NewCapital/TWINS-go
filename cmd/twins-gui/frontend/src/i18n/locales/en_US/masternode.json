@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "My Masternodes",
+  "allMasternodes": "Network Masternodes",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Enabled: {{count}}",
+    "missing": "Missing: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Address",
+    "protocol": "Protocol",
+    "status": "Status",
+    "activeTime": "Active Time",
+    "lastSeen": "Last Seen",
+    "collateralAddress": "Collateral Address",
+    "tier": "Tier",
+    "rank": "Rank"
+  },
+  "status": {
+    "enabled": "ENABLED",
+    "missing": "MISSING",
+    "preEnabled": "PRE_ENABLED",
+    "expired": "EXPIRED",
+    "newStartRequired": "NEW_START_REQUIRED",
+    "updateRequired": "UPDATE_REQUIRED",
+    "watchdogExpired": "WATCHDOG_EXPIRED",
+    "poseBan": "POSE_BAN",
+    "unknown": "UNKNOWN"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Start",
+    "startAlias": "Start alias",
+    "startAll": "Start all",
+    "startMissing": "Start MISSING",
+    "stop": "Stop",
+    "update": "Update status",
+    "edit": "Edit",
+    "remove": "Remove",
+    "copyProTx": "Copy ProTx Hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Start Masternode",
+      "message": "Are you sure you want to start masternode \"{{alias}}\"?",
+      "messageAll": "Are you sure you want to start all masternodes?",
+      "messageMissing": "Are you sure you want to start all MISSING masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Remove Masternode",
+      "message": "Are you sure you want to remove masternode \"{{alias}}\"? This cannot be undone."
+    }
+  },
+  "messages": {
+    "startSuccess": "Successfully started masternode \"{{alias}}\"",
+    "startAllSuccess": "Successfully started all masternodes",
+    "startMissingSuccess": "Successfully started {{count}} missing masternode(s)",
+    "noMissingToStart": "No missing masternodes to start",
+    "startFailed": "Failed to start masternode: {{error}}",
+    "startAllFailed": "Failed to start all masternodes: {{error}}",
+    "startMissingFailed": "Failed to start missing masternodes: {{error}}",
+    "fetchFailed": "Failed to fetch masternodes",
+    "updateSuccess": "Masternode status updated",
+    "removeSuccess": "Masternode \"{{alias}}\" removed"
+  },
+  "note": {
+    "title": "Note:",
+    "line1": "Status of your masternodes in local wallet can potentially be slightly incorrect.",
+    "line2": "Always wait for wallet to sync additional data and then double check from another node",
+    "line3": "if your node should be running but you still see \"MISSING\" in \"Status\" field."
+  },
+  "autoRefresh": "Auto-refresh in {{seconds}}s",
+  "autoRefreshStatus": "Status will be updated automatically in (sec):",
+  "noMasternodes": "No masternodes configured",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

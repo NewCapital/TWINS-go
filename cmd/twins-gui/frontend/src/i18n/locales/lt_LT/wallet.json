@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "APŽVALGA",
+    "recentTransactions": "Naujausios operacijos"
+  },
+  "balance": {
+    "title": "Balansas",
+    "combined": "Kombinuotas balansas",
+    "twins": "TWINS balansas",
+    "total": "Visas",
+    "totalBalance": "Visas balansas",
+    "available": "Prieinama",
+    "pending": "Laukiama",
+    "immature": "Nesubrendęs",
+    "locked": "Užrakinta",
+    "watchOnly": "Tik žiūrėjimo",
+    "spendable": "Prieinamas išleidimui"
+  },
+  "send": {
+    "title": "Siųsti",
+    "payTo": "Mokėti",
+    "payToPlaceholder": "Įveskite TWINS adresą (pvz. D...)",
+    "label": "Etiketė",
+    "labelPlaceholder": "Įveskite pavadinimą šiam adresui",
+    "amount": "Suma",
+    "amountPlaceholder": "0,00",
+    "message": "Žinutė",
+    "messagePlaceholder": "Įveskite žinutę (neprivaloma)",
+    "coinControl": {
+      "title": "Monetų Valdymo Funkcijos",
+      "inputs": "Įvestys",
+      "customChangeAddress": "Pasirinktinio pakeitimo adresas",
+      "customChangePlaceholder": "Įveskite pasirinktinį grąžos adresą",
+      "splitUtxo": "Padalinti bloką",
+      "splitThreshold": "po",
+      "utxoSize": "UTXO dydis"
+    },
+    "recipients": {
+      "add": "Pridėti gavėją",
+      "remove": "Pašalinti šį įrašą",
+      "useMaximum": "Naudoti visą prieinamą likutį",
+      "subtractFee": "Atimti mokestį iš sumos"
+    },
+    "fee": {
+      "label": "Pavedimo mokestis",
+      "normal": "Normalus",
+      "fast": "Greitas",
+      "recommended": "Rekomenduojamas",
+      "custom": "Pasirinktinis",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Bendras mokestis: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Gavėjų suma",
+      "estimatedFee": "Numatomas mokestis",
+      "afterFee": "Po mokesčio",
+      "balance": "Balansas: {{amount}}"
+    },
+    "buttons": {
+      "send": "Siųsti",
+      "clearAll": "Išvalyti viskas"
+    },
+    "errors": {
+      "invalidAddress": "Netinkamas TWINS adreso formatas",
+      "amountRequired": "Suma yra būtina",
+      "amountTooLow": "Suma turi būti bent {{min}} TWINS, kad būtų išvengta dulkių",
+      "insufficientFunds": "Nepakankamai lėšų",
+      "noRecipients": "Pridėkite bent vieną gavėją"
+    },
+    "confirmation": {
+      "title": "Patvirtinti sandorį",
+      "recipient": "Kam",
+      "recipients": "Gavėjai",
+      "amount": "Suma",
+      "totalAmount": "Bendra suma",
+      "fee": "Mokestis",
+      "transactionFee": "Pavedimo mokestis",
+      "total": "Iš viso",
+      "grandTotal": "Galutinė suma",
+      "walletPassphrase": "Piniginės slaptafrazė",
+      "passphrasePlaceholder": "Įveskite piniginės slaptafrazę",
+      "passphraseRequired": "Užšifruotoms piniginėms reikalinga slaptafrazė",
+      "showPassphrase": "Rodyti slaptafrazę",
+      "hidePassphrase": "Slėpti slaptafrazę",
+      "capsLockOn": "Caps Lock ĮJUNGTAS",
+      "largeTransactionWarning": "Įspėjimas: Tai didelis sandoris. Atidžiai patikrinkite visas detales.",
+      "confirmSend": "Patvirtinti siuntimą",
+      "sending": "Siunčiama..."
+    },
+    "success": {
+      "title": "Sandoris sėkmingai išsiųstas",
+      "message": "Sandoris buvo išsiųstas į tinklą.",
+      "txid": "Sandorio ID",
+      "copyTxid": "Kopijuoti TXID",
+      "viewInExplorer": "Peržiūrėti naršyklėje",
+      "copiedToClipboard": "Nukopijuota į mainų sritį!",
+      "copyFailed": "Kopijavimas nepavyko - kopijuokite rankiniu būdu"
+    }
+  },
+  "receive": {
+    "title": "Gauti",
+    "currentAddress": "Dabartinis gavimo adresas",
+    "requestPayment": "Prašyti mokėjimo",
+    "requestingPayment": "Kuriama...",
+    "newAddress": "Generuoti naują adresą",
+    "addressList": "Gavimo adresai",
+    "copyAddress": "Kopijuoti adresą į mainų sritį",
+    "showQR": "Rodyti QR kodą",
+    "qrCode": "QR kodas",
+    "amount": "Suma",
+    "label": "Etiketė",
+    "message": "Žinutė",
+    "address": "Adresas",
+    "reusePrevious": "Pakartotinai naudoti esamą gavimo adresą (nerekomenduojama)",
+    "formInfo": "Naudokite šią formą mokėjimo prašymui. Visi laukai yra <1>neprivalomi</1>.",
+    "clear": "Išvalyti",
+    "receivingAddresses": "Gavimo adresai",
+    "requestedHistory": "Mokėjimo prašymų istorija",
+    "noRequests": "Mokėjimo prašymų dar nėra",
+    "show": "Rodyti",
+    "remove": "Pašalinti",
+    "contextMenu": {
+      "copyLabel": "Kopijuoti etiketę",
+      "copyAddress": "Kopijuoti adresą",
+      "copyMessage": "Kopijuoti žinutę",
+      "copyAmount": "Kopijuoti sumą"
+    },
+    "table": {
+      "date": "Data",
+      "label": "Etiketė",
+      "address": "Adresas",
+      "message": "Žinutė",
+      "amountTwins": "Suma (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "ISTORIJA",
+    "recent": "Naujausi sandoriai",
+    "all": "Visi sandoriai",
+    "noTransactions": "Sandorių nerasta",
+    "loading": "Kraunami sandoriai...",
+    "error": "Klaida: {{message}}",
+    "type": {
+      "all": "Visi",
+      "mostCommon": "Dažniausi",
+      "sent": "Išsiųsta",
+      "received": "Gauta",
+      "toYourself": "Sau",
+      "mined": "Iškasta",
+      "minted": "Nukalta",
+      "masternode": "Masternod'o atlygis",
+      "other": "Kita"
+    },
+    "status": {
+      "confirmed": "Patvirtinta",
+      "unconfirmed": "Nepatvirtinta",
+      "pending": "Laukiama",
+      "conflicted": "Konfliktuoja",
+      "abandoned": "Palikta",
+      "confirmations": "{{count}} patvirtinimas",
+      "confirmations_other": "{{count}} patvirtinimų"
+    },
+    "details": {
+      "title": "Sandorio detalės",
+      "txid": "Sandorio ID",
+      "date": "Data",
+      "status": "Būsena",
+      "amount": "Suma",
+      "fee": "Mokestis",
+      "from": "Nuo",
+      "to": "Kam",
+      "confirmations": "Patvirtinimai",
+      "blockHash": "Bloko maiša",
+      "blockHeight": "Bloko aukštis"
+    },
+    "filters": {
+      "all": "Visi",
+      "today": "Šiandien",
+      "thisWeek": "Šią savaitę",
+      "thisMonth": "Šį mėnesį",
+      "lastMonth": "Praeitą mėnesį",
+      "thisYear": "Šiais metais",
+      "range": "Intervalas...",
+      "dateRange": "Datų intervalas",
+      "type": "Tipas",
+      "minAmount": "Min. suma",
+      "search": "Įveskite adresą arba etiketę paieškoti",
+      "rangeTo": "iki"
+    },
+    "table": {
+      "date": "Data",
+      "type": "Tipas",
+      "address": "Adresas",
+      "amount": "Suma"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopijuoti adresą",
+      "copyLabel": "Kopijuoti etiketę",
+      "copyAmount": "Kopijuoti sumą",
+      "copyTxId": "Kopijuoti sandorio ID",
+      "editLabel": "Redaguoti etiketę",
+      "showDetails": "Rodyti sandorio detales",
+      "hideOrphanStakes": "Slėpti našlaičius stake'us"
+    },
+    "footer": {
+      "selectedAmount": "Pasirinkta suma:",
+      "transactions": "{{count}} sandoris",
+      "transactions_other": "{{count}} sandorių",
+      "export": "Eksportuoti"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Nėra sandorių eksportavimui",
+      "noTransactionsMessage": "Jokie sandoriai neatitinka dabartinių filtrų.",
+      "exportSuccess": "Eksportavimas sėkmingas",
+      "exportedCount": "Eksportuota {{count}} sandoris į CSV failą",
+      "exportedCount_other": "Eksportuota {{count}} sandorių į CSV failą",
+      "exportFailed": "Eksportavimas nepavyko"
+    }
+  },
+  "addressBook": {
+    "title": "Adresų knyga",
+    "add": "Pridėti adresą",
+    "edit": "Redaguoti adresą",
+    "delete": "Ištrinti adresą",
+    "label": "Etiketė",
+    "address": "Adresas",
+    "noAddresses": "Nėra išsaugotų adresų"
+  }
+}

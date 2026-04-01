@@ -1,0 +1,92 @@
+{
+  "title": "Мастерноди",
+  "myMasternodes": "Мої мастерноди",
+  "allMasternodes": "Мастерноди мережі",
+  "count": {
+    "total": "Всього: {{count}}",
+    "enabled": "Активно: {{count}}",
+    "missing": "Неактивно: {{count}}"
+  },
+  "table": {
+    "alias": "Псевдонім",
+    "address": "Адреса",
+    "protocol": "Протокол",
+    "status": "Статус",
+    "activeTime": "Час активності",
+    "lastSeen": "Остання активність",
+    "pubkey": "Публічний ключ",
+    "tier": "Рівень",
+    "rank": "Ранг"
+  },
+  "status": {
+    "enabled": "АКТИВНО",
+    "missing": "НЕАКТИВНО",
+    "preEnabled": "ПОПЕРЕДНЬО_АКТИВНО",
+    "expired": "ЗАВЕРШЕНО",
+    "newStartRequired": "ПОТРІБЕН_НОВИЙ_ЗАПУСК",
+    "updateRequired": "ПОТРІБНЕ_ОНОВЛЕННЯ",
+    "watchdogExpired": "WATCHDOG_ЗАВЕРШЕНО",
+    "poseBan": "POSE_БАН",
+    "unknown": "НЕВІДОМО"
+  },
+  "tiers": {
+    "bronze": "Бронза",
+    "silver": "Срібло",
+    "gold": "Золото",
+    "platinum": "Платина",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Запустити",
+    "startAlias": "Запустити псевдонім",
+    "startAll": "Запустити всі",
+    "startMissing": "Запустити НЕАКТИВНІ",
+    "stop": "Зупинити",
+    "update": "Оновити статус",
+    "edit": "Редагувати",
+    "remove": "Видалити",
+    "copyProTx": "Копіювати ProTx хеш"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Запуск мастерноди",
+      "message": "Ви впевнені, що хочете запустити мастерноду \"{{alias}}\"?",
+      "messageAll": "Ви впевнені, що хочете запустити всі мастерноди?",
+      "messageMissing": "Ви впевнені, що хочете запустити всі НЕАКТИВНІ мастерноди?"
+    },
+    "removeConfirm": {
+      "title": "Видалення мастерноди",
+      "message": "Ви впевнені, що хочете видалити мастерноду \"{{alias}}\"? Цю дію неможливо скасувати."
+    }
+  },
+  "messages": {
+    "startSuccess": "Мастерноду \"{{alias}}\" успішно запущено",
+    "startAllSuccess": "Усі мастерноди успішно запущено",
+    "startMissingSuccess": "Успішно запущено {{count}} неактивних мастернод",
+    "noMissingToStart": "Немає неактивних мастернод для запуску",
+    "startFailed": "Не вдалося запустити мастерноду: {{error}}",
+    "startAllFailed": "Не вдалося запустити всі мастерноди: {{error}}",
+    "startMissingFailed": "Не вдалося запустити неактивні мастерноди: {{error}}",
+    "fetchFailed": "Не вдалося отримати мастерноди",
+    "updateSuccess": "Статус мастерноди оновлено",
+    "removeSuccess": "Мастерноду \"{{alias}}\" видалено"
+  },
+  "note": {
+    "title": "Примітка:",
+    "line1": "Статус ваших мастернод у локальному гаманці може дещо відрізнятися від фактичного.",
+    "line2": "Завжди дочекайтеся синхронізації додаткових даних, а потім перевірте з іншого вузла,",
+    "line3": "якщо ваша нода повинна працювати, але ви все ще бачите \"НЕАКТИВНО\" в полі \"Статус\"."
+  },
+  "autoRefresh": "Автооновлення через {{seconds}}с",
+  "autoRefreshStatus": "Статус буде автоматично оновлено через (сек):",
+  "noMasternodes": "Мастерноди не налаштовано",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

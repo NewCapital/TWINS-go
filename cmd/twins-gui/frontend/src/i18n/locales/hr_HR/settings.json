@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Prozor"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Veličina database cachea",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Broj skripti i foruma za potvrdu",
+    "scriptThreadsAuto": "(0 = auto, <0 = ostavi toliko jezgri)",
+    "language": "Jezik sučelja korisnika:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Tema sučelja korisnika:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Provedite nepotvrđene promjene",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Prag razdvajanja Stake-a:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Omogućite značajke kontrole novčića",
+    "showMasternodes": "Prikaži Masternodes Tab",
+    "expert": "Stručnjak"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Karte porta pomoću UPnP\n",
+    "allowIncoming": "Dopusti dolazne veze",
+    "proxy": "Proxy",
+    "connectProxy": "Povežite se putem SOCKS5 proxyja (zadani proxy):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Port:",
+    "proxyHelp": "IP adresa proxya (npr. IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimaliziraj na traku umjesto Taskbar",
+    "minimizeOnClose": "Minimiziraj pri zatvaranju"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Jedinica za prikaz količine:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimalnih znamenki",
+    "thirdPartyTitle": "URL transakcije treće stranke",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Sakri praznu bilancu"
+  },
+  "buttons": {
+    "ok": "U redu",
+    "cancel": "Poništi",
+    "apply": "Apply",
+    "resetDefaults": "Mogućnosti ponovnog postavljanja"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Ponovno pokretanje klijenta potrebno je za aktiviranje promjena.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Potvrdi ponovno postavljanje mogućnosti"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

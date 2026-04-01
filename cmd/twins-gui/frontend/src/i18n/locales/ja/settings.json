@@ -1,0 +1,85 @@
+{
+  "title": "オプション",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "ウィンドウ"
+  },
+  "common": {
+    "requiresRestart": "再起動が必要",
+    "overriddenBy": "{{flag}} によって上書き",
+    "custom": "カスタム"
+  },
+  "main": {
+    "title": "メイン設定",
+    "database": "データベース",
+    "userInterface": "ユーザーインターフェース",
+    "databaseCache": "データベースキャッシュサイズ：",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "スクリプト検証スレッド：",
+    "scriptThreadsAuto": "(0 = 自動)",
+    "language": "インターフェース言語：",
+    "languageDefault": "(デフォルト)",
+    "languageNote": "アクティブな言語：{{language}}",
+    "theme": "インターフェーステーマ："
+  },
+  "wallet": {
+    "title": "ウォレット",
+    "spendUnconfirmed": "未確認のお釣りを使用",
+    "spendUnconfirmedNote": "(上級者のみ)",
+    "stakeSplitThreshold": "ステーク分割しきい値：",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "ステーキング報酬を自動で統合",
+    "coinControl": "コインコントロール機能を有効化",
+    "showMasternodes": "マスターノードタブを表示",
+    "expert": "上級者"
+  },
+  "network": {
+    "title": "ネットワーク",
+    "mapPort": "UPnPでポートをマッピング",
+    "allowIncoming": "着信接続を許可",
+    "proxy": "プロキシ",
+    "connectProxy": "SOCKS5プロキシ経由で接続（デフォルトプロキシ）：",
+    "proxyIP": "プロキシIP：",
+    "proxyPort": "ポート",
+    "proxyHelp": "プロキシのIPアドレス（例：IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050）",
+    "proxyFormatError": "無効な形式です。IPv4:ポート (127.0.0.1:9050) または [IPv6]:ポート を使用してください"
+  },
+  "window": {
+    "title": "ウィンドウ設定",
+    "hideTrayIcon": "トレイアイコンを非表示",
+    "minimizeToTray": "タスクバーではなくトレイに最小化",
+    "minimizeOnClose": "閉じる時に最小化"
+  },
+  "display": {
+    "title": "表示設定",
+    "units": "単位",
+    "unitLabel": "金額表示単位：",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (ミリ)",
+    "unitMicro": "uTWINS (マイクロ)",
+    "decimalDigits": "小数点以下の桁数：",
+    "thirdPartyTitle": "サードパーティ取引URL",
+    "thirdPartyLabel": "取引情報URL：",
+    "thirdPartyHelp": "取引IDの代わりに%sを使用。複数のURLは|で区切る",
+    "transactionDisplay": "取引表示",
+    "hideOrphanStakes": "取引リストで孤立ステークを非表示",
+    "hideZeroBalances": "ゼロ残高を非表示"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "apply": "適用",
+    "resetDefaults": "デフォルトに戻す"
+  },
+  "messages": {
+    "saved": "設定が正常に保存されました",
+    "restartRequired": "言語の変更はウォレットの再起動後に有効になります。",
+    "restartRequiredTitle": "再起動が必要",
+    "resetConfirm": "すべての設定をデフォルト値に戻してもよろしいですか？"
+  },
+  "overridden": {
+    "title": "設定が上書きされています",
+    "message": "この設定はコマンドラインオプションによって上書きされています：{{flag}}"
+  }
+}

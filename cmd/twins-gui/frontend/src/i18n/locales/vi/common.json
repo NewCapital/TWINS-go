@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Wallet",
+    "version": "Phiên bản {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Hủy",
+    "apply": "Áp dụng",
+    "close": "Đóng",
+    "save": "Lưu",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "copy": "Sao chép",
+    "copyAddress": "Sao chép địa chỉ",
+    "paste": "Dán từ clipboard",
+    "addressBook": "Chọn từ sổ địa chỉ",
+    "max": "Tối đa",
+    "export": "Xuất",
+    "import": "Nhập",
+    "refresh": "Làm mới",
+    "reset": "Đặt lại",
+    "confirm": "Xác nhận",
+    "yes": "Có",
+    "no": "Không",
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "done": "Hoàn tất",
+    "dismiss": "Bỏ qua",
+    "retry": "Thử lại",
+    "retryConnection": "Kết nối lại"
+  },
+  "navigation": {
+    "overview": "Tổng quan",
+    "send": "Gửi",
+    "receive": "Nhận",
+    "transactions": "Giao dịch",
+    "masternodes": "Masternodes",
+    "explorer": "Explorer",
+    "staking": "Staking",
+    "privacy": "Riêng tư"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Đang tải...",
+    "success": "Thành công",
+    "failed": "Thất bại",
+    "error": "Lỗi",
+    "connected": "Đã kết nối",
+    "connecting": "Đang kết nối...",
+    "disconnected": "Ngắt kết nối",
+    "offline": "Ngoại tuyến",
+    "syncing": "Đang đồng bộ...",
+    "synced": "Đã đồng bộ",
+    "outOfSync": "(không đồng bộ)",
+    "upToDate": "Cập nhật"
+  },
+  "errors": {
+    "generic": "Đã xảy ra lỗi",
+    "network": "Lỗi mạng",
+    "timeout": "Yêu cầu đã hết thời gian",
+    "notFound": "Không tìm thấy",
+    "invalidInput": "Đầu vào không hợp lệ",
+    "unauthorized": "Không được phép"
+  },
+  "time": {
+    "seconds": "{{count}} giây",
+    "seconds_other": "{{count}} giây",
+    "minutes": "{{count}} phút",
+    "minutes_other": "{{count}} phút",
+    "hours": "{{count}} giờ",
+    "hours_other": "{{count}} giờ",
+    "days": "{{count}} ngày",
+    "days_other": "{{count}} ngày",
+    "ago": "{{time}} trước",
+    "never": "Không bao giờ"
+  },
+  "confirmDialog": {
+    "areYouSure": "Bạn có chắc không?",
+    "cannotUndo": "Hành động này không thể hoàn tác."
+  },
+  "statusBar": {
+    "synchronizing": "Đang đồng bộ với mạng...",
+    "scanningBlock": "Đang quét khối {{height}}",
+    "upToDate": "Cập nhật",
+    "hdEnabled": "Ví HD đã bật",
+    "torEnabled": "Tor đã bật",
+    "walletEncrypted": "Ví đã mã hóa",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Ví chưa mã hóa",
+    "stakingActive": "Staking đang hoạt động",
+    "stakingInactive": "Staking không hoạt động",
+    "connections": "{{count}} kết nối mạng",
+    "connections_other": "{{count}} kết nối mạng"
+  },
+  "p2pError": {
+    "title": "Lỗi kết nối mạng",
+    "failedToConnect": "Không thể kết nối với mạng TWINS:",
+    "checkConnection": "Kiểm tra kết nối internet và cài đặt tường lửa của bạn. Ví sẽ thử kết nối trong nền."
+  },
+  "intro": {
+    "welcome": "Chào mừng đến với TWINS",
+    "welcomeSubtitle": "Ví chính thức cho tiền mã hóa TWINS",
+    "chooseDataDir": "Chọn thư mục dữ liệu",
+    "dataDirDescription": "TWINS sẽ lưu trữ dữ liệu trong thư mục bên dưới. Điều này bao gồm dữ liệu blockchain, tệp ví và cấu hình.",
+    "defaultDir": "Sử dụng thư mục dữ liệu mặc định",
+    "customDir": "Sử dụng thư mục dữ liệu tùy chỉnh",
+    "browse": "Duyệt...",
+    "spaceRequired": "Yêu cầu ít nhất {{size}} GB dung lượng đĩa.",
+    "getStarted": "Bắt đầu",
+    "continue": "Tiếp tục"
+  },
+  "shutdown": {
+    "title": "Đang tắt",
+    "message": "Ví TWINS đang tắt...",
+    "pleaseWait": "Vui lòng đợi trong khi ví tắt an toàn.",
+    "savingData": "Đang lưu dữ liệu ví...",
+    "closingConnections": "Đang đóng kết nối mạng..."
+  },
+  "loading": {
+    "default": "Đang tải...",
+    "wallet": "Đang tải ví...",
+    "transactions": "Đang tải giao dịch...",
+    "blocks": "Đang tải khối...",
+    "masternodes": "Đang tải masternodes...",
+    "initializing": "Đang khởi tạo..."
+  },
+  "explorer": {
+    "title": "Explorer",
+    "blocks": "Khối",
+    "transactions": "Giao dịch",
+    "addresses": "Địa chỉ",
+    "search": "Tìm kiếm",
+    "searchPlaceholder": "Tìm theo chiều cao khối, hash, txid hoặc địa chỉ...",
+    "height": "Chiều cao",
+    "hash": "Hash",
+    "time": "Thời gian",
+    "age": "Tuổi",
+    "txCount": "Txs",
+    "size": "Kích thước",
+    "confirmations": "Xác nhận",
+    "difficulty": "Độ khó",
+    "noBlocks": "Không tìm thấy khối",
+    "noTransactions": "Không tìm thấy giao dịch",
+    "blockDetails": "Chi tiết khối",
+    "transactionDetails": "Chi tiết giao dịch",
+    "addressDetails": "Chi tiết địa chỉ",
+    "inputs": "Đầu vào",
+    "outputs": "Đầu ra",
+    "value": "Giá trị",
+    "from": "Từ",
+    "to": "Đến",
+    "viewAll": "Xem tất cả"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking đã bật",
+    "disabled": "Staking đã tắt",
+    "stakingBalance": "Số dư staking",
+    "immatureBalance": "Số dư chưa trưởng thành"
+  },
+  "privacy": {
+    "title": "Riêng tư",
+    "mint": "Đúc",
+    "spend": "Chi tiêu",
+    "balance": "Số dư riêng tư",
+    "denominations": "Mệnh giá"
+  },
+  "notifications": {
+    "newTransaction": "Giao dịch mới",
+    "transactionReceived": "Đã nhận {{amount}} TWINS",
+    "transactionSent": "Đã gửi {{amount}} TWINS"
+  }
+}

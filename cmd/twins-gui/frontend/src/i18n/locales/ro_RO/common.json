@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "Portofel TWINS",
+    "version": "Versiunea {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Anulează",
+    "apply": "Aplică",
+    "close": "Închide",
+    "save": "Salvează",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "copy": "Copiază",
+    "copyAddress": "Copiază adresa",
+    "paste": "Lipește din clipboard",
+    "addressBook": "Alege din agenda de adrese",
+    "max": "Max",
+    "export": "Exportă",
+    "import": "Importă",
+    "refresh": "Reîmprospătează",
+    "reset": "Resetează",
+    "confirm": "Confirmă",
+    "yes": "Da",
+    "no": "Nu",
+    "back": "Înapoi",
+    "next": "Următorul",
+    "done": "Gata",
+    "dismiss": "Respinge",
+    "retry": "Încearcă din nou",
+    "retryConnection": "Reîncearcă conexiunea"
+  },
+  "navigation": {
+    "overview": "Prezentare",
+    "send": "Trimite",
+    "receive": "Primește",
+    "transactions": "Tranzacții",
+    "masternodes": "Masternodes",
+    "explorer": "Explorer",
+    "staking": "Staking",
+    "privacy": "Confidențialitate"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Se încarcă...",
+    "success": "Succes",
+    "failed": "Eșuat",
+    "error": "Eroare",
+    "connected": "Conectat",
+    "connecting": "Se conectează...",
+    "disconnected": "Deconectat",
+    "offline": "Offline",
+    "syncing": "Se sincronizează...",
+    "synced": "Sincronizat",
+    "outOfSync": "(nesincronizat)",
+    "upToDate": "Actualizat"
+  },
+  "errors": {
+    "generic": "A apărut o eroare",
+    "network": "Eroare de rețea",
+    "timeout": "Timp expirat",
+    "notFound": "Nu a fost găsit",
+    "invalidInput": "Intrare invalidă",
+    "unauthorized": "Neautorizat"
+  },
+  "time": {
+    "seconds": "{{count}} secundă",
+    "seconds_other": "{{count}} secunde",
+    "minutes": "{{count}} minut",
+    "minutes_other": "{{count}} minute",
+    "hours": "{{count}} oră",
+    "hours_other": "{{count}} ore",
+    "days": "{{count}} zi",
+    "days_other": "{{count}} zile",
+    "ago": "acum {{time}}",
+    "never": "Niciodată"
+  },
+  "confirmDialog": {
+    "areYouSure": "Ești sigur?",
+    "cannotUndo": "Această acțiune nu poate fi anulată."
+  },
+  "statusBar": {
+    "synchronizing": "Se sincronizează cu rețeaua...",
+    "scanningBlock": "Se scanează blocul {{height}}",
+    "upToDate": "Actualizat",
+    "hdEnabled": "Portofel HD activat",
+    "torEnabled": "Tor activat",
+    "walletEncrypted": "Portofel criptat",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Portofel necriptat",
+    "stakingActive": "Staking activ",
+    "stakingInactive": "Staking inactiv",
+    "connections": "{{count}} conexiune de rețea",
+    "connections_other": "{{count}} conexiuni de rețea"
+  },
+  "p2pError": {
+    "title": "Eroare de Conexiune Rețea",
+    "failedToConnect": "Nu s-a putut conecta la rețeaua TWINS:",
+    "checkConnection": "Verifică conexiunea la internet și setările firewall. Portofelul va încerca să se conecteze în fundal."
+  },
+  "intro": {
+    "welcome": "Bun venit la TWINS",
+    "welcomeSubtitle": "Portofelul oficial pentru criptomoneda TWINS",
+    "chooseDataDir": "Alege directorul de date",
+    "dataDirDescription": "TWINS va stoca datele în directorul de mai jos. Aceasta include datele blockchain, fișierele portofelului și configurația.",
+    "defaultDir": "Folosește directorul de date implicit",
+    "customDir": "Folosește un director de date personalizat",
+    "browse": "Răsfoiește...",
+    "spaceRequired": "Sunt necesari cel puțin {{size}} GB de spațiu pe disc.",
+    "getStarted": "Începe",
+    "continue": "Continuă"
+  },
+  "shutdown": {
+    "title": "Se închide",
+    "message": "Portofelul TWINS se închide...",
+    "pleaseWait": "Te rugăm să aștepți până când portofelul se închide în siguranță.",
+    "savingData": "Se salvează datele portofelului...",
+    "closingConnections": "Se închid conexiunile de rețea..."
+  },
+  "loading": {
+    "default": "Se încarcă...",
+    "wallet": "Se încarcă portofelul...",
+    "transactions": "Se încarcă tranzacțiile...",
+    "blocks": "Se încarcă blocurile...",
+    "masternodes": "Se încarcă masternodes...",
+    "initializing": "Se inițializează..."
+  },
+  "explorer": {
+    "title": "Explorer",
+    "blocks": "Blocuri",
+    "transactions": "Tranzacții",
+    "addresses": "Adrese",
+    "search": "Caută",
+    "searchPlaceholder": "Caută după înălțimea blocului, hash, txid sau adresă...",
+    "height": "Înălțime",
+    "hash": "Hash",
+    "time": "Timp",
+    "age": "Vârstă",
+    "txCount": "Txs",
+    "size": "Dimensiune",
+    "confirmations": "Confirmări",
+    "difficulty": "Dificultate",
+    "noBlocks": "Nu au fost găsite blocuri",
+    "noTransactions": "Nu au fost găsite tranzacții",
+    "blockDetails": "Detalii Bloc",
+    "transactionDetails": "Detalii Tranzacție",
+    "addressDetails": "Detalii Adresă",
+    "inputs": "Intrări",
+    "outputs": "Ieșiri",
+    "value": "Valoare",
+    "from": "De la",
+    "to": "Către",
+    "viewAll": "Vezi tot"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking activat",
+    "disabled": "Staking dezactivat",
+    "stakingBalance": "Sold staking",
+    "immatureBalance": "Sold imatur"
+  },
+  "privacy": {
+    "title": "Confidențialitate",
+    "mint": "Emite",
+    "spend": "Cheltuiește",
+    "balance": "Sold privat",
+    "denominations": "Denominări"
+  },
+  "notifications": {
+    "newTransaction": "Tranzacție nouă",
+    "transactionReceived": "Primit {{amount}} TWINS",
+    "transactionSent": "Trimis {{amount}} TWINS"
+  }
+}

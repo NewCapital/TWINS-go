@@ -1,0 +1,139 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# Built binaries
+/build/
+/bin/
+/docker/
+/dist/
+.tmp-home
+__pycache__/
+
+cmd/twins-gui/frontend/node_modules/
+cmd/twins-gui/build/*
+!cmd/twins-gui/build/appicon.png
+!cmd/twins-gui/build/windows/
+
+cmd/twins-gui/frontend/dist/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# TWINS cryptocurrency specific files
+# Blockchain data
+/data/
+/chaindata/
+/blocks/
+/testnet/
+/mainnet/
+**/:memory:/
+
+# Configuration files with sensitive data
+*.conf
+*.config
+!example.conf
+!default.conf
+
+# Log files
+*.log
+/logs/
+
+# Wallet files
+wallet.dat
+wallet.db
+*.wallet
+
+# Private keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+/tmp/
+*.tmp
+
+# Test coverage
+coverage.out
+coverage.html
+profile.out
+cpu.prof
+mem.prof
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Debug files
+/debug
+*.debug
+.gocache
+
+# Profiling files
+*.prof
+
+# Docker
+Dockerfile.local
+
+# Local development
+/local/
+/dev/
+/sandbox/
+
+# Generated protobuf files
+*.pb.go
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Performance test results
+benchmark.txt
+benchmarks/
+
+# Cross-compilation builds
+/build-*
+
+# Local configuration
+local.yml
+local.yaml
+local.json
+development.yml

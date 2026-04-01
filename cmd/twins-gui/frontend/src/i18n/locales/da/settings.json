@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "vindue"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Størrelse på databasecache",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "antal af script verifikationstråde",
+    "scriptThreadsAuto": "(0=auto, >0 efterlad så mange tråde fri)",
+    "language": "Brugerinterface sprog:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Brugers tema:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "brug ikke bekræftede \"penge tilbage\"",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Indtastningsgrænse for indsats:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Aktiver mønt kontrolfeatures",
+    "showMasternodes": "Vis fane med masternoder",
+    "expert": "Ekspert"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "MAP port ved hjælp af UPnP",
+    "allowIncoming": "Tillad indkomne forbindelser",
+    "proxy": "Proxy",
+    "connectProxy": "forbind gennem SOCJS5 proxy (standardproxy):",
+    "proxyIP": "Proxy IP",
+    "proxyPort": "port",
+    "proxyHelp": "IP adresse til proxyserveren (For eksempel IPV4: 127.0.0.1/IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimer til bakken i stedet for til proceslinien",
+    "minimizeOnClose": "Minimer og luk"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Enhed som beløb vises i",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimaler",
+    "thirdPartyTitle": "Tredjepartis transaktions URLs",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Skjul tomme saldi"
+  },
+  "buttons": {
+    "ok": "Ok",
+    "cancel": "Annuller",
+    "apply": "Apply",
+    "resetDefaults": "nulstil optioner"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Klienten skal genstartes for at aktivere ændringerne.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Bekræft nulstilling af optioner"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

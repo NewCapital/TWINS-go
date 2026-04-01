@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Plånbok",
+    "version": "Version {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "apply": "Verkställ",
+    "close": "Stäng",
+    "save": "Spara",
+    "delete": "Radera",
+    "edit": "Redigera",
+    "copy": "Kopiera",
+    "copyAddress": "Kopiera adress",
+    "paste": "Klistra in från urklipp",
+    "addressBook": "Välj från adressbok",
+    "max": "Max",
+    "export": "Exportera",
+    "import": "Importera",
+    "refresh": "Uppdatera",
+    "reset": "Återställ",
+    "confirm": "Bekräfta",
+    "yes": "Ja",
+    "no": "Nej",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "done": "Klar",
+    "dismiss": "Avvisa",
+    "retry": "Försök igen",
+    "retryConnection": "Återanslut"
+  },
+  "navigation": {
+    "overview": "Översikt",
+    "send": "Skicka",
+    "receive": "Ta emot",
+    "transactions": "Transaktioner",
+    "masternodes": "Masternodes",
+    "explorer": "Utforskare",
+    "staking": "Staking",
+    "privacy": "Sekretess"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Laddar...",
+    "success": "Lyckades",
+    "failed": "Misslyckades",
+    "error": "Fel",
+    "connected": "Ansluten",
+    "connecting": "Ansluter...",
+    "disconnected": "Frånkopplad",
+    "offline": "Offline",
+    "syncing": "Synkroniserar...",
+    "synced": "Synkroniserad",
+    "outOfSync": "(ej synkroniserad)",
+    "upToDate": "Aktuell"
+  },
+  "errors": {
+    "generic": "Ett fel uppstod",
+    "network": "Nätverksfel",
+    "timeout": "Tidsgräns överskreds",
+    "notFound": "Hittades inte",
+    "invalidInput": "Ogiltig inmatning",
+    "unauthorized": "Obehörig"
+  },
+  "time": {
+    "seconds": "{{count}} sekund",
+    "seconds_other": "{{count}} sekunder",
+    "minutes": "{{count}} minut",
+    "minutes_other": "{{count}} minuter",
+    "hours": "{{count}} timme",
+    "hours_other": "{{count}} timmar",
+    "days": "{{count}} dag",
+    "days_other": "{{count}} dagar",
+    "ago": "{{time}} sedan",
+    "never": "Aldrig"
+  },
+  "confirmDialog": {
+    "areYouSure": "Är du säker?",
+    "cannotUndo": "Denna åtgärd kan inte ångras."
+  },
+  "statusBar": {
+    "synchronizing": "Synkroniserar med nätverket...",
+    "scanningBlock": "Skannar block {{height}}",
+    "upToDate": "Aktuell",
+    "hdEnabled": "HD-plånbok aktiverad",
+    "torEnabled": "Tor aktiverad",
+    "walletEncrypted": "Plånbok krypterad",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Plånbok ej krypterad",
+    "stakingActive": "Staking aktiv",
+    "stakingInactive": "Staking inaktiv",
+    "connections": "{{count}} nätverksanslutning",
+    "connections_other": "{{count}} nätverksanslutningar"
+  },
+  "p2pError": {
+    "title": "Nätverksanslutningsfel",
+    "failedToConnect": "Kunde inte ansluta till TWINS-nätverket:",
+    "checkConnection": "Kontrollera din internetanslutning och brandväggsinställningar. Plånboken kommer försöka ansluta i bakgrunden."
+  },
+  "intro": {
+    "welcome": "Välkommen till TWINS",
+    "welcomeSubtitle": "Officiell plånbok för TWINS-kryptovaluta",
+    "chooseDataDir": "Välj datakatalog",
+    "dataDirDescription": "TWINS kommer lagra data i katalogen nedan. Detta inkluderar blockkedjedata, plånboksfiler och konfiguration.",
+    "defaultDir": "Använd standard datakatalog",
+    "customDir": "Använd anpassad datakatalog",
+    "browse": "Bläddra...",
+    "spaceRequired": "Minst {{size}} GB diskutrymme krävs.",
+    "getStarted": "Kom igång",
+    "continue": "Fortsätt"
+  },
+  "shutdown": {
+    "title": "Stänger ner",
+    "message": "TWINS-plånboken stänger ner...",
+    "pleaseWait": "Vänta medan plånboken stängs ner säkert.",
+    "savingData": "Sparar plånboksdata...",
+    "closingConnections": "Stänger nätverksanslutningar..."
+  },
+  "loading": {
+    "default": "Laddar...",
+    "wallet": "Laddar plånbok...",
+    "transactions": "Laddar transaktioner...",
+    "blocks": "Laddar block...",
+    "masternodes": "Laddar masternodes...",
+    "initializing": "Initialiserar..."
+  },
+  "explorer": {
+    "title": "Utforskare",
+    "blocks": "Block",
+    "transactions": "Transaktioner",
+    "addresses": "Adresser",
+    "search": "Sök",
+    "searchPlaceholder": "Sök efter blockhöjd, hash, txid eller adress...",
+    "height": "Höjd",
+    "hash": "Hash",
+    "time": "Tid",
+    "age": "Ålder",
+    "txCount": "Txs",
+    "size": "Storlek",
+    "confirmations": "Bekräftelser",
+    "difficulty": "Svårighet",
+    "noBlocks": "Inga block hittades",
+    "noTransactions": "Inga transaktioner hittades",
+    "blockDetails": "Blockdetaljer",
+    "transactionDetails": "Transaktionsdetaljer",
+    "addressDetails": "Adressdetaljer",
+    "inputs": "Inmatningar",
+    "outputs": "Utmatningar",
+    "value": "Värde",
+    "from": "Från",
+    "to": "Till",
+    "viewAll": "Visa alla"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking aktiverad",
+    "disabled": "Staking inaktiverad",
+    "stakingBalance": "Staking-saldo",
+    "immatureBalance": "Omoget saldo"
+  },
+  "privacy": {
+    "title": "Sekretess",
+    "mint": "Prägla",
+    "spend": "Spendera",
+    "balance": "Privat saldo",
+    "denominations": "Valörer"
+  },
+  "notifications": {
+    "newTransaction": "Ny transaktion",
+    "transactionReceived": "Mottog {{amount}} TWINS",
+    "transactionSent": "Skickade {{amount}} TWINS"
+  }
+}

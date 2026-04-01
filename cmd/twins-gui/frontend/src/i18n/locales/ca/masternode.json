@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Els meus Masternodes",
+  "allMasternodes": "Masternodes de la xarxa",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Activats: {{count}}",
+    "missing": "Desapareguts: {{count}}"
+  },
+  "table": {
+    "alias": "Àlies",
+    "address": "Adreça",
+    "protocol": "Protocol",
+    "status": "Estat",
+    "activeTime": "Temps actiu",
+    "lastSeen": "Vist per últim cop",
+    "pubkey": "Clau pública",
+    "tier": "Nivell",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "ACTIVAT",
+    "missing": "DESAPAREGUT",
+    "preEnabled": "PRE_ACTIVAT",
+    "expired": "CADUCAT",
+    "newStartRequired": "NOU_INICI_REQUERIT",
+    "updateRequired": "ACTUALITZACIÓ_REQUERIDA",
+    "watchdogExpired": "WATCHDOG_CADUCAT",
+    "poseBan": "POSE_BAN",
+    "unknown": "DESCONEGUT"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Plata",
+    "gold": "Or",
+    "platinum": "Platí",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Inicia",
+    "startAlias": "Inicia àlies",
+    "startAll": "Inicia tots",
+    "startMissing": "Inicia DESAPAREGUTS",
+    "stop": "Atura",
+    "update": "Actualitza estat",
+    "edit": "Edita",
+    "remove": "Elimina",
+    "copyProTx": "Copia hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Inicia Masternode",
+      "message": "Estàs segur que vols iniciar el masternode \"{{alias}}\"?",
+      "messageAll": "Estàs segur que vols iniciar tots els masternodes?",
+      "messageMissing": "Estàs segur que vols iniciar tots els masternodes DESAPAREGUTS?"
+    },
+    "removeConfirm": {
+      "title": "Elimina Masternode",
+      "message": "Estàs segur que vols eliminar el masternode \"{{alias}}\"? Aquesta acció no es pot desfer."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" iniciat amb èxit",
+    "startAllSuccess": "Tots els masternodes iniciats amb èxit",
+    "startMissingSuccess": "{{count}} masternode(s) desaparegut(s) iniciat(s) amb èxit",
+    "noMissingToStart": "No hi ha masternodes desapareguts per iniciar",
+    "startFailed": "No s'ha pogut iniciar el masternode: {{error}}",
+    "startAllFailed": "No s'han pogut iniciar tots els masternodes: {{error}}",
+    "startMissingFailed": "No s'han pogut iniciar els masternodes desapareguts: {{error}}",
+    "fetchFailed": "No s'han pogut obtenir els masternodes",
+    "updateSuccess": "Estat del masternode actualitzat",
+    "removeSuccess": "Masternode \"{{alias}}\" eliminat"
+  },
+  "note": {
+    "title": "Nota:",
+    "line1": "L'estat dels vostres masternodes al moneder local pot ser lleugerament inexacte.",
+    "line2": "Espereu sempre que el moneder sincronitzi les dades addicionals i després comproveu des d'un altre node",
+    "line3": "si el vostre node hauria d'estar funcionant però encara veieu \"DESAPAREGUT\" al camp \"Estat\"."
+  },
+  "autoRefresh": "Actualització automàtica en {{seconds}}s",
+  "autoRefreshStatus": "L'estat s'actualitzarà automàticament en (seg):",
+  "noMasternodes": "No hi ha masternodes configurats",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "SUPERRIGARDO",
+    "recentTransactions": "Lastaj transakcioj"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Kombinita saldo",
+    "twins": "TWINS saldo",
+    "total": "Sumo",
+    "totalBalance": "Totala saldo",
+    "available": "Disponebla",
+    "pending": "Atendante",
+    "immature": "Nematura",
+    "locked": "Ŝlosita",
+    "watchOnly": "Nur rigardi",
+    "spendable": "Elspezebla"
+  },
+  "send": {
+    "title": "Sendi",
+    "payTo": "Pagi al",
+    "payToPlaceholder": "Enigu TWINS adreson (ekz. D...)",
+    "label": "Etikedo",
+    "labelPlaceholder": "Enigu etikedon por ĉi tiu adreso",
+    "amount": "Kvanto",
+    "amountPlaceholder": "0.00",
+    "message": "Mesaĝo",
+    "messagePlaceholder": "Enigu mesaĝon (nedeviga)",
+    "coinControl": {
+      "title": "Mono Kontrolo Funkcioj",
+      "inputs": "Enigoj",
+      "customChangeAddress": "Propra ŝanĝo-adreso",
+      "customChangePlaceholder": "Enigu propran ŝanĝo-adreson",
+      "splitUtxo": "Dividi blokon",
+      "splitThreshold": "post",
+      "utxoSize": "UTXO grandeco"
+    },
+    "recipients": {
+      "add": "Aldoni ricevanton",
+      "remove": "Forigi ĉi tiun eniron",
+      "useMaximum": "Uzi disponeblan saldon",
+      "subtractFee": "Subtrahi krompago de kvanto"
+    },
+    "fee": {
+      "label": "Transakcio krompago",
+      "normal": "Normala",
+      "fast": "Rapida",
+      "recommended": "Rekomendita",
+      "custom": "Propra",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Totala krompago: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Ricevantoj totale",
+      "estimatedFee": "Taksita krompago",
+      "afterFee": "Post krompago",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Sendi",
+      "clearAll": "Malplenigi ĉiujn"
+    },
+    "errors": {
+      "invalidAddress": "Nevalida TWINS adreso formato",
+      "amountRequired": "Kvanto bezonata",
+      "amountTooLow": "Kvanto devas esti almenaŭ {{min}} TWINS por eviti polvo",
+      "insufficientFunds": "Nesufiĉa saldo",
+      "noRecipients": "Bonvolu aldoni almenaŭ unu ricevanton"
+    },
+    "confirmation": {
+      "title": "Konfirmi Transakcion",
+      "recipient": "Al",
+      "recipients": "Ricevantoj",
+      "amount": "Kvanto",
+      "totalAmount": "Totala kvanto",
+      "fee": "Krompago",
+      "transactionFee": "Transakcio krompago",
+      "total": "Sumo",
+      "grandTotal": "Granda totalo",
+      "walletPassphrase": "Monujo pasfrazo",
+      "passphrasePlaceholder": "Enigu vian monujo pasfrazon",
+      "passphraseRequired": "Pasfrazo bezonata por ĉifritaj monujoj",
+      "showPassphrase": "Montri pasfrazon",
+      "hidePassphrase": "Kaŝi pasfrazon",
+      "capsLockOn": "Majuskla Modo estas AKTIVA",
+      "largeTransactionWarning": "Averto: Ĉi tio estas granda transakcio. Bonvolu zorge kontroli ĉiujn detalojn.",
+      "confirmSend": "Konfirmi sendon",
+      "sending": "Sendante..."
+    },
+    "success": {
+      "title": "Transakcio sendita sukcese",
+      "message": "Transakcio estis sendita al la reto.",
+      "txid": "Transakcio ID",
+      "copyTxid": "Kopii TXID",
+      "viewInExplorer": "Vidi en esplorilo",
+      "copiedToClipboard": "Kopiita al poŝo!",
+      "copyFailed": "Kopiado malsukcesis - bonvolu kopii permane"
+    }
+  },
+  "receive": {
+    "title": "Ricevi",
+    "currentAddress": "Aktuala riceva adreso",
+    "requestPayment": "Peti pagon",
+    "requestingPayment": "Kreante...",
+    "newAddress": "Generi novan adreson",
+    "addressList": "Ricevaj adresoj",
+    "copyAddress": "Kopii adreson al poŝo",
+    "showQR": "Montri QR kodon",
+    "qrCode": "QR kodo",
+    "amount": "Kvanto",
+    "label": "Etikedo",
+    "message": "Mesaĝo",
+    "address": "Adreso",
+    "reusePrevious": "Reuzi ekzistantan ricevan adreson (ne rekomendita)",
+    "formInfo": "Uzu ĉi tiun formularon por peti pagojn. Ĉiuj kampoj estas <1>nedevigaj</1>.",
+    "clear": "Malplenigi",
+    "receivingAddresses": "Ricevaj adresoj",
+    "requestedHistory": "Pago peto historio",
+    "noRequests": "Neniuj pago petoj ankoraŭ",
+    "show": "Montri",
+    "remove": "Forigi",
+    "contextMenu": {
+      "copyLabel": "Kopii etikedon",
+      "copyAddress": "Kopii adreson",
+      "copyMessage": "Kopii mesaĝon",
+      "copyAmount": "Kopii kvanton"
+    },
+    "table": {
+      "date": "Dato",
+      "label": "Etikedo",
+      "address": "Adreso",
+      "message": "Mesaĝo",
+      "amountTwins": "Kvanto (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIO",
+    "recent": "Lastaj transakcioj",
+    "all": "Ĉiuj transakcioj",
+    "noTransactions": "Neniuj transakcioj trovitaj",
+    "loading": "Ŝarĝante transakciojn...",
+    "error": "Eraro: {{message}}",
+    "type": {
+      "all": "Ĉiuj",
+      "mostCommon": "Plej oftaj",
+      "sent": "Sendita al",
+      "received": "Ricevita kun",
+      "toYourself": "Al vi mem",
+      "mined": "Minita",
+      "minted": "Mintita",
+      "masternode": "Mastronodo rekompenco",
+      "other": "Alia"
+    },
+    "status": {
+      "confirmed": "Konfirmita",
+      "unconfirmed": "Nekonfirmita",
+      "pending": "Atendante",
+      "conflicted": "Konfliktita",
+      "abandoned": "Forlasita",
+      "confirmations": "{{count}} konfirmo",
+      "confirmations_other": "{{count}} konfirmoj"
+    },
+    "details": {
+      "title": "Transakcio Detaloj",
+      "txid": "Transakcio ID",
+      "date": "Dato",
+      "status": "Stato",
+      "amount": "Kvanto",
+      "fee": "Krompago",
+      "from": "De",
+      "to": "Al",
+      "confirmations": "Konfirmoj",
+      "blockHash": "Bloko hash",
+      "blockHeight": "Bloko alto"
+    },
+    "filters": {
+      "all": "Ĉiuj",
+      "today": "Hodiaŭ",
+      "thisWeek": "Ĉi semajno",
+      "thisMonth": "Ĉi monato",
+      "lastMonth": "Lasta monato",
+      "thisYear": "Ĉi jaro",
+      "range": "Intervalo...",
+      "dateRange": "Dato intervalo",
+      "type": "Tipo",
+      "minAmount": "Minimuma kvanto",
+      "search": "Enigu adreson aŭ etikedon por serĉi",
+      "rangeTo": "al"
+    },
+    "table": {
+      "date": "Dato",
+      "type": "Tipo",
+      "address": "Adreso",
+      "amount": "Kvanto"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopii adreson",
+      "copyLabel": "Kopii etikedon",
+      "copyAmount": "Kopii kvanton",
+      "copyTxId": "Kopii transakcio ID",
+      "editLabel": "Redakti etikedon",
+      "showDetails": "Montri transakcio detalojn",
+      "hideOrphanStakes": "Kaŝi orfajn stakojn"
+    },
+    "footer": {
+      "selectedAmount": "Elektita kvanto:",
+      "transactions": "{{count}} transakcio",
+      "transactions_other": "{{count}} transakcioj",
+      "export": "Eksporti"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Neniuj transakcioj por eksporti",
+      "noTransactionsMessage": "Neniuj transakcioj kongruas kun la aktualaj filtriloj.",
+      "exportSuccess": "Eksporto sukcesis",
+      "exportedCount": "Eksportita {{count}} transakcio al CSV dosiero",
+      "exportedCount_other": "Eksportitaj {{count}} transakcioj al CSV dosiero",
+      "exportFailed": "Eksporto malsukcesis"
+    }
+  },
+  "addressBook": {
+    "title": "Adresaro",
+    "add": "Aldoni adreson",
+    "edit": "Redakti adreson",
+    "delete": "Forigi adreson",
+    "label": "Etikedo",
+    "address": "Adreso",
+    "noAddresses": "Neniuj konservitaj adresoj"
+  }
+}

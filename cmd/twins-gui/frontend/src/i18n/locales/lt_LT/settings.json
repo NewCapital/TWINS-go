@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Langas"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Duomenų bazės talpyklos dydis",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Script verification threads:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "User interface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "User interface theme:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Išleisti nepatvirtintą grąžą",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Stake split threshold:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Įgalinti monetų valdymo funkcijas",
+    "showMasternodes": "Rodyti Masternod'ų Langelį",
+    "expert": "Ekspertas"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Įrašyti prievadą naudojant UPnP",
+    "allowIncoming": "Leisti įeinančius ryšius",
+    "proxy": "Proxy",
+    "connectProxy": "Connect through SOCKS5 proxy (default proxy):",
+    "proxyIP": "Proxy IP: ",
+    "proxyPort": "Prievadas (angl. port):",
+    "proxyHelp": "IP proxy adresas (pvz. IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimize to the tray instead of the taskbar",
+    "minimizeOnClose": "Minimize on close"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Unit to show amounts in:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Dešimtainiai skaitmenys",
+    "thirdPartyTitle": "Trečių šalių pavedimų URL adresai",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Slėpti tuščius balansus"
+  },
+  "buttons": {
+    "ok": "Gerai",
+    "cancel": "Atšaukti",
+    "apply": "Apply",
+    "resetDefaults": "Atstatyti Nustatymus"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Reikalingas pakartotinis programos paleidimas norint aktyvuoti pakeitimus.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Patvirtinti nustatymų atstatymą"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

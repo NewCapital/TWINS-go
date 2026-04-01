@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Window"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": " Veritabanı önbellek boyutu",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Komut dosyası ve doğrulama iş parçacığı sayısı",
+    "scriptThreadsAuto": "(0 = auto, <0 = birçok çekirdeği serbest bırak)",
+    "language": "Kullanıcı Arayüzü ve dil:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Kullanıcı Arabirimi Teması:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Doğrulanmamış değişikliği harcama",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Stake split threshold:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Köşe ve kontrol özelliklerini etkinleştir",
+    "showMasternodes": "Göster Masternodlar Sekmesini",
+    "expert": "Uzman"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Map port using UPnP",
+    "allowIncoming": "Gelen bağlantılara izin ver",
+    "proxy": "Proxy",
+    "connectProxy": "Connect through SOCKS5 proxy (default proxy):",
+    "proxyIP": "<br>",
+    "proxyPort": "Port:",
+    "proxyHelp": "IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Görev çubuğu yerine tepsiye simge durumuna küçült",
+    "minimizeOnClose": "Küçült kapatırken"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": " Birim tutarları göstermek için:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Ondalık basamak",
+    "thirdPartyTitle": "Üçüncü taraf işlem URL'leri",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Boş bakiyeleri sakla"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "İptal",
+    "apply": "Apply",
+    "resetDefaults": "Ayarları sıfırla"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Değişiklikleri etkinleştirmek için istemci yeniden başlatılması gerekiyor.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Seçeneklerin sıfırlanmasını onayla"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

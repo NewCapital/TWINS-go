@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "概要",
+    "recentTransactions": "最近の取引"
+  },
+  "balance": {
+    "title": "残高",
+    "combined": "合計残高",
+    "twins": "TWINS残高",
+    "total": "合計",
+    "totalBalance": "総残高",
+    "available": "利用可能",
+    "pending": "保留中",
+    "immature": "未成熟",
+    "locked": "ロック済み",
+    "watchOnly": "監視のみ",
+    "spendable": "使用可能"
+  },
+  "send": {
+    "title": "送金",
+    "payTo": "送金先",
+    "payToPlaceholder": "TWINSアドレスを入力（例：D...）",
+    "label": "ラベル",
+    "labelPlaceholder": "このアドレスのラベルを入力",
+    "amount": "金額",
+    "amountPlaceholder": "0.00",
+    "message": "メッセージ",
+    "messagePlaceholder": "メッセージを入力（任意）",
+    "coinControl": {
+      "title": "コインコントロール機能",
+      "inputs": "入力",
+      "customChangeAddress": "カスタムおつりアドレス",
+      "customChangePlaceholder": "カスタムおつりアドレスを入力",
+      "splitUtxo": "ブロックを分割",
+      "splitThreshold": "後",
+      "utxoSize": "UTXOサイズ"
+    },
+    "recipients": {
+      "add": "受取人を追加",
+      "remove": "このエントリを削除",
+      "useMaximum": "利用可能な全残高を使用",
+      "subtractFee": "金額から手数料を差し引く"
+    },
+    "fee": {
+      "label": "取引手数料",
+      "normal": "通常",
+      "fast": "高速",
+      "recommended": "推奨",
+      "custom": "カスタム",
+      "perKB": "{{rate}} TWINS/KB",
+      "total": "合計手数料：{{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "受取人合計",
+      "estimatedFee": "推定手数料",
+      "afterFee": "手数料後",
+      "balance": "残高：{{amount}}"
+    },
+    "buttons": {
+      "send": "送金",
+      "clearAll": "すべてクリア"
+    },
+    "errors": {
+      "invalidAddress": "無効なTWINSアドレス形式",
+      "amountRequired": "金額が必要です",
+      "amountTooLow": "ダストを避けるため、金額は少なくとも {{min}} TWINS必要です",
+      "insufficientFunds": "残高不足",
+      "noRecipients": "少なくとも1人の受取人を追加してください"
+    },
+    "confirmation": {
+      "title": "取引の確認",
+      "recipient": "送金先",
+      "recipients": "受取人",
+      "amount": "金額",
+      "totalAmount": "合計金額",
+      "fee": "手数料",
+      "transactionFee": "取引手数料",
+      "total": "合計",
+      "grandTotal": "総合計",
+      "walletPassphrase": "ウォレットパスフレーズ",
+      "passphrasePlaceholder": "ウォレットパスフレーズを入力",
+      "passphraseRequired": "暗号化されたウォレットにはパスフレーズが必要です",
+      "showPassphrase": "パスフレーズを表示",
+      "hidePassphrase": "パスフレーズを隠す",
+      "capsLockOn": "Caps Lockがオンです",
+      "largeTransactionWarning": "警告：これは大きな取引です。すべての詳細を注意深く確認してください。",
+      "confirmSend": "送金を確認",
+      "sending": "送金中..."
+    },
+    "success": {
+      "title": "取引が正常に送信されました",
+      "message": "取引がネットワークに送信されました。",
+      "txid": "取引ID",
+      "copyTxid": "TXIDをコピー",
+      "viewInExplorer": "エクスプローラーで表示",
+      "copiedToClipboard": "クリップボードにコピーしました！",
+      "copyFailed": "コピーに失敗しました - 手動でコピーしてください"
+    }
+  },
+  "receive": {
+    "title": "受取",
+    "currentAddress": "現在の受取アドレス",
+    "requestPayment": "支払いをリクエスト",
+    "requestingPayment": "作成中...",
+    "newAddress": "新しいアドレスを生成",
+    "addressList": "受取アドレス",
+    "copyAddress": "アドレスをクリップボードにコピー",
+    "showQR": "QRコードを表示",
+    "qrCode": "QRコード",
+    "amount": "金額",
+    "label": "ラベル",
+    "message": "メッセージ",
+    "address": "アドレス",
+    "reusePrevious": "既存のアドレスを再利用（非推奨）",
+    "formInfo": "このフォームを使用して支払いをリクエストしてください。すべてのフィールドは<1>任意</1>です。",
+    "clear": "クリア",
+    "receivingAddresses": "受取アドレス",
+    "requestedHistory": "支払いリクエスト履歴",
+    "noRequests": "支払いリクエストはありません",
+    "show": "表示",
+    "remove": "削除",
+    "contextMenu": {
+      "copyLabel": "ラベルをコピー",
+      "copyAddress": "アドレスをコピー",
+      "copyMessage": "メッセージをコピー",
+      "copyAmount": "金額をコピー"
+    },
+    "table": {
+      "date": "日付",
+      "label": "ラベル",
+      "address": "アドレス",
+      "message": "メッセージ",
+      "amountTwins": "金額 (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "履歴",
+    "recent": "最近の取引",
+    "all": "すべての取引",
+    "noTransactions": "取引が見つかりません",
+    "loading": "取引を読み込み中...",
+    "error": "エラー：{{message}}",
+    "type": {
+      "all": "すべて",
+      "mostCommon": "一般的",
+      "sent": "送金先",
+      "received": "受取元",
+      "toYourself": "自分自身へ",
+      "mined": "マイニング",
+      "minted": "ミント",
+      "masternode": "マスターノード報酬",
+      "other": "その他"
+    },
+    "status": {
+      "confirmed": "確認済み",
+      "unconfirmed": "未確認",
+      "pending": "保留中",
+      "conflicted": "競合",
+      "abandoned": "放棄済み",
+      "confirmations": "{{count}}回確認",
+      "confirmations_other": "{{count}}回確認"
+    },
+    "details": {
+      "title": "取引詳細",
+      "txid": "取引ID",
+      "date": "日付",
+      "status": "状態",
+      "amount": "金額",
+      "fee": "手数料",
+      "from": "送信元",
+      "to": "送信先",
+      "confirmations": "確認数",
+      "blockHash": "ブロックハッシュ",
+      "blockHeight": "ブロック高"
+    },
+    "filters": {
+      "all": "すべて",
+      "today": "今日",
+      "thisWeek": "今週",
+      "thisMonth": "今月",
+      "lastMonth": "先月",
+      "thisYear": "今年",
+      "range": "範囲...",
+      "dateRange": "日付範囲",
+      "type": "種類",
+      "minAmount": "最小金額",
+      "search": "アドレスまたはラベルで検索",
+      "rangeTo": "から"
+    },
+    "table": {
+      "date": "日付",
+      "type": "種類",
+      "address": "アドレス",
+      "amount": "金額"
+    },
+    "contextMenu": {
+      "copyAddress": "アドレスをコピー",
+      "copyLabel": "ラベルをコピー",
+      "copyAmount": "金額をコピー",
+      "copyTxId": "取引IDをコピー",
+      "editLabel": "ラベルを編集",
+      "showDetails": "取引詳細を表示",
+      "hideOrphanStakes": "孤立ステークを非表示"
+    },
+    "footer": {
+      "selectedAmount": "選択金額：",
+      "transactions": "{{count}}件の取引",
+      "transactions_other": "{{count}}件の取引",
+      "export": "エクスポート"
+    },
+    "notifications": {
+      "noTransactionsToExport": "エクスポートする取引がありません",
+      "noTransactionsMessage": "現在のフィルターに一致する取引がありません。",
+      "exportSuccess": "エクスポート成功",
+      "exportedCount": "{{count}}件の取引をCSVファイルにエクスポートしました",
+      "exportedCount_other": "{{count}}件の取引をCSVファイルにエクスポートしました",
+      "exportFailed": "エクスポート失敗"
+    }
+  },
+  "addressBook": {
+    "title": "アドレス帳",
+    "add": "アドレスを追加",
+    "edit": "アドレスを編集",
+    "delete": "アドレスを削除",
+    "label": "ラベル",
+    "address": "アドレス",
+    "noAddresses": "保存されたアドレスはありません"
+  }
+}

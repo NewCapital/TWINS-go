@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Mis Masternodes",
+  "allMasternodes": "Masternodes de la Red",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Habilitados: {{count}}",
+    "missing": "Ausentes: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Dirección",
+    "protocol": "Protocolo",
+    "status": "Estado",
+    "activeTime": "Tiempo Activo",
+    "lastSeen": "Última Vez Visto",
+    "pubkey": "Clave Pública",
+    "tier": "Nivel",
+    "rank": "Rango"
+  },
+  "status": {
+    "enabled": "HABILITADO",
+    "missing": "AUSENTE",
+    "preEnabled": "PRE_HABILITADO",
+    "expired": "EXPIRADO",
+    "newStartRequired": "NUEVO_INICIO_REQUERIDO",
+    "updateRequired": "ACTUALIZACIÓN_REQUERIDA",
+    "watchdogExpired": "WATCHDOG_EXPIRADO",
+    "poseBan": "POSE_BAN",
+    "unknown": "DESCONOCIDO"
+  },
+  "tiers": {
+    "bronze": "Bronce",
+    "silver": "Plata",
+    "gold": "Oro",
+    "platinum": "Platino",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Iniciar",
+    "startAlias": "Iniciar alias",
+    "startAll": "Iniciar todos",
+    "startMissing": "Iniciar AUSENTES",
+    "stop": "Detener",
+    "update": "Actualizar estado",
+    "edit": "Editar",
+    "remove": "Eliminar",
+    "copyProTx": "Copiar hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Iniciar Masternode",
+      "message": "¿Está seguro de que desea iniciar el masternode \"{{alias}}\"?",
+      "messageAll": "¿Está seguro de que desea iniciar todos los masternodes?",
+      "messageMissing": "¿Está seguro de que desea iniciar todos los masternodes AUSENTES?"
+    },
+    "removeConfirm": {
+      "title": "Eliminar Masternode",
+      "message": "¿Está seguro de que desea eliminar el masternode \"{{alias}}\"? Esta acción no se puede deshacer."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" iniciado correctamente",
+    "startAllSuccess": "Todos los masternodes iniciados correctamente",
+    "startMissingSuccess": "{{count}} masternode(s) ausente(s) iniciado(s) correctamente",
+    "noMissingToStart": "No hay masternodes ausentes para iniciar",
+    "startFailed": "Error al iniciar masternode: {{error}}",
+    "startAllFailed": "Error al iniciar todos los masternodes: {{error}}",
+    "startMissingFailed": "Error al iniciar masternodes ausentes: {{error}}",
+    "fetchFailed": "Error al obtener masternodes",
+    "updateSuccess": "Estado del masternode actualizado",
+    "removeSuccess": "Masternode \"{{alias}}\" eliminado"
+  },
+  "note": {
+    "title": "Nota:",
+    "line1": "El estado de sus masternodes en el monedero local puede ser ligeramente impreciso.",
+    "line2": "Siempre espere a que el monedero sincronice datos adicionales y luego verifique desde otro nodo,",
+    "line3": "si su nodo debería estar funcionando pero todavía ve \"AUSENTE\" en el campo \"Estado\"."
+  },
+  "autoRefresh": "Actualización automática en {{seconds}}s",
+  "autoRefreshStatus": "El estado se actualizará automáticamente en (seg):",
+  "noMasternodes": "No hay masternodes configurados",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

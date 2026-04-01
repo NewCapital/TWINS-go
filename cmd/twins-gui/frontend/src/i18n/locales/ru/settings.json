@@ -1,0 +1,85 @@
+{
+  "title": "Настройки",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Окно"
+  },
+  "common": {
+    "requiresRestart": "Требуется перезапуск",
+    "overriddenBy": "Переопределено параметром {{flag}}",
+    "custom": "пользовательская"
+  },
+  "main": {
+    "title": "Основные настройки",
+    "database": "База данных",
+    "userInterface": "Интерфейс пользователя",
+    "databaseCache": "Размер кэша базы данных:",
+    "databaseCacheMB": "МБ",
+    "scriptThreads": "Потоки проверки скриптов:",
+    "scriptThreadsAuto": "(0 = авто)",
+    "language": "Язык интерфейса:",
+    "languageDefault": "(по умолчанию)",
+    "languageNote": "Активный язык: {{language}}",
+    "theme": "Тема интерфейса:"
+  },
+  "wallet": {
+    "title": "Кошелёк",
+    "spendUnconfirmed": "Тратить неподтверждённую сдачу",
+    "spendUnconfirmedNote": "(только для экспертов)",
+    "stakeSplitThreshold": "Порог разделения стейка:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Автоматически объединять награды стейкинга",
+    "coinControl": "Включить функции контроля монет",
+    "showMasternodes": "Показать вкладку Мастернод",
+    "expert": "Эксперт"
+  },
+  "network": {
+    "title": "Сеть",
+    "mapPort": "Пробросить порт через UPnP",
+    "allowIncoming": "Разрешить входящие соединения",
+    "proxy": "Прокси",
+    "connectProxy": "Подключаться через SOCKS5 прокси (прокси по умолчанию):",
+    "proxyIP": "IP прокси:",
+    "proxyPort": "Порт",
+    "proxyHelp": "IP-адрес прокси (напр. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Неверный формат. Используйте IPv4:порт (127.0.0.1:9050) или [IPv6]:порт"
+  },
+  "window": {
+    "title": "Настройки окна",
+    "hideTrayIcon": "Скрыть иконку в трее",
+    "minimizeToTray": "Сворачивать в трей вместо панели задач",
+    "minimizeOnClose": "Сворачивать при закрытии"
+  },
+  "display": {
+    "title": "Настройки отображения",
+    "units": "Единицы",
+    "unitLabel": "Единица отображения сумм:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (милли)",
+    "unitMicro": "uTWINS (микро)",
+    "decimalDigits": "Десятичные знаки:",
+    "thirdPartyTitle": "URL сторонних сервисов",
+    "thirdPartyLabel": "URL для информации о транзакциях:",
+    "thirdPartyHelp": "Используйте %s вместо ID транзакции. Несколько URL разделяются |",
+    "transactionDisplay": "Отображение транзакций",
+    "hideOrphanStakes": "Скрывать осиротевшие стейки в списках транзакций",
+    "hideZeroBalances": "Скрывать нулевые балансы"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Отмена",
+    "apply": "Применить",
+    "resetDefaults": "Сбросить настройки"
+  },
+  "messages": {
+    "saved": "Настройки успешно сохранены",
+    "restartRequired": "Изменение языка вступит в силу после перезапуска кошелька.",
+    "restartRequiredTitle": "Требуется перезапуск",
+    "resetConfirm": "Вы уверены, что хотите сбросить все настройки до значений по умолчанию?"
+  },
+  "overridden": {
+    "title": "Настройка переопределена",
+    "message": "Эта настройка переопределена параметром командной строки: {{flag}}"
+  }
+}

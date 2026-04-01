@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Moje masternodes",
+  "allMasternodes": "Masternodes sieci",
+  "count": {
+    "total": "Razem: {{count}}",
+    "enabled": "Włączone: {{count}}",
+    "missing": "Brakujące: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adres",
+    "protocol": "Protokół",
+    "status": "Status",
+    "activeTime": "Czas aktywności",
+    "lastSeen": "Ostatnio widziano",
+    "pubkey": "Klucz publiczny",
+    "tier": "Poziom",
+    "rank": "Ranga"
+  },
+  "status": {
+    "enabled": "WŁĄCZONE",
+    "missing": "BRAKUJĄCE",
+    "preEnabled": "PRE_WŁĄCZONE",
+    "expired": "WYGASŁE",
+    "newStartRequired": "WYMAGANY_NOWY_START",
+    "updateRequired": "WYMAGANA_AKTUALIZACJA",
+    "watchdogExpired": "WATCHDOG_WYGASŁ",
+    "poseBan": "POSE_BAN",
+    "unknown": "NIEZNANE"
+  },
+  "tiers": {
+    "bronze": "Brąz",
+    "silver": "Srebro",
+    "gold": "Złoto",
+    "platinum": "Platyna",
+    "collateral": {
+      "bronze": "1 000 000 TWINS",
+      "silver": "5 000 000 TWINS",
+      "gold": "20 000 000 TWINS",
+      "platinum": "100 000 000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Uruchom",
+    "startAlias": "Uruchom alias",
+    "startAll": "Uruchom wszystkie",
+    "startMissing": "Uruchom BRAKUJĄCE",
+    "stop": "Zatrzymaj",
+    "update": "Aktualizuj status",
+    "edit": "Edytuj",
+    "remove": "Usuń",
+    "copyProTx": "Kopiuj hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Uruchom masternode",
+      "message": "Czy na pewno chcesz uruchomić masternode \"{{alias}}\"?",
+      "messageAll": "Czy na pewno chcesz uruchomić WSZYSTKIE masternodes?",
+      "messageMissing": "Czy na pewno chcesz uruchomić wszystkie BRAKUJĄCE masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Usuń masternode",
+      "message": "Czy na pewno chcesz usunąć masternode \"{{alias}}\"? Tej operacji nie można cofnąć."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" uruchomiony pomyślnie",
+    "startAllSuccess": "Wszystkie masternodes uruchomione pomyślnie",
+    "startMissingSuccess": "{{count}} brakujących masternode(s) uruchomionych pomyślnie",
+    "noMissingToStart": "Brak brakujących masternodes do uruchomienia",
+    "startFailed": "Nie udało się uruchomić masternode: {{error}}",
+    "startAllFailed": "Nie udało się uruchomić wszystkich masternodes: {{error}}",
+    "startMissingFailed": "Nie udało się uruchomić brakujących masternodes: {{error}}",
+    "fetchFailed": "Nie udało się pobrać masternodes",
+    "updateSuccess": "Status masternode zaktualizowany",
+    "removeSuccess": "Masternode \"{{alias}}\" usunięty"
+  },
+  "note": {
+    "title": "Uwaga:",
+    "line1": "Status twoich masternodes w lokalnym portfelu może być nieco niedokładny.",
+    "line2": "Zawsze poczekaj, aż portfel zsynchronizuje dodatkowe dane, a następnie zweryfikuj z innego node'a,",
+    "line3": "jeśli twój node powinien działać, ale nadal widzisz \"BRAKUJĄCE\" w polu statusu."
+  },
+  "autoRefresh": "Automatyczne odświeżanie za {{seconds}}s",
+  "autoRefreshStatus": "Status będzie automatycznie aktualizowany za (sek.):",
+  "noMasternodes": "Brak skonfigurowanych masternodes",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

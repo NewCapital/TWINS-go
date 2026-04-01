@@ -1,0 +1,92 @@
+{
+  "title": "マスターノード",
+  "myMasternodes": "マイマスターノード",
+  "allMasternodes": "ネットワークマスターノード",
+  "count": {
+    "total": "合計：{{count}}",
+    "enabled": "有効：{{count}}",
+    "missing": "不明：{{count}}"
+  },
+  "table": {
+    "alias": "エイリアス",
+    "address": "アドレス",
+    "protocol": "プロトコル",
+    "status": "状態",
+    "activeTime": "稼働時間",
+    "lastSeen": "最終確認",
+    "pubkey": "公開鍵",
+    "tier": "ティア",
+    "rank": "ランク"
+  },
+  "status": {
+    "enabled": "有効",
+    "missing": "不明",
+    "preEnabled": "事前有効化",
+    "expired": "期限切れ",
+    "newStartRequired": "再起動が必要",
+    "updateRequired": "アップデートが必要",
+    "watchdogExpired": "ウォッチドッグ期限切れ",
+    "poseBan": "POSEバン",
+    "unknown": "不明"
+  },
+  "tiers": {
+    "bronze": "ブロンズ",
+    "silver": "シルバー",
+    "gold": "ゴールド",
+    "platinum": "プラチナ",
+    "collateral": {
+      "bronze": "1,000,000 TWINS",
+      "silver": "5,000,000 TWINS",
+      "gold": "20,000,000 TWINS",
+      "platinum": "100,000,000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "開始",
+    "startAlias": "エイリアスを開始",
+    "startAll": "すべて開始",
+    "startMissing": "不明を開始",
+    "stop": "停止",
+    "update": "状態を更新",
+    "edit": "編集",
+    "remove": "削除",
+    "copyProTx": "ProTxハッシュをコピー"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "マスターノードを開始",
+      "message": "マスターノード \"{{alias}}\" を開始してもよろしいですか？",
+      "messageAll": "すべてのマスターノードを開始してもよろしいですか？",
+      "messageMissing": "すべての不明なマスターノードを開始してもよろしいですか？"
+    },
+    "removeConfirm": {
+      "title": "マスターノードを削除",
+      "message": "マスターノード \"{{alias}}\" を削除してもよろしいですか？この操作は取り消せません。"
+    }
+  },
+  "messages": {
+    "startSuccess": "マスターノード \"{{alias}}\" が正常に開始されました",
+    "startAllSuccess": "すべてのマスターノードが正常に開始されました",
+    "startMissingSuccess": "{{count}}件の不明なマスターノードが正常に開始されました",
+    "noMissingToStart": "開始する不明なマスターノードはありません",
+    "startFailed": "マスターノードの開始に失敗しました：{{error}}",
+    "startAllFailed": "すべてのマスターノードの開始に失敗しました：{{error}}",
+    "startMissingFailed": "不明なマスターノードの開始に失敗しました：{{error}}",
+    "fetchFailed": "マスターノードの取得に失敗しました",
+    "updateSuccess": "マスターノードの状態が更新されました",
+    "removeSuccess": "マスターノード \"{{alias}}\" が削除されました"
+  },
+  "note": {
+    "title": "注意：",
+    "line1": "ローカルウォレットでのマスターノードの状態は若干不正確な場合があります。",
+    "line2": "ウォレットが追加データを同期するまで待ってから、別のノードから確認してください",
+    "line3": "ノードが稼働しているはずなのに「状態」フィールドが「不明」と表示される場合。"
+  },
+  "autoRefresh": "{{seconds}}秒後に自動更新",
+  "autoRefreshStatus": "状態は自動的に更新されます（秒）：",
+  "noMasternodes": "設定されたマスターノードはありません",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

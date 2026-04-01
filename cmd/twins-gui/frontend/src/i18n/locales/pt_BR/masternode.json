@@ -1,0 +1,92 @@
+{
+  "title": "Masternode",
+  "myMasternodes": "Meus Masternodes",
+  "allMasternodes": "Masternodes da rede",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Habilitados: {{count}}",
+    "missing": "Faltando: {{count}}"
+  },
+  "table": {
+    "alias": "Apelido",
+    "address": "Endereço",
+    "protocol": "Protocolo",
+    "status": "Status",
+    "activeTime": "Tempo ativo",
+    "lastSeen": "Última vez visto",
+    "pubkey": "Chave pública",
+    "tier": "Nível",
+    "rank": "Posição"
+  },
+  "status": {
+    "enabled": "HABILITADO",
+    "missing": "FALTANDO",
+    "preEnabled": "PRÉ_HABILITADO",
+    "expired": "EXPIRADO",
+    "newStartRequired": "REINÍCIO_NECESSÁRIO",
+    "updateRequired": "ATUALIZAÇÃO_NECESSÁRIA",
+    "watchdogExpired": "WATCHDOG_EXPIRADO",
+    "poseBan": "POSE_BAN",
+    "unknown": "DESCONHECIDO"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Prata",
+    "gold": "Ouro",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Iniciar",
+    "startAlias": "Iniciar apelido",
+    "startAll": "Iniciar todos",
+    "startMissing": "Iniciar FALTANDO",
+    "stop": "Parar",
+    "update": "Atualizar status",
+    "edit": "Editar",
+    "remove": "Remover",
+    "copyProTx": "Copiar hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Iniciar Masternode",
+      "message": "Tem certeza de que deseja iniciar o masternode \"{{alias}}\"?",
+      "messageAll": "Tem certeza de que deseja iniciar todos os masternodes?",
+      "messageMissing": "Tem certeza de que deseja iniciar todos os masternodes FALTANDO?"
+    },
+    "removeConfirm": {
+      "title": "Remover Masternode",
+      "message": "Tem certeza de que deseja remover o masternode \"{{alias}}\"? Esta ação não pode ser desfeita."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" iniciado com sucesso",
+    "startAllSuccess": "Todos os masternodes iniciados com sucesso",
+    "startMissingSuccess": "{{count}} masternode(s) faltando iniciado(s) com sucesso",
+    "noMissingToStart": "Nenhum masternode faltando para iniciar",
+    "startFailed": "Falha ao iniciar masternode: {{error}}",
+    "startAllFailed": "Falha ao iniciar todos os masternodes: {{error}}",
+    "startMissingFailed": "Falha ao iniciar masternodes faltando: {{error}}",
+    "fetchFailed": "Falha ao buscar masternodes",
+    "updateSuccess": "Status do masternode atualizado",
+    "removeSuccess": "Masternode \"{{alias}}\" removido"
+  },
+  "note": {
+    "title": "Nota:",
+    "line1": "O status dos seus masternodes na carteira local pode estar ligeiramente impreciso.",
+    "line2": "Aguarde sempre a carteira sincronizar os dados adicionais e verifique em outro nó",
+    "line3": "se seu nó deveria estar em execução, mas ainda mostra \"FALTANDO\" no campo \"Status\"."
+  },
+  "autoRefresh": "Atualização automática em {{seconds}}s",
+  "autoRefreshStatus": "O status será atualizado automaticamente em (seg):",
+  "noMasternodes": "Nenhum masternode configurado",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

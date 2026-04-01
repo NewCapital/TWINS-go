@@ -1,0 +1,92 @@
+{
+  "title": "Masternode'lar",
+  "myMasternodes": "Masternode'larım",
+  "allMasternodes": "Ağ masternode'ları",
+  "count": {
+    "total": "Toplam: {{count}}",
+    "enabled": "Etkin: {{count}}",
+    "missing": "Eksik: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adres",
+    "protocol": "Protokol",
+    "status": "Durum",
+    "activeTime": "Aktif süre",
+    "lastSeen": "Son görülme",
+    "collateralAddress": "Collateral Address",
+    "tier": "Seviye",
+    "rank": "Sıra"
+  },
+  "status": {
+    "enabled": "ETKİN",
+    "missing": "EKSİK",
+    "preEnabled": "ÖN_ETKİN",
+    "expired": "SÜRESİ_DOLDU",
+    "newStartRequired": "YENİ_BAŞLATMA_GEREKLİ",
+    "updateRequired": "GÜNCELLEME_GEREKLİ",
+    "watchdogExpired": "WATCHDOG_SÜRESİ_DOLDU",
+    "poseBan": "POSE_YASAK",
+    "unknown": "BİLİNMİYOR"
+  },
+  "tiers": {
+    "bronze": "Bronz",
+    "silver": "Gümüş",
+    "gold": "Altın",
+    "platinum": "Platin",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Başlat",
+    "startAlias": "Alias başlat",
+    "startAll": "Tümünü başlat",
+    "startMissing": "EKSİK olanları başlat",
+    "stop": "Durdur",
+    "update": "Durumu güncelle",
+    "edit": "Düzenle",
+    "remove": "Kaldır",
+    "copyProTx": "ProTx hash kopyala"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Masternode başlat",
+      "message": "\"{{alias}}\" masternode'unu başlatmak istediğinize emin misiniz?",
+      "messageAll": "TÜM masternode'ları başlatmak istediğinize emin misiniz?",
+      "messageMissing": "Tüm EKSİK masternode'ları başlatmak istediğinize emin misiniz?"
+    },
+    "removeConfirm": {
+      "title": "Masternode kaldır",
+      "message": "\"{{alias}}\" masternode'unu kaldırmak istediğinize emin misiniz? Bu işlem geri alınamaz."
+    }
+  },
+  "messages": {
+    "startSuccess": "\"{{alias}}\" masternode başarıyla başlatıldı",
+    "startAllSuccess": "Tüm masternode'lar başarıyla başlatıldı",
+    "startMissingSuccess": "{{count}} eksik masternode başarıyla başlatıldı",
+    "noMissingToStart": "Başlatılacak eksik masternode yok",
+    "startFailed": "Masternode başlatılamadı: {{error}}",
+    "startAllFailed": "Tüm masternode'lar başlatılamadı: {{error}}",
+    "startMissingFailed": "Eksik masternode'lar başlatılamadı: {{error}}",
+    "fetchFailed": "Masternode'lar alınamadı",
+    "updateSuccess": "Masternode durumu güncellendi",
+    "removeSuccess": "\"{{alias}}\" masternode kaldırıldı"
+  },
+  "note": {
+    "title": "Not:",
+    "line1": "Yerel cüzdanınızdaki masternode'larınızın durumu biraz yanlış olabilir.",
+    "line2": "Cüzdanın ek verileri senkronize etmesini bekleyin, ardından başka bir düğümden doğrulayın,",
+    "line3": "eğer düğümünüz çalışıyor olmalı ama durum alanında hala \"EKSİK\" görüyorsanız."
+  },
+  "autoRefresh": "Otomatik yenileme {{seconds}}s içinde",
+  "autoRefreshStatus": "Durum otomatik olarak güncellenecek (saniye):",
+  "noMasternodes": "Yapılandırılmış masternode yok",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

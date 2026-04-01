@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "OVERSIGT",
+    "recentTransactions": "Seneste transaktioner"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Kombineret saldo",
+    "twins": "TWINS saldo",
+    "total": "I alt",
+    "totalBalance": "Samlet saldo",
+    "available": "Tilgængelig",
+    "pending": "Afventer",
+    "immature": "Umoden",
+    "locked": "Låst",
+    "watchOnly": "Kun overvågning",
+    "spendable": "Kan bruges"
+  },
+  "send": {
+    "title": "Send",
+    "payTo": "Betal til",
+    "payToPlaceholder": "Indtast en TWINS-adresse (f.eks. D...)",
+    "label": "Etiket",
+    "labelPlaceholder": "Indtast en etiket for denne adresse",
+    "amount": "Beløb",
+    "amountPlaceholder": "0,00",
+    "message": "Besked",
+    "messagePlaceholder": "Indtast en besked (valgfri)",
+    "coinControl": {
+      "title": "Mønt-kontrolfunktioner",
+      "inputs": "Input",
+      "customChangeAddress": "Brugerdefineret byttepenge-adresse",
+      "customChangePlaceholder": "Indtast brugerdefineret byttepenge-adresse",
+      "splitUtxo": "Opdel blok",
+      "splitThreshold": "efter",
+      "utxoSize": "UTXO-størrelse"
+    },
+    "recipients": {
+      "add": "Tilføj modtager",
+      "remove": "Fjern denne post",
+      "useMaximum": "Brug tilgængelig saldo",
+      "subtractFee": "Træk gebyr fra beløb"
+    },
+    "fee": {
+      "label": "Transaktionsgebyr",
+      "normal": "Normal",
+      "fast": "Hurtig",
+      "recommended": "Anbefalet",
+      "custom": "Brugerdefineret",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Samlet gebyr: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Modtagere i alt",
+      "estimatedFee": "Anslået gebyr",
+      "afterFee": "Efter gebyr",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Send",
+      "clearAll": "Ryd alle"
+    },
+    "errors": {
+      "invalidAddress": "Ugyldigt TWINS-adresseformat",
+      "amountRequired": "Beløb er påkrævet",
+      "amountTooLow": "Beløbet skal være mindst {{min}} TWINS for at undgå støv",
+      "insufficientFunds": "Utilstrækkelig saldo",
+      "noRecipients": "Tilføj venligst mindst én modtager"
+    },
+    "confirmation": {
+      "title": "Bekræft transaktion",
+      "recipient": "Til",
+      "recipients": "Modtagere",
+      "amount": "Beløb",
+      "totalAmount": "Samlet beløb",
+      "fee": "Gebyr",
+      "transactionFee": "Transaktionsgebyr",
+      "total": "I alt",
+      "grandTotal": "Samlet total",
+      "walletPassphrase": "Tegnebogskodeord",
+      "passphrasePlaceholder": "Indtast dit tegnebogskodeord",
+      "passphraseRequired": "Kodeord påkrævet for krypterede tegnebøger",
+      "showPassphrase": "Vis kodeord",
+      "hidePassphrase": "Skjul kodeord",
+      "capsLockOn": "Caps Lock er SLÅET TIL",
+      "largeTransactionWarning": "Advarsel: Dette er en stor transaktion. Bekræft venligst alle detaljer omhyggeligt.",
+      "confirmSend": "Bekræft afsendelse",
+      "sending": "Sender..."
+    },
+    "success": {
+      "title": "Transaktion sendt",
+      "message": "Transaktionen er blevet sendt til netværket.",
+      "txid": "Transaktions-ID",
+      "copyTxid": "Kopiér TXID",
+      "viewInExplorer": "Vis i stifinder",
+      "copiedToClipboard": "Kopieret til udklipsholder!",
+      "copyFailed": "Kopiering mislykkedes - kopiér venligst manuelt"
+    }
+  },
+  "receive": {
+    "title": "Modtag",
+    "currentAddress": "Nuværende modtageadresse",
+    "requestPayment": "Anmod om betaling",
+    "requestingPayment": "Opretter...",
+    "newAddress": "Generer ny adresse",
+    "addressList": "Modtageadresser",
+    "copyAddress": "Kopiér adresse til udklipsholder",
+    "showQR": "Vis QR-kode",
+    "qrCode": "QR-kode",
+    "amount": "Beløb",
+    "label": "Etiket",
+    "message": "Besked",
+    "address": "Adresse",
+    "reusePrevious": "Genbrug en eksisterende modtageadresse (anbefales ikke)",
+    "formInfo": "Brug denne formular til at anmode om betalinger. Alle felter er <1>valgfrie</1>.",
+    "clear": "Ryd",
+    "receivingAddresses": "Modtageadresser",
+    "requestedHistory": "Historik over betalingsanmodninger",
+    "noRequests": "Ingen betalingsanmodninger endnu",
+    "show": "Vis",
+    "remove": "Fjern",
+    "contextMenu": {
+      "copyLabel": "Kopiér etiket",
+      "copyAddress": "Kopiér adresse",
+      "copyMessage": "Kopiér besked",
+      "copyAmount": "Kopiér beløb"
+    },
+    "table": {
+      "date": "Dato",
+      "label": "Etiket",
+      "address": "Adresse",
+      "message": "Besked",
+      "amountTwins": "Beløb (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIK",
+    "recent": "Seneste transaktioner",
+    "all": "Alle transaktioner",
+    "noTransactions": "Ingen transaktioner fundet",
+    "loading": "Indlæser transaktioner...",
+    "error": "Fejl: {{message}}",
+    "type": {
+      "all": "Alle",
+      "mostCommon": "Mest almindelige",
+      "sent": "Sendt til",
+      "received": "Modtaget med",
+      "toYourself": "Til dig selv",
+      "mined": "Minet",
+      "minted": "Præget",
+      "masternode": "Masternode-belønning",
+      "other": "Andre"
+    },
+    "status": {
+      "confirmed": "Bekræftet",
+      "unconfirmed": "Ubekræftet",
+      "pending": "Afventer",
+      "conflicted": "Konflikt",
+      "abandoned": "Opgivet",
+      "confirmations": "{{count}} bekræftelse",
+      "confirmations_other": "{{count}} bekræftelser"
+    },
+    "details": {
+      "title": "Transaktionsdetaljer",
+      "txid": "Transaktions-ID",
+      "date": "Dato",
+      "status": "Status",
+      "amount": "Beløb",
+      "fee": "Gebyr",
+      "from": "Fra",
+      "to": "Til",
+      "confirmations": "Bekræftelser",
+      "blockHash": "Blokhash",
+      "blockHeight": "Blokhøjde"
+    },
+    "filters": {
+      "all": "Alle",
+      "today": "I dag",
+      "thisWeek": "Denne uge",
+      "thisMonth": "Denne måned",
+      "lastMonth": "Sidste måned",
+      "thisYear": "Dette år",
+      "range": "Interval...",
+      "dateRange": "Datointerval",
+      "type": "Type",
+      "minAmount": "Minimumsbeløb",
+      "search": "Indtast adresse eller etiket for at søge",
+      "rangeTo": "til"
+    },
+    "table": {
+      "date": "Dato",
+      "type": "Type",
+      "address": "Adresse",
+      "amount": "Beløb"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopiér adresse",
+      "copyLabel": "Kopiér etiket",
+      "copyAmount": "Kopiér beløb",
+      "copyTxId": "Kopiér transaktions-ID",
+      "editLabel": "Rediger etiket",
+      "showDetails": "Vis transaktionsdetaljer",
+      "hideOrphanStakes": "Skjul forældreløse stakes"
+    },
+    "footer": {
+      "selectedAmount": "Valgt beløb:",
+      "transactions": "{{count}} transaktion",
+      "transactions_other": "{{count}} transaktioner",
+      "export": "Eksportér"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Ingen transaktioner at eksportere",
+      "noTransactionsMessage": "Ingen transaktioner matcher de aktuelle filtre.",
+      "exportSuccess": "Eksport lykkedes",
+      "exportedCount": "Eksporterede {{count}} transaktion til CSV-fil",
+      "exportedCount_other": "Eksporterede {{count}} transaktioner til CSV-fil",
+      "exportFailed": "Eksport mislykkedes"
+    }
+  },
+  "addressBook": {
+    "title": "Adressebog",
+    "add": "Tilføj adresse",
+    "edit": "Rediger adresse",
+    "delete": "Slet adresse",
+    "label": "Etiket",
+    "address": "Adresse",
+    "noAddresses": "Ingen gemte adresser"
+  }
+}

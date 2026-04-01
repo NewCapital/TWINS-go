@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Cüzdanı",
+    "version": "Sürüm {{version}}"
+  },
+  "buttons": {
+    "ok": "Tamam",
+    "cancel": "İptal",
+    "apply": "Uygula",
+    "close": "Kapat",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "copy": "Kopyala",
+    "copyAddress": "Adresi Kopyala",
+    "paste": "Panodan yapıştır",
+    "addressBook": "Adres defterinden seç",
+    "max": "Maks",
+    "export": "Çıkart",
+    "import": "İçe aktar",
+    "refresh": "Yenile",
+    "reset": "Sıfırla",
+    "confirm": "Onayla",
+    "yes": "Evet",
+    "no": "Hayır",
+    "back": "Geri",
+    "next": "İleri",
+    "done": "Bitti",
+    "dismiss": "Kapat",
+    "retry": "Yeniden Dene",
+    "retryConnection": "Yeniden Bağlan"
+  },
+  "navigation": {
+    "overview": "Genel Bakış",
+    "send": "Gönder",
+    "receive": "Al",
+    "transactions": "İşlemler",
+    "masternodes": "Masternodes",
+    "explorer": "Gezgin",
+    "staking": "Staking",
+    "privacy": "Gizlilik"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Yükleniyor...",
+    "success": "Başarılı",
+    "failed": "Başarısız",
+    "error": "Hata",
+    "connected": "Bağlı",
+    "connecting": "Bağlanıyor...",
+    "disconnected": "Bağlantı Kesildi",
+    "offline": "Çevrimdışı",
+    "syncing": "Senkronize ediliyor...",
+    "synced": "Senkronize",
+    "outOfSync": "(senkron dışı)",
+    "upToDate": "Güncel"
+  },
+  "errors": {
+    "generic": "Bir hata oluştu",
+    "network": "Ağ hatası",
+    "timeout": "İstek zaman aşımına uğradı",
+    "notFound": "Bulunamadı",
+    "invalidInput": "Geçersiz girdi",
+    "unauthorized": "Yetkisiz"
+  },
+  "time": {
+    "seconds": "{{count}} saniye",
+    "seconds_other": "{{count}} saniye",
+    "minutes": "{{count}} dakika",
+    "minutes_other": "{{count}} dakika",
+    "hours": "{{count}} saat",
+    "hours_other": "{{count}} saat",
+    "days": "{{count}} gün",
+    "days_other": "{{count}} gün",
+    "ago": "{{time}} önce",
+    "never": "Asla"
+  },
+  "confirmDialog": {
+    "areYouSure": "Emin misiniz?",
+    "cannotUndo": "Bu işlem geri alınamaz."
+  },
+  "statusBar": {
+    "synchronizing": "Ağ ile senkronize ediliyor...",
+    "scanningBlock": "Blok taranıyor {{height}}",
+    "upToDate": "Güncel",
+    "hdEnabled": "HD Cüzdanı Etkin",
+    "torEnabled": "Tor Etkin",
+    "walletEncrypted": "Cüzdan Şifreli",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Cüzdan Şifrelenmemiş",
+    "stakingActive": "Staking Aktif",
+    "stakingInactive": "Staking Devre Dışı",
+    "connections": "{{count}} ağ bağlantısı",
+    "connections_other": "{{count}} ağ bağlantısı"
+  },
+  "p2pError": {
+    "title": "Ağ Bağlantı Hatası",
+    "failedToConnect": "TWINS ağına bağlanılamadı:",
+    "checkConnection": "İnternet bağlantınızı ve güvenlik duvarı ayarlarınızı kontrol edin. Cüzdan arka planda bağlanmayı deneyecektir."
+  },
+  "intro": {
+    "welcome": "TWINS'e Hoş Geldiniz",
+    "welcomeSubtitle": "TWINS kripto parası için resmi cüzdan",
+    "chooseDataDir": "Veri Dizini Seçin",
+    "dataDirDescription": "TWINS verilerini aşağıdaki dizinde saklayacaktır. Bu, blok zinciri verileri, cüzdan dosyaları ve yapılandırma içerir.",
+    "defaultDir": "Varsayılan veri dizinini kullan",
+    "customDir": "Özel veri dizini kullan",
+    "browse": "Gözat...",
+    "spaceRequired": "En az {{size}} GB disk alanı gerekli.",
+    "getStarted": "Başlayın",
+    "continue": "Devam"
+  },
+  "shutdown": {
+    "title": "Kapatılıyor",
+    "message": "TWINS cüzdanı kapatılıyor...",
+    "pleaseWait": "Cüzdan güvenli bir şekilde kapatılırken lütfen bekleyin.",
+    "savingData": "Cüzdan verileri kaydediliyor...",
+    "closingConnections": "Ağ bağlantıları kapatılıyor..."
+  },
+  "loading": {
+    "default": "Yükleniyor...",
+    "wallet": "Cüzdan yükleniyor...",
+    "transactions": "İşlemler yükleniyor...",
+    "blocks": "Bloklar yükleniyor...",
+    "masternodes": "Masternode'lar yükleniyor...",
+    "initializing": "Başlatılıyor..."
+  },
+  "explorer": {
+    "title": "Gezgin",
+    "blocks": "Bloklar",
+    "transactions": "İşlemler",
+    "addresses": "Adresler",
+    "search": "Ara",
+    "searchPlaceholder": "Blok yüksekliği, hash, txid veya adres ara...",
+    "height": "Yükseklik",
+    "hash": "Hash",
+    "time": "Zaman",
+    "age": "Yaş",
+    "txCount": "Txs",
+    "size": "Boyut",
+    "confirmations": "Doğrulamalar",
+    "difficulty": "Zorluk",
+    "noBlocks": "Blok bulunamadı",
+    "noTransactions": "İşlem bulunamadı",
+    "blockDetails": "Blok Detayları",
+    "transactionDetails": "İşlem Detayları",
+    "addressDetails": "Adres Detayları",
+    "inputs": "Girdiler",
+    "outputs": "Çıktılar",
+    "value": "Değer",
+    "from": "Gönderen",
+    "to": "Alıcı",
+    "viewAll": "Tümünü Görüntüle"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking Etkin",
+    "disabled": "Staking Devre Dışı",
+    "stakingBalance": "Staking Bakiyesi",
+    "immatureBalance": "Olgunlaşmamış Bakiye"
+  },
+  "privacy": {
+    "title": "Gizlilik",
+    "mint": "Bas",
+    "spend": "Harca",
+    "balance": "Özel Bakiye",
+    "denominations": "Değerler"
+  },
+  "notifications": {
+    "newTransaction": "Yeni İşlem",
+    "transactionReceived": "{{amount}} TWINS alındı",
+    "transactionSent": "{{amount}} TWINS gönderildi"
+  }
+}

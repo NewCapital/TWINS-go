@@ -1,0 +1,42 @@
+# TWINS Testnet Configuration
+
+# Network settings
+network:
+  port: 19333
+  seeds:
+    - testnet-seed1.twins.org:19333
+    - testnet-seed2.twins.org:19333
+  maxPeers: 125
+  testNet: true
+  listenAddr: "0.0.0.0"
+  externalIP: ""
+  timeout: 30
+  keepAlive: 60
+  maxBandwidth: 0
+
+# RPC server settings
+rpc:
+  enabled: true
+  port: 19332
+  host: "127.0.0.1"
+  username: ""
+  password: ""
+  allowedIPs:
+    - "127.0.0.1"
+    - "::1"
+  maxClients: 50
+  timeout: 30
+
+# Masternode settings
+masternode:
+  enabled: false
+  privateKey: ""
+  serviceAddr: ""
+  mnConf: "masternode.conf"
+  mnConfLock: true
+
+# Logging settings
+logging:
+  level: "debug"
+  format: "text"
+  output: "./twins.log"

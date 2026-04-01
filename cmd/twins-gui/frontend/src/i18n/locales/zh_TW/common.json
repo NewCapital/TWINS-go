@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS 錢包",
+    "version": "版本 {{version}}"
+  },
+  "buttons": {
+    "ok": "確定",
+    "cancel": "取消",
+    "apply": "套用",
+    "close": "關閉",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "copy": "複製",
+    "copyAddress": "拷貝位址",
+    "paste": "從剪貼簿貼上",
+    "addressBook": "從位址簿選取",
+    "max": "最大",
+    "export": "匯出",
+    "import": "匯入",
+    "refresh": "重新整理",
+    "reset": "重設",
+    "confirm": "確認",
+    "yes": "是",
+    "no": "否",
+    "back": "返回",
+    "next": "下一步",
+    "done": "完成",
+    "dismiss": "關閉",
+    "retry": "重試",
+    "retryConnection": "重新連線"
+  },
+  "navigation": {
+    "overview": "概覽",
+    "send": "發送",
+    "receive": "接收",
+    "transactions": "交易記錄",
+    "masternodes": "主節點",
+    "explorer": "瀏覽器",
+    "staking": "質押",
+    "privacy": "隱私"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "載入中...",
+    "success": "成功",
+    "failed": "失敗",
+    "error": "錯誤",
+    "connected": "已連線",
+    "connecting": "連線中...",
+    "disconnected": "已斷線",
+    "offline": "離線",
+    "syncing": "同步中...",
+    "synced": "已同步",
+    "outOfSync": "(未同步)",
+    "upToDate": "已更新"
+  },
+  "errors": {
+    "generic": "發生錯誤",
+    "network": "網路錯誤",
+    "timeout": "請求逾時",
+    "notFound": "找不到",
+    "invalidInput": "無效輸入",
+    "unauthorized": "未授權"
+  },
+  "time": {
+    "seconds": "{{count}} 秒",
+    "seconds_other": "{{count}} 秒",
+    "minutes": "{{count}} 分鐘",
+    "minutes_other": "{{count}} 分鐘",
+    "hours": "{{count}} 小時",
+    "hours_other": "{{count}} 小時",
+    "days": "{{count}} 天",
+    "days_other": "{{count}} 天",
+    "ago": "{{time}}前",
+    "never": "從未"
+  },
+  "confirmDialog": {
+    "areYouSure": "您確定嗎？",
+    "cannotUndo": "此操作無法復原。"
+  },
+  "statusBar": {
+    "synchronizing": "正在與網路同步...",
+    "scanningBlock": "正在掃描區塊 {{height}}",
+    "upToDate": "已更新",
+    "hdEnabled": "HD 錢包已啟用",
+    "torEnabled": "Tor 已啟用",
+    "walletEncrypted": "錢包已加密",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "錢包未加密",
+    "stakingActive": "質押進行中",
+    "stakingInactive": "質押未啟用",
+    "connections": "{{count}} 個網路連線",
+    "connections_other": "{{count}} 個網路連線"
+  },
+  "p2pError": {
+    "title": "網路連線錯誤",
+    "failedToConnect": "無法連線至 TWINS 網路：",
+    "checkConnection": "請檢查您的網路連線和防火牆設定。錢包將在背景嘗試連線。"
+  },
+  "intro": {
+    "welcome": "歡迎使用 TWINS",
+    "welcomeSubtitle": "TWINS 加密貨幣官方錢包",
+    "chooseDataDir": "選擇資料目錄",
+    "dataDirDescription": "TWINS 將在下方目錄儲存資料。這包括區塊鏈資料、錢包檔案和設定。",
+    "defaultDir": "使用預設資料目錄",
+    "customDir": "使用自訂資料目錄",
+    "browse": "瀏覽...",
+    "spaceRequired": "至少需要 {{size}} GB 磁碟空間。",
+    "getStarted": "開始使用",
+    "continue": "繼續"
+  },
+  "shutdown": {
+    "title": "正在關閉",
+    "message": "TWINS 錢包正在關閉...",
+    "pleaseWait": "請稍候，錢包正在安全關閉。",
+    "savingData": "正在儲存錢包資料...",
+    "closingConnections": "正在關閉網路連線..."
+  },
+  "loading": {
+    "default": "載入中...",
+    "wallet": "正在載入錢包...",
+    "transactions": "正在載入交易記錄...",
+    "blocks": "正在載入區塊...",
+    "masternodes": "正在載入主節點...",
+    "initializing": "正在初始化..."
+  },
+  "explorer": {
+    "title": "瀏覽器",
+    "blocks": "區塊",
+    "transactions": "交易",
+    "addresses": "位址",
+    "search": "搜尋",
+    "searchPlaceholder": "搜尋區塊高度、雜湊、交易ID或位址...",
+    "height": "高度",
+    "hash": "雜湊",
+    "time": "時間",
+    "age": "經過時間",
+    "txCount": "交易數",
+    "size": "大小",
+    "confirmations": "確認數",
+    "difficulty": "難度",
+    "noBlocks": "找不到區塊",
+    "noTransactions": "找不到交易",
+    "blockDetails": "區塊詳情",
+    "transactionDetails": "交易詳情",
+    "addressDetails": "位址詳情",
+    "inputs": "輸入",
+    "outputs": "輸出",
+    "value": "金額",
+    "from": "來自",
+    "to": "發送至",
+    "viewAll": "查看全部"
+  },
+  "staking": {
+    "title": "質押",
+    "enabled": "質押已啟用",
+    "disabled": "質押已停用",
+    "stakingBalance": "質押餘額",
+    "immatureBalance": "未成熟餘額"
+  },
+  "privacy": {
+    "title": "隱私",
+    "mint": "鑄造",
+    "spend": "花費",
+    "balance": "隱私餘額",
+    "denominations": "面額"
+  },
+  "notifications": {
+    "newTransaction": "新交易",
+    "transactionReceived": "已收到 {{amount}} TWINS",
+    "transactionSent": "已發送 {{amount}} TWINS"
+  }
+}

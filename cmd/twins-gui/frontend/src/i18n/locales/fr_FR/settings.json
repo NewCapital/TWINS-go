@@ -1,0 +1,85 @@
+{
+  "title": "Paramètres",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Fenêtre"
+  },
+  "common": {
+    "requiresRestart": "Redémarrage requis",
+    "overriddenBy": "Remplacé par {{flag}}",
+    "custom": "personnalisé"
+  },
+  "main": {
+    "title": "Paramètres principaux",
+    "database": "Base de données",
+    "userInterface": "Interface utilisateur",
+    "databaseCache": "Taille du cache de base de données :",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Threads de vérification des scripts :",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "Langue de l'interface :",
+    "languageDefault": "(par défaut)",
+    "languageNote": "Langue active : {{language}}",
+    "theme": "Thème de l'interface :"
+  },
+  "wallet": {
+    "title": "Portefeuille",
+    "spendUnconfirmed": "Dépenser la monnaie non confirmée",
+    "spendUnconfirmedNote": "(experts uniquement)",
+    "stakeSplitThreshold": "Seuil de division du stake :",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Combiner automatiquement les récompenses de staking",
+    "coinControl": "Activer les fonctions de contrôle des pièces",
+    "showMasternodes": "Afficher l'onglet Masternodes",
+    "expert": "Expert"
+  },
+  "network": {
+    "title": "Réseau",
+    "mapPort": "Mapper le port via UPnP",
+    "allowIncoming": "Autoriser les connexions entrantes",
+    "proxy": "Proxy",
+    "connectProxy": "Se connecter via proxy SOCKS5 (proxy par défaut) :",
+    "proxyIP": "IP du proxy :",
+    "proxyPort": "Port",
+    "proxyHelp": "Adresse IP du proxy (ex. IPv4 : 127.0.0.1:9050 / IPv6 : [::1]:9050)",
+    "proxyFormatError": "Format invalide. Utilisez IPv4:port (127.0.0.1:9050) ou [IPv6]:port"
+  },
+  "window": {
+    "title": "Paramètres de fenêtre",
+    "hideTrayIcon": "Masquer l'icône de la barre d'état",
+    "minimizeToTray": "Réduire dans la barre d'état au lieu de la barre des tâches",
+    "minimizeOnClose": "Réduire à la fermeture"
+  },
+  "display": {
+    "title": "Paramètres d'affichage",
+    "units": "Unités",
+    "unitLabel": "Unité d'affichage des montants :",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Chiffres décimaux :",
+    "thirdPartyTitle": "URLs de transactions tierces",
+    "thirdPartyLabel": "URLs pour les informations de transaction :",
+    "thirdPartyHelp": "Utilisez %s à la place de l'ID de transaction. URLs multiples séparées par |",
+    "transactionDisplay": "Affichage des transactions",
+    "hideOrphanStakes": "Masquer les stakes orphelins dans les listes de transactions",
+    "hideZeroBalances": "Masquer les soldes nuls"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "apply": "Appliquer",
+    "resetDefaults": "Réinitialiser par défaut"
+  },
+  "messages": {
+    "saved": "Paramètres enregistrés avec succès",
+    "restartRequired": "Le changement de langue prendra effet après le redémarrage du portefeuille.",
+    "restartRequiredTitle": "Redémarrage requis",
+    "resetConfirm": "Êtes-vous sûr de vouloir réinitialiser tous les paramètres à leurs valeurs par défaut ?"
+  },
+  "overridden": {
+    "title": "Paramètre remplacé",
+    "message": "Ce paramètre est remplacé par l'option de ligne de commande : {{flag}}"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Прозорец"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Размер на кеша в базата данни",
+    "databaseCacheMB": "Мегабайта",
+    "scriptThreads": "Брой проверяващи нишки",
+    "scriptThreadsAuto": "(0 = автоматичен, <0 = остави толкова ядра неангажирани)",
+    "language": "Език на интерфейса:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Тема на интерфейса:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Похарви непотвърденото ресто",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Праг на споделеното съхранение:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Включи възможностите за контрол на монетите.",
+    "showMasternodes": "Покажи Мастърноуд Таба",
+    "expert": "Експерт"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Картографирай портовете използвайки UPnP",
+    "allowIncoming": "Приемай входящи свръзки",
+    "proxy": "Proxy",
+    "connectProxy": "Свуржи се чрез SOCKS5 прокси (по подразбиране):",
+    "proxyIP": "Прокси IP:",
+    "proxyPort": "Порт:",
+    "proxyHelp": "IP адрес на проксито (например: IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Минимизирай в системния трей вместо в работната лента.",
+    "minimizeOnClose": "Минимизирай при затваряне"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Мерни единици:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Десетични единици",
+    "thirdPartyTitle": "Преводни URL-и на трети лица.",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Скрий нулевите наличности"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Отказ",
+    "apply": "Apply",
+    "resetDefaults": "Възстанови Опциите"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Трябва да рестартирате програмата.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Потвърди нулиране"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

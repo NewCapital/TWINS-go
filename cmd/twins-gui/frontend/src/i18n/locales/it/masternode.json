@@ -1,0 +1,92 @@
+{
+  "title": "Masternode",
+  "myMasternodes": "I miei Masternode",
+  "allMasternodes": "Masternode della rete",
+  "count": {
+    "total": "Totale: {{count}}",
+    "enabled": "Abilitati: {{count}}",
+    "missing": "Mancanti: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Indirizzo",
+    "protocol": "Protocollo",
+    "status": "Stato",
+    "activeTime": "Tempo attivo",
+    "lastSeen": "Ultimo avvistamento",
+    "pubkey": "Chiave pubblica",
+    "tier": "Livello",
+    "rank": "Posizione"
+  },
+  "status": {
+    "enabled": "ABILITATO",
+    "missing": "MANCANTE",
+    "preEnabled": "PRE_ABILITATO",
+    "expired": "SCADUTO",
+    "newStartRequired": "RIAVVIO_RICHIESTO",
+    "updateRequired": "AGGIORNAMENTO_RICHIESTO",
+    "watchdogExpired": "WATCHDOG_SCADUTO",
+    "poseBan": "POSE_BAN",
+    "unknown": "SCONOSCIUTO"
+  },
+  "tiers": {
+    "bronze": "Bronzo",
+    "silver": "Argento",
+    "gold": "Oro",
+    "platinum": "Platino",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Avvia",
+    "startAlias": "Avvia alias",
+    "startAll": "Avvia tutti",
+    "startMissing": "Avvia MANCANTI",
+    "stop": "Ferma",
+    "update": "Aggiorna stato",
+    "edit": "Modifica",
+    "remove": "Rimuovi",
+    "copyProTx": "Copia hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Avvia Masternode",
+      "message": "Sei sicuro di voler avviare il masternode \"{{alias}}\"?",
+      "messageAll": "Sei sicuro di voler avviare tutti i masternode?",
+      "messageMissing": "Sei sicuro di voler avviare tutti i masternode MANCANTI?"
+    },
+    "removeConfirm": {
+      "title": "Rimuovi Masternode",
+      "message": "Sei sicuro di voler rimuovere il masternode \"{{alias}}\"? Questa azione non può essere annullata."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" avviato con successo",
+    "startAllSuccess": "Tutti i masternode avviati con successo",
+    "startMissingSuccess": "{{count}} masternode mancante/i avviato/i con successo",
+    "noMissingToStart": "Nessun masternode mancante da avviare",
+    "startFailed": "Avvio masternode fallito: {{error}}",
+    "startAllFailed": "Avvio di tutti i masternode fallito: {{error}}",
+    "startMissingFailed": "Avvio masternode mancanti fallito: {{error}}",
+    "fetchFailed": "Recupero masternode fallito",
+    "updateSuccess": "Stato masternode aggiornato",
+    "removeSuccess": "Masternode \"{{alias}}\" rimosso"
+  },
+  "note": {
+    "title": "Nota:",
+    "line1": "Lo stato dei tuoi masternode nel portafoglio locale potrebbe essere leggermente impreciso.",
+    "line2": "Attendi sempre che il portafoglio sincronizzi i dati aggiuntivi, quindi verifica da un altro nodo",
+    "line3": "se il tuo nodo dovrebbe essere in esecuzione ma mostra ancora \"MANCANTE\" nel campo \"Stato\"."
+  },
+  "autoRefresh": "Aggiornamento automatico tra {{seconds}}s",
+  "autoRefreshStatus": "Lo stato verrà aggiornato automaticamente tra (sec):",
+  "noMasternodes": "Nessun masternode configurato",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

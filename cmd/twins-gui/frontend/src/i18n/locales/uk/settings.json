@@ -1,0 +1,85 @@
+{
+  "title": "Налаштування",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Вікно"
+  },
+  "common": {
+    "requiresRestart": "Потрібен перезапуск",
+    "overriddenBy": "Перевизначено параметром {{flag}}",
+    "custom": "власна"
+  },
+  "main": {
+    "title": "Основні налаштування",
+    "database": "База даних",
+    "userInterface": "Інтерфейс користувача",
+    "databaseCache": "Розмір кешу бази даних:",
+    "databaseCacheMB": "МБ",
+    "scriptThreads": "Потоки перевірки скриптів:",
+    "scriptThreadsAuto": "(0 = авто)",
+    "language": "Мова інтерфейсу:",
+    "languageDefault": "(за замовчуванням)",
+    "languageNote": "Активна мова: {{language}}",
+    "theme": "Тема інтерфейсу:"
+  },
+  "wallet": {
+    "title": "Гаманець",
+    "spendUnconfirmed": "Витрачати непідтверджену решту",
+    "spendUnconfirmedNote": "(тільки для експертів)",
+    "stakeSplitThreshold": "Поріг розділення стейку:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Авто-об'єднання нагород стейкінгу",
+    "coinControl": "Увімкнути функції контролю монет",
+    "showMasternodes": "Показати вкладку Мастернод",
+    "expert": "Експерт"
+  },
+  "network": {
+    "title": "Мережа",
+    "mapPort": "Прокласти порт через UPnP",
+    "allowIncoming": "Дозволити вхідні з'єднання",
+    "proxy": "Проксі",
+    "connectProxy": "Підключатися через SOCKS5 проксі (проксі за замовчуванням):",
+    "proxyIP": "IP проксі:",
+    "proxyPort": "Порт",
+    "proxyHelp": "IP-адреса проксі (напр. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Невірний формат. Використовуйте IPv4:порт (127.0.0.1:9050) або [IPv6]:порт"
+  },
+  "window": {
+    "title": "Налаштування вікна",
+    "hideTrayIcon": "Приховати іконку в треї",
+    "minimizeToTray": "Згортати в трей замість панелі завдань",
+    "minimizeOnClose": "Згортати при закритті"
+  },
+  "display": {
+    "title": "Налаштування відображення",
+    "units": "Одиниці",
+    "unitLabel": "Одиниця відображення сум:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (мілі)",
+    "unitMicro": "uTWINS (мікро)",
+    "decimalDigits": "Десяткові знаки:",
+    "thirdPartyTitle": "URL-адреси сторонніх сервісів",
+    "thirdPartyLabel": "URL для інформації про транзакції:",
+    "thirdPartyHelp": "Використовуйте %s замість ID транзакції. Кілька URL розділяються |",
+    "transactionDisplay": "Відображення транзакцій",
+    "hideOrphanStakes": "Приховати осиротілі стейки у списках транзакцій",
+    "hideZeroBalances": "Приховати нульові баланси"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Скасувати",
+    "apply": "Застосувати",
+    "resetDefaults": "Скинути налаштування"
+  },
+  "messages": {
+    "saved": "Налаштування успішно збережено",
+    "restartRequired": "Зміна мови набуде чинності після перезапуску гаманця.",
+    "restartRequiredTitle": "Потрібен перезапуск",
+    "resetConfirm": "Ви впевнені, що хочете скинути всі налаштування до значень за замовчуванням?"
+  },
+  "overridden": {
+    "title": "Налаштування перевизначено",
+    "message": "Це налаштування перевизначено параметром командного рядка: {{flag}}"
+  }
+}

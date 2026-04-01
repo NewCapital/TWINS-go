@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "ÖVERSIKT",
+    "recentTransactions": "Senaste transaktioner"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Kombinerat saldo",
+    "twins": "TWINS-saldo",
+    "total": "Totalt",
+    "totalBalance": "Totalt saldo",
+    "available": "Tillgängligt",
+    "pending": "Väntande",
+    "immature": "Omoget",
+    "locked": "Låst",
+    "watchOnly": "Endast visning",
+    "spendable": "Spenderbart"
+  },
+  "send": {
+    "title": "Skicka",
+    "payTo": "Betala till",
+    "payToPlaceholder": "Ange TWINS-adress (t.ex. D...)",
+    "label": "Etikett",
+    "labelPlaceholder": "Ange en etikett för denna adress",
+    "amount": "Belopp",
+    "amountPlaceholder": "0,00",
+    "message": "Meddelande",
+    "messagePlaceholder": "Ange ett meddelande (valfritt)",
+    "coinControl": {
+      "title": "Myntkontrollfunktioner",
+      "inputs": "Inmatningar",
+      "customChangeAddress": "Anpassad växeladress",
+      "customChangePlaceholder": "Ange anpassad växeladress",
+      "splitUtxo": "Dela block",
+      "splitThreshold": "efter",
+      "utxoSize": "UTXO-storlek"
+    },
+    "recipients": {
+      "add": "Lägg till mottagare",
+      "remove": "Ta bort denna post",
+      "useMaximum": "Använd tillgängligt saldo",
+      "subtractFee": "Dra av avgift från belopp"
+    },
+    "fee": {
+      "label": "Transaktionsavgift",
+      "normal": "Normal",
+      "fast": "Snabb",
+      "recommended": "Rekommenderad",
+      "custom": "Anpassad",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Total avgift: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Totalt mottagare",
+      "estimatedFee": "Uppskattad avgift",
+      "afterFee": "Efter avgift",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Skicka",
+      "clearAll": "Rensa allt"
+    },
+    "errors": {
+      "invalidAddress": "Ogiltigt TWINS-adressformat",
+      "amountRequired": "Belopp krävs",
+      "amountTooLow": "Beloppet måste vara minst {{min}} TWINS för att undvika damm",
+      "insufficientFunds": "Otillräckliga medel",
+      "noRecipients": "Lägg till minst en mottagare"
+    },
+    "confirmation": {
+      "title": "Bekräfta Transaktion",
+      "recipient": "Till",
+      "recipients": "Mottagare",
+      "amount": "Belopp",
+      "totalAmount": "Totalt belopp",
+      "fee": "Avgift",
+      "transactionFee": "Transaktionsavgift",
+      "total": "Totalt",
+      "grandTotal": "Totalsumma",
+      "walletPassphrase": "Plånbokslösenfras",
+      "passphrasePlaceholder": "Ange plånbokslösenfras",
+      "passphraseRequired": "Lösenfras krävs för krypterade plånböcker",
+      "showPassphrase": "Visa lösenfras",
+      "hidePassphrase": "Dölj lösenfras",
+      "capsLockOn": "Caps Lock är PÅ",
+      "largeTransactionWarning": "Varning: Detta är en stor transaktion. Kontrollera alla detaljer noggrant.",
+      "confirmSend": "Bekräfta sändning",
+      "sending": "Skickar..."
+    },
+    "success": {
+      "title": "Transaktion Skickad",
+      "message": "Transaktionen har sänts till nätverket.",
+      "txid": "Transaktions-ID",
+      "copyTxid": "Kopiera TXID",
+      "viewInExplorer": "Visa i utforskaren",
+      "copiedToClipboard": "Kopierad till urklipp!",
+      "copyFailed": "Kopiering misslyckades - kopiera manuellt"
+    }
+  },
+  "receive": {
+    "title": "Ta emot",
+    "currentAddress": "Nuvarande mottagaradress",
+    "requestPayment": "Begär betalning",
+    "requestingPayment": "Skapar...",
+    "newAddress": "Generera ny adress",
+    "addressList": "Mottagaradresser",
+    "copyAddress": "Kopiera adress till urklipp",
+    "showQR": "Visa QR-kod",
+    "qrCode": "QR-kod",
+    "amount": "Belopp",
+    "label": "Etikett",
+    "message": "Meddelande",
+    "address": "Adress",
+    "reusePrevious": "Återanvänd befintlig mottagaradress (rekommenderas ej)",
+    "formInfo": "Använd detta formulär för att begära betalningar. Alla fält är <1>valfria</1>.",
+    "clear": "Rensa",
+    "receivingAddresses": "Mottagaradresser",
+    "requestedHistory": "Betalningsförfrågningshistorik",
+    "noRequests": "Inga betalningsförfrågningar ännu",
+    "show": "Visa",
+    "remove": "Ta bort",
+    "contextMenu": {
+      "copyLabel": "Kopiera etikett",
+      "copyAddress": "Kopiera adress",
+      "copyMessage": "Kopiera meddelande",
+      "copyAmount": "Kopiera belopp"
+    },
+    "table": {
+      "date": "Datum",
+      "label": "Etikett",
+      "address": "Adress",
+      "message": "Meddelande",
+      "amountTwins": "Belopp (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIK",
+    "recent": "Senaste transaktioner",
+    "all": "Alla transaktioner",
+    "noTransactions": "Inga transaktioner hittades",
+    "loading": "Laddar transaktioner...",
+    "error": "Fel: {{message}}",
+    "type": {
+      "all": "Alla",
+      "mostCommon": "Vanligast",
+      "sent": "Skickade till",
+      "received": "Mottagna från",
+      "toYourself": "Till dig själv",
+      "mined": "Mined",
+      "minted": "Präglad",
+      "masternode": "Masternodebelöning",
+      "other": "Annan"
+    },
+    "status": {
+      "confirmed": "Bekräftad",
+      "unconfirmed": "Obekräftad",
+      "pending": "Väntande",
+      "conflicted": "I konflikt",
+      "abandoned": "Övergiven",
+      "confirmations": "{{count}} bekräftelse",
+      "confirmations_other": "{{count}} bekräftelser"
+    },
+    "details": {
+      "title": "Transaktionsdetaljer",
+      "txid": "Transaktions-ID",
+      "date": "Datum",
+      "status": "Status",
+      "amount": "Belopp",
+      "fee": "Avgift",
+      "from": "Från",
+      "to": "Till",
+      "confirmations": "Bekräftelser",
+      "blockHash": "Blockhash",
+      "blockHeight": "Blockhöjd"
+    },
+    "filters": {
+      "all": "Alla",
+      "today": "Idag",
+      "thisWeek": "Denna vecka",
+      "thisMonth": "Denna månad",
+      "lastMonth": "Förra månaden",
+      "thisYear": "Detta år",
+      "range": "Intervall...",
+      "dateRange": "Datumintervall",
+      "type": "Typ",
+      "minAmount": "Min belopp",
+      "search": "Ange adress eller etikett att söka",
+      "rangeTo": "till"
+    },
+    "table": {
+      "date": "Datum",
+      "type": "Typ",
+      "address": "Adress",
+      "amount": "Belopp"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopiera adress",
+      "copyLabel": "Kopiera etikett",
+      "copyAmount": "Kopiera belopp",
+      "copyTxId": "Kopiera transaktions-ID",
+      "editLabel": "Redigera etikett",
+      "showDetails": "Visa transaktionsdetaljer",
+      "hideOrphanStakes": "Dölj föräldralösa stakes"
+    },
+    "footer": {
+      "selectedAmount": "Valt belopp:",
+      "transactions": "{{count}} transaktion",
+      "transactions_other": "{{count}} transaktioner",
+      "export": "Exportera"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Inga transaktioner att exportera",
+      "noTransactionsMessage": "Inga transaktioner matchar aktuella filter.",
+      "exportSuccess": "Export lyckades",
+      "exportedCount": "{{count}} transaktion exporterad till CSV-fil",
+      "exportedCount_other": "{{count}} transaktioner exporterade till CSV-fil",
+      "exportFailed": "Export misslyckades"
+    }
+  },
+  "addressBook": {
+    "title": "Adressbok",
+    "add": "Lägg till adress",
+    "edit": "Redigera adress",
+    "delete": "Radera adress",
+    "label": "Etikett",
+    "address": "Adress",
+    "noAddresses": "Inga sparade adresser"
+  }
+}

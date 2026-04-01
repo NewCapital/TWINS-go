@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Mijn masternodes",
+  "allMasternodes": "Netwerk masternodes",
+  "count": {
+    "total": "Totaal: {{count}}",
+    "enabled": "Ingeschakeld: {{count}}",
+    "missing": "Ontbrekend: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adres",
+    "protocol": "Protocol",
+    "status": "Status",
+    "activeTime": "Actieve tijd",
+    "lastSeen": "Laatst gezien",
+    "collateralAddress": "Collateral Address",
+    "tier": "Niveau",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "INGESCHAKELD",
+    "missing": "ONTBREKEND",
+    "preEnabled": "PRE_INGESCHAKELD",
+    "expired": "VERLOPEN",
+    "newStartRequired": "NIEUWE_START_VEREIST",
+    "updateRequired": "UPDATE_VEREIST",
+    "watchdogExpired": "WATCHDOG_VERLOPEN",
+    "poseBan": "POSE_BAN",
+    "unknown": "ONBEKEND"
+  },
+  "tiers": {
+    "bronze": "Brons",
+    "silver": "Zilver",
+    "gold": "Goud",
+    "platinum": "Platina",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Starten",
+    "startAlias": "Start alias",
+    "startAll": "Start alle",
+    "startMissing": "Start ONTBREKENDE",
+    "stop": "Stoppen",
+    "update": "Status bijwerken",
+    "edit": "Bewerken",
+    "remove": "Verwijderen",
+    "copyProTx": "Kopieer ProTx hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Start masternode",
+      "message": "Weet je zeker dat je masternode \"{{alias}}\" wilt starten?",
+      "messageAll": "Weet je zeker dat je ALLE masternodes wilt starten?",
+      "messageMissing": "Weet je zeker dat je alle ONTBREKENDE masternodes wilt starten?"
+    },
+    "removeConfirm": {
+      "title": "Verwijder masternode",
+      "message": "Weet je zeker dat je masternode \"{{alias}}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" succesvol gestart",
+    "startAllSuccess": "Alle masternodes succesvol gestart",
+    "startMissingSuccess": "{{count}} ontbrekende masternode(s) succesvol gestart",
+    "noMissingToStart": "Geen ontbrekende masternodes om te starten",
+    "startFailed": "Masternode starten mislukt: {{error}}",
+    "startAllFailed": "Alle masternodes starten mislukt: {{error}}",
+    "startMissingFailed": "Ontbrekende masternodes starten mislukt: {{error}}",
+    "fetchFailed": "Masternodes ophalen mislukt",
+    "updateSuccess": "Masternode status bijgewerkt",
+    "removeSuccess": "Masternode \"{{alias}}\" verwijderd"
+  },
+  "note": {
+    "title": "Opmerking:",
+    "line1": "De status van uw masternodes in de lokale portemonnee kan mogelijk iets afwijken.",
+    "line2": "Wacht altijd tot de portemonnee additionele data synchroniseert, verifieer dan vanaf een andere node,",
+    "line3": "als uw node zou moeten draaien maar u ziet nog steeds \"ONTBREKEND\" in het status veld."
+  },
+  "autoRefresh": "Automatisch vernieuwen in {{seconds}}s",
+  "autoRefreshStatus": "Status wordt automatisch bijgewerkt in (sec):",
+  "noMasternodes": "Geen geconfigureerde masternodes",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

@@ -1,0 +1,258 @@
+##
+## twins.conf configuration file
+## Lines beginning with # are comments
+##
+## This file should be placed in your TWINS data directory:
+##   Linux/Unix: ~/.twins/twins.conf
+##   macOS: ~/Library/Application Support/TWINS/twins.conf
+##   Windows: %APPDATA%\TWINS\twins.conf
+##
+
+# ==========================================
+# Network Settings
+# ==========================================
+
+# Run on the test network instead of the real TWINS network (default: 0)
+#testnet=0
+
+# Run a regression test network (default: 0)
+#regtest=0
+
+# Listen for connections on this port (default: 37817, testnet: 37847)
+#port=37817
+
+# Maximum number of inbound+outbound connections (default: 125)
+#maxconnections=125
+
+# Accept connections from outside (default: 1 if no proxy or connect)
+#listen=1
+
+# Use as many addnode= settings as you like to connect to specific peers
+#addnode=159.65.195.97:37817
+#addnode=134.209.146.52:37817
+#addnode=46.101.113.6:37817
+
+# Alternatively use connect= to ONLY connect to specific peers (disables DNS seeding)
+#connect=159.65.195.97:37817
+
+# Bind to given address and always listen on it (default: bind to all interfaces)
+#bind=0.0.0.0
+
+# Specify your own public IP address if behind NAT
+#externalip=1.2.3.4
+
+# Connect through a SOCKS5 proxy
+#proxy=127.0.0.1:9050
+
+# Use separate SOCKS5 proxy for Tor hidden service connections
+#onion=127.0.0.1:9050
+
+# Automatically create Tor hidden service (default: 1)
+#listenonion=1
+
+# Only connect to nodes in network (ipv4, ipv6, or onion)
+#onlynet=ipv4
+
+# Allow DNS lookups for addnode, seednode and connect (default: 1)
+#dns=1
+
+# Query for peer addresses via DNS lookup (default: 1 unless -connect used)
+#dnsseed=1
+
+# Whitelist peers connecting from the given netmask or IP (can specify multiple)
+#whitelist=192.168.1.0/24
+
+# Connection timeout in milliseconds (minimum: 1, default: 5000)
+#timeout=5000
+
+# Threshold for disconnecting misbehaving peers (default: 100)
+#banscore=100
+
+# Number of seconds to keep misbehaving peers from reconnecting (default: 86400)
+#bantime=86400
+
+# ==========================================
+# JSON-RPC Server Settings
+# ==========================================
+
+# Accept JSON-RPC commands (required for twins-cli) (default: 0)
+server=1
+
+# Username for JSON-RPC connections (REQUIRED if server=1)
+rpcuser=your_rpc_username
+
+# Password for JSON-RPC connections (REQUIRED if server=1)
+# Use a strong, random password!
+rpcpassword=your_secure_password_here
+
+# Listen for JSON-RPC connections on this port (default: 37818, testnet: 37848)
+#rpcport=37818
+
+# Bind RPC server to this address (default: 127.0.0.1, use 0.0.0.0 for all)
+#rpcbind=127.0.0.1
+
+# Allow JSON-RPC connections from specified source (can specify multiple)
+# WARNING: Exposing RPC to the internet is NOT recommended
+#rpcallowip=127.0.0.1
+#rpcallowip=192.168.1.0/24
+
+# How many seconds to wait for a complete RPC HTTP request (default: 30)
+#rpcclienttimeout=30
+
+# Number of threads to service RPC calls (default: 4)
+#rpcthreads=4
+
+# ==========================================
+# Wallet Settings
+# ==========================================
+
+# Do not load the wallet and disable wallet RPC calls (default: 0)
+#disablewallet=0
+
+# Set key pool size (number of pre-generated keys) (default: 100)
+#keypool=100
+
+# Transaction fee per kB to add to transactions (default: 0.0001)
+#paytxfee=0.0001
+
+# Minimum transaction fee per kB (default: 0.0001)
+#mintxfee=0.0001
+
+# Maximum total fees to use in a single transaction (default: 0.10)
+#maxtxfee=0.10
+
+# Spend unconfirmed change when sending transactions (default: 1)
+#spendzeroconfchange=1
+
+# Use HD wallet key generation (BIP32/44) (default: 1)
+#usehd=1
+
+# Execute command when a wallet transaction changes (%s = txid)
+#walletnotify=/path/to/script.sh %s
+
+# Rescan the blockchain for missing wallet transactions on startup
+#rescan
+
+# ==========================================
+# Staking Settings
+# ==========================================
+
+# Enable staking functionality (default: 0)
+#staking=0
+
+# Enable staking for TWINS inputs (default: 0)
+#twinsstake=0
+
+# Reserve amount of TWINS not used for staking (default: 0)
+#reservebalance=0
+
+# ==========================================
+# Masternode Settings
+# ==========================================
+
+# Enable masternode mode (default: 0)
+#masternode=0
+
+# Masternode private key (generate with createmasternodekey RPC)
+#masternodeprivkey=your_masternode_private_key_here
+
+# External address to reach this masternode (IP:port)
+#masternodeaddr=1.2.3.4:37817
+
+# Masternode configuration file (default: masternode.conf)
+#mnconf=masternode.conf
+
+# Lock masternodes from masternode.conf (default: 1)
+#mnconflock=1
+
+# ==========================================
+# Database Settings
+# ==========================================
+
+# Set database cache size in megabytes (default: 100, range: 10-512)
+#dbcache=100
+
+# Specify data directory (default: platform-specific)
+#datadir=/path/to/data
+
+# Maintain a full transaction index (default: 1)
+#txindex=1
+
+# ==========================================
+# Logging/Debug Settings
+# ==========================================
+
+# Output debugging information to debug.log (can specify categories)
+# Categories: net, tor, mempool, http, bench, coindb, db, rpc, addrman, selectcoins
+# Use debug=1 for all categories
+#debug=0
+
+# Send trace/debug info to console instead of debug.log (default: 0)
+#printtoconsole=0
+
+# Prepend timestamps to debug output (default: 1)
+#logtimestamps=1
+
+# Include IP addresses in debug output (default: 0)
+#logips=0
+
+# Shrink debug.log file on client startup (default: 1)
+#shrinkdebugfile=1
+
+# ==========================================
+# Block/Chain Settings
+# ==========================================
+
+# Rebuild block chain index from blk000??.dat files on startup
+#reindex
+
+# How many blocks to check at startup (default: 500, 0=all)
+#checkblocks=500
+
+# Keep at most n unconnectable transactions in memory (default: 100)
+#maxorphantx=100
+
+# Set the number of script verification threads (default: auto)
+#par=0
+
+# ==========================================
+# Relay/Mempool Settings
+# ==========================================
+
+# Fees per kB smaller than this are considered zero fee for relaying (default: 0.0001)
+#minrelaytxfee=0.0001
+
+# Relay non-P2SH multisig (default: 1)
+#permitbaremultisig=1
+
+# Relay and mine data carrier transactions (OP_RETURN) (default: 1)
+#datacarrier=1
+
+# Maximum size of data in data carrier transactions (default: 83)
+#datacarriersize=83
+
+# ==========================================
+# Notification Settings
+# ==========================================
+
+# Execute command when an alert is received (%s = message)
+#alertnotify=/path/to/alert.sh %s
+
+# Execute command when the best block changes (%s = block hash)
+#blocknotify=/path/to/block.sh %s
+
+# ==========================================
+# ZeroMQ Notification Settings
+# ==========================================
+
+# Enable publish hash block to <address>
+#zmqpubhashblock=tcp://127.0.0.1:28332
+
+# Enable publish hash transaction to <address>
+#zmqpubhashtx=tcp://127.0.0.1:28332
+
+# Enable publish raw block to <address>
+#zmqpubrawblock=tcp://127.0.0.1:28332
+
+# Enable publish raw transaction to <address>
+#zmqpubrawtx=tcp://127.0.0.1:28332

@@ -1,0 +1,85 @@
+{
+  "title": "Optionen",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Fenster"
+  },
+  "common": {
+    "requiresRestart": "Neustart erforderlich",
+    "overriddenBy": "Überschrieben durch {{flag}}",
+    "custom": "benutzerdefiniert"
+  },
+  "main": {
+    "title": "Allgemeine Einstellungen",
+    "database": "Datenbank",
+    "userInterface": "Benutzeroberfläche",
+    "databaseCache": "Größe des Datenbank-Cache:",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Skript-Verifikations-Threads:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "Sprache der Benutzeroberfläche:",
+    "languageDefault": "(Standard)",
+    "languageNote": "Aktive Sprache: {{language}}",
+    "theme": "Benutzeroberflächen-Motiv:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Unbestätigtes Wechselgeld ausgeben",
+    "spendUnconfirmedNote": "(nur für Experten)",
+    "stakeSplitThreshold": "Stake-Split-Schwelle:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Staking-Belohnungen automatisch kombinieren",
+    "coinControl": "Coin-Control-Funktionen aktivieren",
+    "showMasternodes": "Masternodes-Tab anzeigen",
+    "expert": "Experte"
+  },
+  "network": {
+    "title": "Netzwerk",
+    "mapPort": "Port mit UPnP mappen",
+    "allowIncoming": "Eingehende Verbindungen erlauben",
+    "proxy": "Proxy",
+    "connectProxy": "Über SOCKS5-Proxy verbinden (Standard-Proxy):",
+    "proxyIP": "Proxy-IP:",
+    "proxyPort": "Port",
+    "proxyHelp": "IP-Adresse des Proxys (z.B. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Ungültiges Format. Verwenden Sie IPv4:Port (127.0.0.1:9050) oder [IPv6]:Port"
+  },
+  "window": {
+    "title": "Fenster-Einstellungen",
+    "hideTrayIcon": "Tray-Symbol ausblenden",
+    "minimizeToTray": "In den Tray statt in die Taskleiste minimieren",
+    "minimizeOnClose": "Beim Schließen minimieren"
+  },
+  "display": {
+    "title": "Anzeige-Einstellungen",
+    "units": "Einheiten",
+    "unitLabel": "Einheit zur Betragsanzeige:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (Milli)",
+    "unitMicro": "uTWINS (Mikro)",
+    "decimalDigits": "Dezimalstellen:",
+    "thirdPartyTitle": "Drittanbieter-Transaktions-URLs",
+    "thirdPartyLabel": "URLs für Transaktionsinformationen:",
+    "thirdPartyHelp": "Verwenden Sie %s anstelle der Transaktions-ID. Mehrere URLs durch | trennen",
+    "transactionDisplay": "Transaktionsanzeige",
+    "hideOrphanStakes": "Verwaiste Stakes in Transaktionslisten ausblenden",
+    "hideZeroBalances": "Nullsalden ausblenden"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "apply": "Übernehmen",
+    "resetDefaults": "Auf Standard zurücksetzen"
+  },
+  "messages": {
+    "saved": "Einstellungen erfolgreich gespeichert",
+    "restartRequired": "Die Sprachänderung wird nach einem Neustart des Wallets wirksam.",
+    "restartRequiredTitle": "Neustart erforderlich",
+    "resetConfirm": "Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte zurücksetzen möchten?"
+  },
+  "overridden": {
+    "title": "Einstellung überschrieben",
+    "message": "Diese Einstellung wird durch Befehlszeilenoption überschrieben: {{flag}}"
+  }
+}

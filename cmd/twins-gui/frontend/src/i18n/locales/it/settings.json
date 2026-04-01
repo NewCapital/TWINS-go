@@ -1,0 +1,85 @@
+{
+  "title": "Opzioni",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Finestra"
+  },
+  "common": {
+    "requiresRestart": "Richiede riavvio",
+    "overriddenBy": "Sovrascritto da {{flag}}",
+    "custom": "personalizzato"
+  },
+  "main": {
+    "title": "Impostazioni principali",
+    "database": "Database",
+    "userInterface": "Interfaccia utente",
+    "databaseCache": "Dimensione cache database:",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Thread di verifica script:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "Lingua dell'interfaccia:",
+    "languageDefault": "(predefinito)",
+    "languageNote": "Lingua attiva: {{language}}",
+    "theme": "Tema dell'interfaccia:"
+  },
+  "wallet": {
+    "title": "Portafoglio",
+    "spendUnconfirmed": "Spendi resto non confermato",
+    "spendUnconfirmedNote": "(solo esperti)",
+    "stakeSplitThreshold": "Soglia di divisione stake:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Combina automaticamente le ricompense di staking",
+    "coinControl": "Abilita funzioni di controllo monete",
+    "showMasternodes": "Mostra scheda Masternodes",
+    "expert": "Esperto"
+  },
+  "network": {
+    "title": "Rete",
+    "mapPort": "Mappa porta usando UPnP",
+    "allowIncoming": "Consenti connessioni in entrata",
+    "proxy": "Proxy",
+    "connectProxy": "Connetti tramite proxy SOCKS5 (proxy predefinito):",
+    "proxyIP": "IP del proxy:",
+    "proxyPort": "Porta",
+    "proxyHelp": "Indirizzo IP del proxy (es. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Formato non valido. Usa IPv4:porta (127.0.0.1:9050) o [IPv6]:porta"
+  },
+  "window": {
+    "title": "Impostazioni finestra",
+    "hideTrayIcon": "Nascondi icona nel vassoio",
+    "minimizeToTray": "Riduci nel vassoio invece della barra delle applicazioni",
+    "minimizeOnClose": "Riduci alla chiusura"
+  },
+  "display": {
+    "title": "Impostazioni visualizzazione",
+    "units": "Unità",
+    "unitLabel": "Unità per mostrare gli importi:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Cifre decimali:",
+    "thirdPartyTitle": "URL transazioni di terze parti",
+    "thirdPartyLabel": "URL per informazioni transazioni:",
+    "thirdPartyHelp": "Usa %s al posto dell'ID transazione. URL multipli separati da |",
+    "transactionDisplay": "Visualizzazione transazioni",
+    "hideOrphanStakes": "Nascondi stake orfani nelle liste transazioni",
+    "hideZeroBalances": "Nascondi saldi zero"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Annulla",
+    "apply": "Applica",
+    "resetDefaults": "Ripristina predefiniti"
+  },
+  "messages": {
+    "saved": "Impostazioni salvate con successo",
+    "restartRequired": "Il cambio di lingua avrà effetto dopo il riavvio del portafoglio.",
+    "restartRequiredTitle": "Riavvio richiesto",
+    "resetConfirm": "Sei sicuro di voler ripristinare tutte le impostazioni ai valori predefiniti?"
+  },
+  "overridden": {
+    "title": "Impostazione sovrascritta",
+    "message": "Questa impostazione è sovrascritta dall'opzione della riga di comando: {{flag}}"
+  }
+}

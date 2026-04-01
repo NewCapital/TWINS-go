@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Кошелек",
+    "version": "Версия {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Отмена",
+    "apply": "Применить",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "copy": "Копировать",
+    "copyAddress": "Копировать адрес",
+    "paste": "Вставить из буфера обмена",
+    "addressBook": "Выбрать из адресной книги",
+    "max": "Макс",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "refresh": "Обновить",
+    "reset": "Сбросить",
+    "confirm": "Подтвердить",
+    "yes": "Да",
+    "no": "Нет",
+    "back": "Назад",
+    "next": "Далее",
+    "done": "Готово",
+    "dismiss": "Закрыть",
+    "retry": "Повторить",
+    "retryConnection": "Повторить подключение"
+  },
+  "navigation": {
+    "overview": "Обзор",
+    "send": "Отправить",
+    "receive": "Получить",
+    "transactions": "Транзакции",
+    "masternodes": "Мастерноды",
+    "explorer": "Обозреватель",
+    "staking": "Стейкинг",
+    "privacy": "Конфиденциальность"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Загрузка...",
+    "success": "Успешно",
+    "failed": "Ошибка",
+    "error": "Ошибка",
+    "connected": "Подключено",
+    "connecting": "Подключение...",
+    "disconnected": "Отключено",
+    "offline": "Не в сети",
+    "syncing": "Синхронизация...",
+    "synced": "Синхронизировано",
+    "outOfSync": "(не синхронизировано)",
+    "upToDate": "Актуально"
+  },
+  "errors": {
+    "generic": "Произошла ошибка",
+    "network": "Ошибка сети",
+    "timeout": "Время ожидания истекло",
+    "notFound": "Не найдено",
+    "invalidInput": "Неверный ввод",
+    "unauthorized": "Не авторизован"
+  },
+  "time": {
+    "seconds": "{{count}} секунда",
+    "seconds_other": "{{count}} секунд",
+    "minutes": "{{count}} минута",
+    "minutes_other": "{{count}} минут",
+    "hours": "{{count}} час",
+    "hours_other": "{{count}} часов",
+    "days": "{{count}} день",
+    "days_other": "{{count}} дней",
+    "ago": "{{time}} назад",
+    "never": "Никогда"
+  },
+  "confirmDialog": {
+    "areYouSure": "Вы уверены?",
+    "cannotUndo": "Это действие нельзя отменить."
+  },
+  "statusBar": {
+    "synchronizing": "Синхронизация с сетью...",
+    "scanningBlock": "Сканирование блока {{height}}",
+    "upToDate": "Актуально",
+    "hdEnabled": "HD-кошелек включен",
+    "torEnabled": "Tor включен",
+    "walletEncrypted": "Кошелек зашифрован",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Кошелек не зашифрован",
+    "stakingActive": "Стейкинг активен",
+    "stakingInactive": "Стейкинг неактивен",
+    "connections": "{{count}} сетевое подключение",
+    "connections_other": "{{count}} сетевых подключений"
+  },
+  "p2pError": {
+    "title": "Ошибка сетевого подключения",
+    "failedToConnect": "Не удалось подключиться к сети TWINS:",
+    "checkConnection": "Пожалуйста, проверьте подключение к интернету и настройки брандмауэра. Кошелек продолжит попытки подключения в фоновом режиме."
+  },
+  "intro": {
+    "welcome": "Добро пожаловать в TWINS",
+    "welcomeSubtitle": "Официальный криптовалютный кошелек TWINS",
+    "chooseDataDir": "Выберите каталог данных",
+    "dataDirDescription": "TWINS будет хранить данные в указанном ниже каталоге. Сюда входят данные блокчейна, файлы кошелька и конфигурация.",
+    "defaultDir": "Использовать каталог по умолчанию",
+    "customDir": "Использовать пользовательский каталог",
+    "browse": "Обзор...",
+    "spaceRequired": "Требуется не менее {{size}} ГБ дискового пространства.",
+    "getStarted": "Начать",
+    "continue": "Продолжить"
+  },
+  "shutdown": {
+    "title": "Завершение работы",
+    "message": "Кошелек TWINS завершает работу...",
+    "pleaseWait": "Пожалуйста, подождите, пока кошелек безопасно закроется.",
+    "savingData": "Сохранение данных кошелька...",
+    "closingConnections": "Закрытие сетевых подключений..."
+  },
+  "loading": {
+    "default": "Загрузка...",
+    "wallet": "Загрузка кошелька...",
+    "transactions": "Загрузка транзакций...",
+    "blocks": "Загрузка блоков...",
+    "masternodes": "Загрузка мастернод...",
+    "initializing": "Инициализация..."
+  },
+  "explorer": {
+    "title": "Обозреватель",
+    "blocks": "Блоки",
+    "transactions": "Транзакции",
+    "addresses": "Адреса",
+    "search": "Поиск",
+    "searchPlaceholder": "Поиск по высоте блока, хешу, TxID или адресу...",
+    "height": "Высота",
+    "hash": "Хеш",
+    "time": "Время",
+    "age": "Возраст",
+    "txCount": "Txn",
+    "size": "Размер",
+    "confirmations": "Подтверждения",
+    "difficulty": "Сложность",
+    "noBlocks": "Блоки не найдены",
+    "noTransactions": "Транзакции не найдены",
+    "blockDetails": "Детали блока",
+    "transactionDetails": "Детали транзакции",
+    "addressDetails": "Детали адреса",
+    "inputs": "Входы",
+    "outputs": "Выходы",
+    "value": "Значение",
+    "from": "От",
+    "to": "Кому",
+    "viewAll": "Показать все"
+  },
+  "staking": {
+    "title": "Стейкинг",
+    "enabled": "Стейкинг включен",
+    "disabled": "Стейкинг отключен",
+    "stakingBalance": "Баланс стейкинга",
+    "immatureBalance": "Незрелый баланс"
+  },
+  "privacy": {
+    "title": "Конфиденциальность",
+    "mint": "Чеканка",
+    "spend": "Потратить",
+    "balance": "Приватный баланс",
+    "denominations": "Номиналы"
+  },
+  "notifications": {
+    "newTransaction": "Новая транзакция",
+    "transactionReceived": "Получено {{amount}} TWINS",
+    "transactionSent": "Отправлено {{amount}} TWINS"
+  }
+}

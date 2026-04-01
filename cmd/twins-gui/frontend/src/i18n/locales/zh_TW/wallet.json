@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "概覽",
+    "recentTransactions": "最近交易"
+  },
+  "balance": {
+    "title": "餘額",
+    "combined": "合併餘額",
+    "twins": "TWINS 餘額",
+    "total": "總計",
+    "totalBalance": "總餘額",
+    "available": "可用",
+    "pending": "待確認",
+    "immature": "未成熟",
+    "locked": "已鎖定",
+    "watchOnly": "僅觀察",
+    "spendable": "可花費"
+  },
+  "send": {
+    "title": "發送",
+    "payTo": "付款至",
+    "payToPlaceholder": "輸入 TWINS 位址 (例如 D...)",
+    "label": "標記",
+    "labelPlaceholder": "為此位址輸入標記",
+    "amount": "金額",
+    "amountPlaceholder": "0.00",
+    "message": "訊息",
+    "messagePlaceholder": "輸入訊息（選填）",
+    "coinControl": {
+      "title": "幣控制功能",
+      "inputs": "輸入",
+      "customChangeAddress": "自訂找零位址",
+      "customChangePlaceholder": "輸入自訂找零位址",
+      "splitUtxo": "拆分區塊",
+      "splitThreshold": "之後",
+      "utxoSize": "UTXO 大小"
+    },
+    "recipients": {
+      "add": "新增收款人",
+      "remove": "移除此項目",
+      "useMaximum": "使用可用餘額",
+      "subtractFee": "從金額中扣除手續費"
+    },
+    "fee": {
+      "label": "交易手續費",
+      "normal": "一般",
+      "fast": "快速",
+      "recommended": "建議",
+      "custom": "自訂",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "總手續費：{{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "收款人總計",
+      "estimatedFee": "預估手續費",
+      "afterFee": "扣除手續費後",
+      "balance": "餘額：{{amount}}"
+    },
+    "buttons": {
+      "send": "發送",
+      "clearAll": "清除全部"
+    },
+    "errors": {
+      "invalidAddress": "無效的 TWINS 位址格式",
+      "amountRequired": "必須輸入金額",
+      "amountTooLow": "金額必須至少 {{min}} TWINS 以避免微塵",
+      "insufficientFunds": "餘額不足",
+      "noRecipients": "請新增至少一位收款人"
+    },
+    "confirmation": {
+      "title": "確認交易",
+      "recipient": "收款人",
+      "recipients": "收款人",
+      "amount": "金額",
+      "totalAmount": "總金額",
+      "fee": "手續費",
+      "transactionFee": "交易手續費",
+      "total": "總計",
+      "grandTotal": "合計",
+      "walletPassphrase": "錢包密碼",
+      "passphrasePlaceholder": "輸入錢包密碼",
+      "passphraseRequired": "加密錢包需要密碼",
+      "showPassphrase": "顯示密碼",
+      "hidePassphrase": "隱藏密碼",
+      "capsLockOn": "Caps Lock 已開啟",
+      "largeTransactionWarning": "警告：這是大額交易。請仔細核對所有詳情。",
+      "confirmSend": "確認發送",
+      "sending": "發送中..."
+    },
+    "success": {
+      "title": "交易已發送",
+      "message": "交易已傳送至網路。",
+      "txid": "交易 ID",
+      "copyTxid": "複製 TXID",
+      "viewInExplorer": "在瀏覽器中查看",
+      "copiedToClipboard": "已複製到剪貼簿！",
+      "copyFailed": "複製失敗 - 請手動複製"
+    }
+  },
+  "receive": {
+    "title": "接收",
+    "currentAddress": "目前接收位址",
+    "requestPayment": "請求付款",
+    "requestingPayment": "建立中...",
+    "newAddress": "產生新位址",
+    "addressList": "接收位址",
+    "copyAddress": "複製位址到剪貼簿",
+    "showQR": "顯示 QR 碼",
+    "qrCode": "QR 碼",
+    "amount": "金額",
+    "label": "標記",
+    "message": "訊息",
+    "address": "位址",
+    "reusePrevious": "重複使用現有接收位址（不建議）",
+    "formInfo": "使用此表單請求付款。所有欄位皆為<1>選填</1>。",
+    "clear": "清除",
+    "receivingAddresses": "接收位址",
+    "requestedHistory": "付款請求記錄",
+    "noRequests": "尚無付款請求",
+    "show": "顯示",
+    "remove": "移除",
+    "contextMenu": {
+      "copyLabel": "複製標記",
+      "copyAddress": "複製位址",
+      "copyMessage": "複製訊息",
+      "copyAmount": "複製金額"
+    },
+    "table": {
+      "date": "日期",
+      "label": "標記",
+      "address": "位址",
+      "message": "訊息",
+      "amountTwins": "金額 (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "記錄",
+    "recent": "最近交易",
+    "all": "所有交易",
+    "noTransactions": "找不到交易",
+    "loading": "正在載入交易...",
+    "error": "錯誤：{{message}}",
+    "type": {
+      "all": "全部",
+      "mostCommon": "最常見",
+      "sent": "發送至",
+      "received": "接收自",
+      "toYourself": "發送給自己",
+      "mined": "挖礦",
+      "minted": "鑄造",
+      "masternode": "主節點獎勵",
+      "other": "其他"
+    },
+    "status": {
+      "confirmed": "已確認",
+      "unconfirmed": "未確認",
+      "pending": "待確認",
+      "conflicted": "衝突",
+      "abandoned": "已放棄",
+      "confirmations": "{{count}} 次確認",
+      "confirmations_other": "{{count}} 次確認"
+    },
+    "details": {
+      "title": "交易詳情",
+      "txid": "交易 ID",
+      "date": "日期",
+      "status": "狀態",
+      "amount": "金額",
+      "fee": "手續費",
+      "from": "來自",
+      "to": "發送至",
+      "confirmations": "確認數",
+      "blockHash": "區塊雜湊",
+      "blockHeight": "區塊高度"
+    },
+    "filters": {
+      "all": "全部",
+      "today": "今天",
+      "thisWeek": "本週",
+      "thisMonth": "本月",
+      "lastMonth": "上個月",
+      "thisYear": "今年",
+      "range": "範圍...",
+      "dateRange": "日期範圍",
+      "type": "類型",
+      "minAmount": "最小金額",
+      "search": "輸入位址或標記搜尋",
+      "rangeTo": "至"
+    },
+    "table": {
+      "date": "日期",
+      "type": "類型",
+      "address": "位址",
+      "amount": "金額"
+    },
+    "contextMenu": {
+      "copyAddress": "複製位址",
+      "copyLabel": "複製標記",
+      "copyAmount": "複製金額",
+      "copyTxId": "複製交易 ID",
+      "editLabel": "編輯標記",
+      "showDetails": "顯示交易詳情",
+      "hideOrphanStakes": "隱藏孤立質押"
+    },
+    "footer": {
+      "selectedAmount": "已選金額：",
+      "transactions": "{{count}} 筆交易",
+      "transactions_other": "{{count}} 筆交易",
+      "export": "匯出"
+    },
+    "notifications": {
+      "noTransactionsToExport": "沒有可匯出的交易",
+      "noTransactionsMessage": "沒有符合目前篩選條件的交易。",
+      "exportSuccess": "匯出成功",
+      "exportedCount": "已匯出 {{count}} 筆交易至 CSV 檔案",
+      "exportedCount_other": "已匯出 {{count}} 筆交易至 CSV 檔案",
+      "exportFailed": "匯出失敗"
+    }
+  },
+  "addressBook": {
+    "title": "位址簿",
+    "add": "新增位址",
+    "edit": "編輯位址",
+    "delete": "刪除位址",
+    "label": "標記",
+    "address": "位址",
+    "noAddresses": "沒有已儲存的位址"
+  }
+}

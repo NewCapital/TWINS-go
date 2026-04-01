@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "ОБЗОР",
+    "recentTransactions": "Последние транзакции"
+  },
+  "balance": {
+    "title": "Баланс",
+    "combined": "Общий баланс",
+    "twins": "Баланс TWINS",
+    "total": "Всего",
+    "totalBalance": "Общий баланс",
+    "available": "Доступно",
+    "pending": "Ожидает",
+    "immature": "Незрелый",
+    "locked": "Заблокировано",
+    "watchOnly": "Только просмотр",
+    "spendable": "Доступно для траты"
+  },
+  "send": {
+    "title": "Отправить",
+    "payTo": "Получатель",
+    "payToPlaceholder": "Введите адрес TWINS (например, D...)",
+    "label": "Метка",
+    "labelPlaceholder": "Введите метку для этого адреса",
+    "amount": "Сумма",
+    "amountPlaceholder": "0,00",
+    "message": "Сообщение",
+    "messagePlaceholder": "Введите сообщение (опционально)",
+    "coinControl": {
+      "title": "Функции контроля монет",
+      "inputs": "Входы",
+      "customChangeAddress": "Пользовательский адрес сдачи",
+      "customChangePlaceholder": "Введите пользовательский адрес сдачи",
+      "splitUtxo": "Разделить блок",
+      "splitThreshold": "после",
+      "utxoSize": "Размер UTXO"
+    },
+    "recipients": {
+      "add": "Добавить получателя",
+      "remove": "Удалить эту запись",
+      "useMaximum": "Использовать доступный баланс",
+      "subtractFee": "Вычесть комиссию из суммы"
+    },
+    "fee": {
+      "label": "Комиссия транзакции",
+      "normal": "Обычная",
+      "fast": "Быстрая",
+      "recommended": "Рекомендуемая",
+      "custom": "Пользовательская",
+      "perKB": "{{rate}} TWINS/кБ",
+      "total": "Общая комиссия: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Итого получателям",
+      "estimatedFee": "Расчетная комиссия",
+      "afterFee": "После комиссии",
+      "balance": "Баланс: {{amount}}"
+    },
+    "buttons": {
+      "send": "Отправить",
+      "clearAll": "Очистить все"
+    },
+    "errors": {
+      "invalidAddress": "Неверный формат адреса TWINS",
+      "amountRequired": "Требуется сумма",
+      "amountTooLow": "Сумма должна быть не менее {{min}} TWINS во избежание пыли",
+      "insufficientFunds": "Недостаточно средств",
+      "noRecipients": "Пожалуйста, добавьте хотя бы одного получателя"
+    },
+    "confirmation": {
+      "title": "Подтвердить транзакцию",
+      "recipient": "Кому",
+      "recipients": "Получатели",
+      "amount": "Сумма",
+      "totalAmount": "Общая сумма",
+      "fee": "Комиссия",
+      "transactionFee": "Комиссия транзакции",
+      "total": "Итого",
+      "grandTotal": "Всего",
+      "walletPassphrase": "Пароль кошелька",
+      "passphrasePlaceholder": "Введите пароль кошелька",
+      "passphraseRequired": "Пароль требуется для зашифрованных кошельков",
+      "showPassphrase": "Показать пароль",
+      "hidePassphrase": "Скрыть пароль",
+      "capsLockOn": "Caps Lock ВКЛЮЧЕН",
+      "largeTransactionWarning": "Внимание: это крупная транзакция. Пожалуйста, внимательно проверьте все детали.",
+      "confirmSend": "Подтвердить отправку",
+      "sending": "Отправка..."
+    },
+    "success": {
+      "title": "Транзакция успешно отправлена",
+      "message": "Транзакция была отправлена в сеть.",
+      "txid": "ID транзакции",
+      "copyTxid": "Копировать TXID",
+      "viewInExplorer": "Посмотреть в обозревателе",
+      "copiedToClipboard": "Скопировано в буфер обмена!",
+      "copyFailed": "Не удалось скопировать - скопируйте вручную"
+    }
+  },
+  "receive": {
+    "title": "Получить",
+    "currentAddress": "Текущий адрес получения",
+    "requestPayment": "Запросить платеж",
+    "requestingPayment": "Создание...",
+    "newAddress": "Создать новый адрес",
+    "addressList": "Адреса получения",
+    "copyAddress": "Копировать адрес в буфер обмена",
+    "showQR": "Показать QR-код",
+    "qrCode": "QR-код",
+    "amount": "Сумма",
+    "label": "Метка",
+    "message": "Сообщение",
+    "address": "Адрес",
+    "reusePrevious": "Повторно использовать существующий адрес получения (не рекомендуется)",
+    "formInfo": "Используйте эту форму для запроса платежей. Все поля <1>необязательны</1>.",
+    "clear": "Очистить",
+    "receivingAddresses": "Адреса получения",
+    "requestedHistory": "История запросов платежей",
+    "noRequests": "Запросов платежей пока нет",
+    "show": "Показать",
+    "remove": "Удалить",
+    "contextMenu": {
+      "copyLabel": "Копировать метку",
+      "copyAddress": "Копировать адрес",
+      "copyMessage": "Копировать сообщение",
+      "copyAmount": "Копировать сумму"
+    },
+    "table": {
+      "date": "Дата",
+      "label": "Метка",
+      "address": "Адрес",
+      "message": "Сообщение",
+      "amountTwins": "Сумма (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "ИСТОРИЯ",
+    "recent": "Последние транзакции",
+    "all": "Все транзакции",
+    "noTransactions": "Транзакции не найдены",
+    "loading": "Загрузка транзакций...",
+    "error": "Ошибка: {{message}}",
+    "type": {
+      "all": "Все",
+      "mostCommon": "Самые частые",
+      "sent": "Отправлено на",
+      "received": "Получено с",
+      "toYourself": "Самому себе",
+      "mined": "Добыто",
+      "minted": "Отчеканено",
+      "masternode": "Награда мастерноды",
+      "other": "Другое"
+    },
+    "status": {
+      "confirmed": "Подтверждено",
+      "unconfirmed": "Не подтверждено",
+      "pending": "Ожидает",
+      "conflicted": "Конфликт",
+      "abandoned": "Отменено",
+      "confirmations": "{{count}} подтверждение",
+      "confirmations_other": "{{count}} подтверждений"
+    },
+    "details": {
+      "title": "Детали транзакции",
+      "txid": "ID транзакции",
+      "date": "Дата",
+      "status": "Статус",
+      "amount": "Сумма",
+      "fee": "Комиссия",
+      "from": "От",
+      "to": "Кому",
+      "confirmations": "Подтверждения",
+      "blockHash": "Хеш блока",
+      "blockHeight": "Высота блока"
+    },
+    "filters": {
+      "all": "Все",
+      "today": "Сегодня",
+      "thisWeek": "Эта неделя",
+      "thisMonth": "Этот месяц",
+      "lastMonth": "Прошлый месяц",
+      "thisYear": "Этот год",
+      "range": "Диапазон...",
+      "dateRange": "Диапазон дат",
+      "type": "Тип",
+      "minAmount": "Мин. сумма",
+      "search": "Поиск по адресу или метке",
+      "rangeTo": "до"
+    },
+    "table": {
+      "date": "Дата",
+      "type": "Тип",
+      "address": "Адрес",
+      "amount": "Сумма"
+    },
+    "contextMenu": {
+      "copyAddress": "Копировать адрес",
+      "copyLabel": "Копировать метку",
+      "copyAmount": "Копировать сумму",
+      "copyTxId": "Копировать ID транзакции",
+      "editLabel": "Редактировать метку",
+      "showDetails": "Показать детали транзакции",
+      "hideOrphanStakes": "Скрыть осиротевшие стейки"
+    },
+    "footer": {
+      "selectedAmount": "Выбранная сумма:",
+      "transactions": "{{count}} транзакция",
+      "transactions_other": "{{count}} транзакций",
+      "export": "Экспорт"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Нет транзакций для экспорта",
+      "noTransactionsMessage": "Нет транзакций, соответствующих текущим фильтрам.",
+      "exportSuccess": "Экспорт успешен",
+      "exportedCount": "Экспортировано {{count}} транзакция в CSV файл",
+      "exportedCount_other": "Экспортировано {{count}} транзакций в CSV файл",
+      "exportFailed": "Ошибка экспорта"
+    }
+  },
+  "addressBook": {
+    "title": "Адресная книга",
+    "add": "Добавить адрес",
+    "edit": "Редактировать адрес",
+    "delete": "Удалить адрес",
+    "label": "Метка",
+    "address": "Адрес",
+    "noAddresses": "Адреса не сохранены"
+  }
+}

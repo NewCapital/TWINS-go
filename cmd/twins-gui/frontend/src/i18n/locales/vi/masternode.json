@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Masternodes của tôi",
+  "allMasternodes": "Masternodes mạng",
+  "count": {
+    "total": "Tổng: {{count}}",
+    "enabled": "Đã bật: {{count}}",
+    "missing": "Thiếu: {{count}}"
+  },
+  "table": {
+    "alias": "Bí danh",
+    "address": "Địa chỉ",
+    "protocol": "Giao thức",
+    "status": "Trạng thái",
+    "activeTime": "Thời gian hoạt động",
+    "lastSeen": "Lần cuối nhìn thấy",
+    "pubkey": "Khóa công khai",
+    "tier": "Cấp",
+    "rank": "Hạng"
+  },
+  "status": {
+    "enabled": "ĐÃ BẬT",
+    "missing": "THIẾU",
+    "preEnabled": "TRƯỚC_BẬT",
+    "expired": "HẾT HẠN",
+    "newStartRequired": "CẦN_KHỞI_ĐỘNG_MỚI",
+    "updateRequired": "CẦN_CẬP_NHẬT",
+    "watchdogExpired": "WATCHDOG_HẾT_HẠN",
+    "poseBan": "POSE_CẤM",
+    "unknown": "KHÔNG RÕ"
+  },
+  "tiers": {
+    "bronze": "Đồng",
+    "silver": "Bạc",
+    "gold": "Vàng",
+    "platinum": "Bạch kim",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Bắt đầu",
+    "startAlias": "Bắt đầu bí danh",
+    "startAll": "Bắt đầu tất cả",
+    "startMissing": "Bắt đầu THIẾU",
+    "stop": "Dừng",
+    "update": "Cập nhật trạng thái",
+    "edit": "Sửa",
+    "remove": "Xóa",
+    "copyProTx": "Sao chép hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Bắt đầu masternode",
+      "message": "Bạn có chắc muốn bắt đầu masternode \"{{alias}}\"?",
+      "messageAll": "Bạn có chắc muốn bắt đầu TẤT CẢ masternodes?",
+      "messageMissing": "Bạn có chắc muốn bắt đầu tất cả masternodes THIẾU?"
+    },
+    "removeConfirm": {
+      "title": "Xóa masternode",
+      "message": "Bạn có chắc muốn xóa masternode \"{{alias}}\"? Hành động này không thể hoàn tác."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" đã bắt đầu thành công",
+    "startAllSuccess": "Tất cả masternodes đã bắt đầu thành công",
+    "startMissingSuccess": "{{count}} masternode thiếu đã bắt đầu thành công",
+    "noMissingToStart": "Không có masternode thiếu để bắt đầu",
+    "startFailed": "Không thể bắt đầu masternode: {{error}}",
+    "startAllFailed": "Không thể bắt đầu tất cả masternodes: {{error}}",
+    "startMissingFailed": "Không thể bắt đầu masternodes thiếu: {{error}}",
+    "fetchFailed": "Không thể lấy masternodes",
+    "updateSuccess": "Trạng thái masternode đã cập nhật",
+    "removeSuccess": "Masternode \"{{alias}}\" đã xóa"
+  },
+  "note": {
+    "title": "Lưu ý:",
+    "line1": "Trạng thái masternodes trong ví cục bộ có thể hơi không chính xác.",
+    "line2": "Luôn đợi ví đồng bộ dữ liệu bổ sung, sau đó xác minh từ một nút khác,",
+    "line3": "nếu nút của bạn nên chạy nhưng bạn vẫn thấy \"THIẾU\" trong trường trạng thái."
+  },
+  "autoRefresh": "Tự động làm mới sau {{seconds}}s",
+  "autoRefreshStatus": "Trạng thái sẽ tự động cập nhật sau (giây):",
+  "noMasternodes": "Không có masternodes được cấu hình",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

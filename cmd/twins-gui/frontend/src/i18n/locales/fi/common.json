@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Lompakko",
+    "version": "Versio {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Peruuta",
+    "apply": "Käytä",
+    "close": "Sulje",
+    "save": "Tallenna",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "copy": "Kopioi",
+    "copyAddress": "Kopioi osoite",
+    "paste": "Liitä leikepöydältä",
+    "addressBook": "Valitse osoitekirjasta",
+    "max": "Maksimi",
+    "export": "Vie",
+    "import": "Tuo",
+    "refresh": "Päivitä",
+    "reset": "Nollaa",
+    "confirm": "Vahvista",
+    "yes": "Kyllä",
+    "no": "Ei",
+    "back": "Takaisin",
+    "next": "Seuraava",
+    "done": "Valmis",
+    "dismiss": "Hylkää",
+    "retry": "Yritä uudelleen",
+    "retryConnection": "Yritä yhteyttä uudelleen"
+  },
+  "navigation": {
+    "overview": "Yleiskatsaus",
+    "send": "Lähetä",
+    "receive": "Vastaanota",
+    "transactions": "Tapahtumat",
+    "masternodes": "Masternodet",
+    "explorer": "Selain",
+    "staking": "Panostus",
+    "privacy": "Yksityisyys"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Ladataan...",
+    "success": "Onnistui",
+    "failed": "Epäonnistui",
+    "error": "Virhe",
+    "connected": "Yhdistetty",
+    "connecting": "Yhdistetään...",
+    "disconnected": "Yhteys katkaistu",
+    "offline": "Offline",
+    "syncing": "Synkronoidaan...",
+    "synced": "Synkronoitu",
+    "outOfSync": "(ei synkronoitu)",
+    "upToDate": "Ajan tasalla"
+  },
+  "errors": {
+    "generic": "Tapahtui virhe",
+    "network": "Verkkovirhe",
+    "timeout": "Pyyntö aikakatkaistiin",
+    "notFound": "Ei löytynyt",
+    "invalidInput": "Virheellinen syöte",
+    "unauthorized": "Ei valtuutettu"
+  },
+  "time": {
+    "seconds": "{{count}} sekunti",
+    "seconds_other": "{{count}} sekuntia",
+    "minutes": "{{count}} minuutti",
+    "minutes_other": "{{count}} minuuttia",
+    "hours": "{{count}} tunti",
+    "hours_other": "{{count}} tuntia",
+    "days": "{{count}} päivä",
+    "days_other": "{{count}} päivää",
+    "ago": "{{time}} sitten",
+    "never": "Ei koskaan"
+  },
+  "confirmDialog": {
+    "areYouSure": "Oletko varma?",
+    "cannotUndo": "Tätä toimintoa ei voi kumota."
+  },
+  "statusBar": {
+    "synchronizing": "Synkronoidaan verkon kanssa...",
+    "scanningBlock": "Skannataan lohkoa {{height}}",
+    "upToDate": "Ajan tasalla",
+    "hdEnabled": "HD-lompakko käytössä",
+    "torEnabled": "Tor käytössä",
+    "walletEncrypted": "Lompakko salattu",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Lompakko ei salattu",
+    "stakingActive": "Panostus aktiivinen",
+    "stakingInactive": "Panostus ei aktiivinen",
+    "connections": "{{count}} verkkoyhteys",
+    "connections_other": "{{count}} verkkoyhteyttä"
+  },
+  "p2pError": {
+    "title": "Verkkoyhteyden Virhe",
+    "failedToConnect": "Yhdistäminen TWINS-verkkoon epäonnistui:",
+    "checkConnection": "Tarkista internet-yhteytesi ja palomuuriasetukset. Lompakko jatkaa yhdistämisyritystä taustalla."
+  },
+  "intro": {
+    "welcome": "Tervetuloa TWINSiin",
+    "welcomeSubtitle": "Virallinen TWINS kryptovaluutta lompakko",
+    "chooseDataDir": "Valitse datahakemisto",
+    "dataDirDescription": "TWINS tallentaa tietonsa alla olevaan hakemistoon. Tämä sisältää lohkoketjudatan, lompakkotiedostot ja asetukset.",
+    "defaultDir": "Käytä oletushakemistoa",
+    "customDir": "Käytä mukautettua hakemistoa",
+    "browse": "Selaa...",
+    "spaceRequired": "Vähintään {{size}} GB levytilaa vaaditaan.",
+    "getStarted": "Aloita",
+    "continue": "Jatka"
+  },
+  "shutdown": {
+    "title": "Sammutetaan",
+    "message": "TWINS Lompakko sammuu...",
+    "pleaseWait": "Odota kun lompakko sulkeutuu turvallisesti.",
+    "savingData": "Tallennetaan lompakkodataa...",
+    "closingConnections": "Suljetaan verkkoyhteyksiä..."
+  },
+  "loading": {
+    "default": "Ladataan...",
+    "wallet": "Ladataan lompakkoa...",
+    "transactions": "Ladataan tapahtumia...",
+    "blocks": "Ladataan lohkoja...",
+    "masternodes": "Ladataan masternodeja...",
+    "initializing": "Alustetaan..."
+  },
+  "explorer": {
+    "title": "Selain",
+    "blocks": "Lohkot",
+    "transactions": "Tapahtumat",
+    "addresses": "Osoitteet",
+    "search": "Etsi",
+    "searchPlaceholder": "Etsi lohkon korkeus, hash, txid tai osoite...",
+    "height": "Korkeus",
+    "hash": "Hash",
+    "time": "Aika",
+    "age": "Ikä",
+    "txCount": "Txs",
+    "size": "Koko",
+    "confirmations": "Vahvistukset",
+    "difficulty": "Vaikeus",
+    "noBlocks": "Lohkoja ei löytynyt",
+    "noTransactions": "Tapahtumia ei löytynyt",
+    "blockDetails": "Lohkon Tiedot",
+    "transactionDetails": "Tapahtuman Tiedot",
+    "addressDetails": "Osoitteen Tiedot",
+    "inputs": "Syötteet",
+    "outputs": "Tulosteet",
+    "value": "Arvo",
+    "from": "Lähettäjä",
+    "to": "Vastaanottaja",
+    "viewAll": "Näytä kaikki"
+  },
+  "staking": {
+    "title": "Panostus",
+    "enabled": "Panostus käytössä",
+    "disabled": "Panostus pois käytöstä",
+    "stakingBalance": "Panostussaldo",
+    "immatureBalance": "Epäkypsä saldo"
+  },
+  "privacy": {
+    "title": "Yksityisyys",
+    "mint": "Lyö",
+    "spend": "Käytä",
+    "balance": "Yksityinen saldo",
+    "denominations": "Nimellisarvot"
+  },
+  "notifications": {
+    "newTransaction": "Uusi tapahtuma",
+    "transactionReceived": "Vastaanotettu {{amount}} TWINS",
+    "transactionSent": "Lähetetty {{amount}} TWINS"
+  }
+}

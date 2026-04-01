@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "개요",
+    "recentTransactions": "최근 거래"
+  },
+  "balance": {
+    "title": "잔액",
+    "combined": "전체 잔액",
+    "twins": "TWINS 잔액",
+    "total": "총계",
+    "totalBalance": "총 잔액",
+    "available": "사용 가능",
+    "pending": "대기중",
+    "immature": "미완료",
+    "locked": "잠김",
+    "watchOnly": "읽기 전용",
+    "spendable": "출금 가능"
+  },
+  "send": {
+    "title": "보내기",
+    "payTo": "받는 주소",
+    "payToPlaceholder": "TWINS 주소 입력 (예: D...)",
+    "label": "라벨",
+    "labelPlaceholder": "이 주소의 라벨 입력",
+    "amount": "금액",
+    "amountPlaceholder": "0.00",
+    "message": "메시지",
+    "messagePlaceholder": "메시지 입력 (선택사항)",
+    "coinControl": {
+      "title": "코인 제어 기능",
+      "inputs": "입력",
+      "customChangeAddress": "사용자 지정 잔돈 주소",
+      "customChangePlaceholder": "사용자 지정 잔돈 주소 입력",
+      "splitUtxo": "블록 분할",
+      "splitThreshold": "이후",
+      "utxoSize": "UTXO 크기"
+    },
+    "recipients": {
+      "add": "받는 사람 추가",
+      "remove": "이 항목 삭제",
+      "useMaximum": "사용 가능한 잔액 사용",
+      "subtractFee": "금액에서 수수료 차감"
+    },
+    "fee": {
+      "label": "거래 수수료",
+      "normal": "보통",
+      "fast": "빠름",
+      "recommended": "권장",
+      "custom": "사용자 지정",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "총 수수료: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "받는 사람 총액",
+      "estimatedFee": "예상 수수료",
+      "afterFee": "수수료 후",
+      "balance": "잔액: {{amount}}"
+    },
+    "buttons": {
+      "send": "보내기",
+      "clearAll": "모두 지우기"
+    },
+    "errors": {
+      "invalidAddress": "잘못된 TWINS 주소 형식",
+      "amountRequired": "금액이 필요합니다",
+      "amountTooLow": "더스트를 피하려면 금액이 최소 {{min}} TWINS 이상이어야 합니다",
+      "insufficientFunds": "자금이 부족합니다",
+      "noRecipients": "받는 사람을 하나 이상 추가해주세요"
+    },
+    "confirmation": {
+      "title": "거래 확인",
+      "recipient": "받는 곳",
+      "recipients": "받는 사람",
+      "amount": "금액",
+      "totalAmount": "총 금액",
+      "fee": "수수료",
+      "transactionFee": "거래 수수료",
+      "total": "총계",
+      "grandTotal": "최종 금액",
+      "walletPassphrase": "지갑 암호",
+      "passphrasePlaceholder": "지갑 암호 입력",
+      "passphraseRequired": "암호화된 지갑에는 암호가 필요합니다",
+      "showPassphrase": "암호 표시",
+      "hidePassphrase": "암호 숨기기",
+      "capsLockOn": "Caps Lock이 켜져 있습니다",
+      "largeTransactionWarning": "경고: 이것은 큰 거래입니다. 모든 세부사항을 주의 깊게 확인해주세요.",
+      "confirmSend": "전송 확인",
+      "sending": "전송 중..."
+    },
+    "success": {
+      "title": "거래가 성공적으로 전송되었습니다",
+      "message": "거래가 네트워크에 전송되었습니다.",
+      "txid": "거래 ID",
+      "copyTxid": "TXID 복사",
+      "viewInExplorer": "탐색기에서 보기",
+      "copiedToClipboard": "클립보드에 복사되었습니다!",
+      "copyFailed": "복사 실패 - 수동으로 복사해주세요"
+    }
+  },
+  "receive": {
+    "title": "받기",
+    "currentAddress": "현재 받는 주소",
+    "requestPayment": "결제 요청",
+    "requestingPayment": "생성 중...",
+    "newAddress": "새 주소 생성",
+    "addressList": "받는 주소 목록",
+    "copyAddress": "주소를 클립보드에 복사",
+    "showQR": "QR 코드 표시",
+    "qrCode": "QR 코드",
+    "amount": "금액",
+    "label": "라벨",
+    "message": "메시지",
+    "address": "주소",
+    "reusePrevious": "기존 받는 주소 재사용 (권장하지 않음)",
+    "formInfo": "결제를 요청하려면 이 양식을 사용하세요. 모든 필드는 <1>선택사항</1>입니다.",
+    "clear": "지우기",
+    "receivingAddresses": "받는 주소",
+    "requestedHistory": "결제 요청 기록",
+    "noRequests": "결제 요청이 없습니다",
+    "show": "표시",
+    "remove": "삭제",
+    "contextMenu": {
+      "copyLabel": "라벨 복사",
+      "copyAddress": "주소 복사",
+      "copyMessage": "메시지 복사",
+      "copyAmount": "금액 복사"
+    },
+    "table": {
+      "date": "날짜",
+      "label": "라벨",
+      "address": "주소",
+      "message": "메시지",
+      "amountTwins": "금액 (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "거래내역",
+    "recent": "최근 거래",
+    "all": "모든 거래",
+    "noTransactions": "거래를 찾을 수 없습니다",
+    "loading": "거래내역 로딩 중...",
+    "error": "오류: {{message}}",
+    "type": {
+      "all": "전체",
+      "mostCommon": "기본",
+      "sent": "전송됨",
+      "received": "수신됨",
+      "toYourself": "자신에게",
+      "mined": "채굴됨",
+      "minted": "발행됨",
+      "masternode": "마스터노드 보상",
+      "other": "기타"
+    },
+    "status": {
+      "confirmed": "확인됨",
+      "unconfirmed": "미확인",
+      "pending": "대기중",
+      "conflicted": "충돌됨",
+      "abandoned": "포기됨",
+      "confirmations": "{{count}}회 확인",
+      "confirmations_other": "{{count}}회 확인"
+    },
+    "details": {
+      "title": "거래 상세정보",
+      "txid": "거래 ID",
+      "date": "날짜",
+      "status": "상태",
+      "amount": "금액",
+      "fee": "수수료",
+      "from": "보낸 곳",
+      "to": "받는 곳",
+      "confirmations": "확인",
+      "blockHash": "블록 해시",
+      "blockHeight": "블록 높이"
+    },
+    "filters": {
+      "all": "전체",
+      "today": "오늘",
+      "thisWeek": "이번 주",
+      "thisMonth": "이번 달",
+      "lastMonth": "지난 달",
+      "thisYear": "올해",
+      "range": "범위...",
+      "dateRange": "날짜 범위",
+      "type": "유형",
+      "minAmount": "최소 금액",
+      "search": "검색할 주소 또는 라벨 입력",
+      "rangeTo": "~"
+    },
+    "table": {
+      "date": "날짜",
+      "type": "유형",
+      "address": "주소",
+      "amount": "금액"
+    },
+    "contextMenu": {
+      "copyAddress": "주소 복사",
+      "copyLabel": "라벨 복사",
+      "copyAmount": "금액 복사",
+      "copyTxId": "거래 ID 복사",
+      "editLabel": "라벨 수정",
+      "showDetails": "거래 상세정보 표시",
+      "hideOrphanStakes": "고아 스테이크 숨기기"
+    },
+    "footer": {
+      "selectedAmount": "선택한 금액:",
+      "transactions": "{{count}}개 거래",
+      "transactions_other": "{{count}}개 거래",
+      "export": "내보내기"
+    },
+    "notifications": {
+      "noTransactionsToExport": "내보낼 거래가 없습니다",
+      "noTransactionsMessage": "현재 필터와 일치하는 거래가 없습니다.",
+      "exportSuccess": "내보내기 성공",
+      "exportedCount": "{{count}}개 거래를 CSV 파일로 내보냈습니다",
+      "exportedCount_other": "{{count}}개 거래를 CSV 파일로 내보냈습니다",
+      "exportFailed": "내보내기 실패"
+    }
+  },
+  "addressBook": {
+    "title": "주소록",
+    "add": "주소 추가",
+    "edit": "주소 수정",
+    "delete": "주소 삭제",
+    "label": "라벨",
+    "address": "주소",
+    "noAddresses": "저장된 주소가 없습니다"
+  }
+}

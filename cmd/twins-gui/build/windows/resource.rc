@@ -1,0 +1,6 @@
+// TWINS Wallet Windows resource file
+// Compiled by windres during cross-compilation to embed icon into .exe
+// ID 3 = Wails AppIconID (winc/app.go:19), used by Wails to set window/taskbar icon
+// ID 1 = Standard Windows shell icon (Explorer, Alt+Tab)
+3 ICON "appicon.ico"
+1 ICON "appicon.ico"

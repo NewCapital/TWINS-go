@@ -1,0 +1,179 @@
+{
+  "app": {
+    "name": "TWINS Tegnebog",
+    "version": "Version {{version}}"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Annuller",
+    "apply": "Anvend",
+    "close": "Luk",
+    "save": "Gem",
+    "delete": "Slet",
+    "edit": "Rediger",
+    "copy": "Kopiér",
+    "copyAddress": "Kopiér adresse",
+    "paste": "Indsæt fra udklipsholder",
+    "addressBook": "Vælg fra adressebog",
+    "max": "Maksimum",
+    "export": "Eksportér",
+    "import": "Importér",
+    "refresh": "Opdater",
+    "reset": "Nulstil",
+    "confirm": "Bekræft",
+    "yes": "Ja",
+    "no": "Nej",
+    "back": "Tilbage",
+    "next": "Næste",
+    "done": "Færdig",
+    "dismiss": "Afvis",
+    "retry": "Prøv igen",
+    "retryConnection": "Prøv forbindelse igen"
+  },
+  "navigation": {
+    "overview": "Oversigt",
+    "send": "Send",
+    "receive": "Modtag",
+    "transactions": "Transaktioner",
+    "masternodes": "Masternodes",
+    "explorer": "Stifinder",
+    "staking": "Staking",
+    "privacy": "Privatliv"
+  },
+  "units": {
+    "twins": "TWINS",
+    "mtwins": "mTWINS",
+    "utwins": "uTWINS"
+  },
+  "status": {
+    "loading": "Indlæser...",
+    "success": "Succes",
+    "failed": "Fejlet",
+    "error": "Fejl",
+    "connected": "Tilsluttet",
+    "connecting": "Tilslutter...",
+    "disconnected": "Frakoblet",
+    "offline": "Offline",
+    "syncing": "Synkroniserer...",
+    "synced": "Synkroniseret",
+    "outOfSync": "(ude af synkronisering)",
+    "upToDate": "Opdateret"
+  },
+  "errors": {
+    "generic": "Der opstod en fejl",
+    "network": "Netværksfejl",
+    "timeout": "Anmodningen fik timeout",
+    "notFound": "Ikke fundet",
+    "invalidInput": "Ugyldigt input",
+    "unauthorized": "Ikke autoriseret"
+  },
+  "time": {
+    "seconds": "{{count}} sekund",
+    "seconds_other": "{{count}} sekunder",
+    "minutes": "{{count}} minut",
+    "minutes_other": "{{count}} minutter",
+    "hours": "{{count}} time",
+    "hours_other": "{{count}} timer",
+    "days": "{{count}} dag",
+    "days_other": "{{count}} dage",
+    "ago": "{{time}} siden",
+    "never": "Aldrig"
+  },
+  "confirmDialog": {
+    "areYouSure": "Er du sikker?",
+    "cannotUndo": "Denne handling kan ikke fortrydes."
+  },
+  "statusBar": {
+    "synchronizing": "Synkroniserer med netværk...",
+    "scanningBlock": "Scanner blok {{height}}",
+    "upToDate": "Opdateret",
+    "hdEnabled": "HD-tegnebog aktiveret",
+    "torEnabled": "Tor aktiveret",
+    "walletEncrypted": "Tegnebog krypteret",
+    "walletUnlocked": "Wallet unlocked",
+    "walletStakingOnly": "Wallet unlocked for staking only",
+    "walletNotEncrypted": "Tegnebog ikke krypteret",
+    "stakingActive": "Staking aktiv",
+    "stakingInactive": "Staking inaktiv",
+    "connections": "{{count}} netværksforbindelse",
+    "connections_other": "{{count}} netværksforbindelser"
+  },
+  "p2pError": {
+    "title": "Netværksforbindelsesfejl",
+    "failedToConnect": "Kunne ikke oprette forbindelse til TWINS-netværket:",
+    "checkConnection": "Kontroller venligst din internetforbindelse og firewall-indstillinger. Tegnebogen vil fortsætte med at prøve at oprette forbindelse i baggrunden."
+  },
+  "intro": {
+    "welcome": "Velkommen til TWINS",
+    "welcomeSubtitle": "Den officielle TWINS kryptovaluta-tegnebog",
+    "chooseDataDir": "Vælg datamappe",
+    "dataDirDescription": "TWINS vil gemme sine data i mappen nedenfor. Dette inkluderer blockchain-data, tegnebogsfiler og konfiguration.",
+    "defaultDir": "Brug standard datamappe",
+    "customDir": "Brug brugerdefineret datamappe",
+    "browse": "Gennemse...",
+    "spaceRequired": "Mindst {{size}} GB diskplads er påkrævet.",
+    "getStarted": "Kom i gang",
+    "continue": "Fortsæt"
+  },
+  "shutdown": {
+    "title": "Lukker ned",
+    "message": "TWINS Tegnebog lukker ned...",
+    "pleaseWait": "Vent venligst mens tegnebogen lukker sikkert.",
+    "savingData": "Gemmer tegnebogsdata...",
+    "closingConnections": "Lukker netværksforbindelser..."
+  },
+  "loading": {
+    "default": "Indlæser...",
+    "wallet": "Indlæser tegnebog...",
+    "transactions": "Indlæser transaktioner...",
+    "blocks": "Indlæser blokke...",
+    "masternodes": "Indlæser masternodes...",
+    "initializing": "Initialiserer..."
+  },
+  "explorer": {
+    "title": "Stifinder",
+    "blocks": "Blokke",
+    "transactions": "Transaktioner",
+    "addresses": "Adresser",
+    "search": "Søg",
+    "searchPlaceholder": "Søg efter blokhøjde, hash, txid eller adresse...",
+    "height": "Højde",
+    "hash": "Hash",
+    "time": "Tid",
+    "age": "Alder",
+    "txCount": "Txns",
+    "size": "Størrelse",
+    "confirmations": "Bekræftelser",
+    "difficulty": "Sværhedsgrad",
+    "noBlocks": "Ingen blokke fundet",
+    "noTransactions": "Ingen transaktioner fundet",
+    "blockDetails": "Blokdetaljer",
+    "transactionDetails": "Transaktionsdetaljer",
+    "addressDetails": "Adressedetaljer",
+    "inputs": "Input",
+    "outputs": "Output",
+    "value": "Værdi",
+    "from": "Fra",
+    "to": "Til",
+    "viewAll": "Vis alle"
+  },
+  "staking": {
+    "title": "Staking",
+    "enabled": "Staking aktiveret",
+    "disabled": "Staking deaktiveret",
+    "stakingBalance": "Staking-saldo",
+    "immatureBalance": "Umoden saldo"
+  },
+  "privacy": {
+    "title": "Privatliv",
+    "mint": "Præg",
+    "spend": "Brug",
+    "balance": "Privat saldo",
+    "denominations": "Denominationer"
+  },
+  "notifications": {
+    "newTransaction": "Ny transaktion",
+    "transactionReceived": "Modtaget {{amount}} TWINS",
+    "transactionSent": "Sendt {{amount}} TWINS"
+  }
+}

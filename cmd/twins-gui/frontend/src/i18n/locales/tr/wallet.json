@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "GENEL BAKIŞ",
+    "recentTransactions": "Son İşlemler"
+  },
+  "balance": {
+    "title": "Bakiye",
+    "combined": "Toplam Bakiye",
+    "twins": "TWINS Bakiyesi",
+    "total": "Toplam",
+    "totalBalance": "Toplam Bakiye",
+    "available": "Mevcut",
+    "pending": "Bekliyor",
+    "immature": "Olgunlaşmamış",
+    "locked": "Kilitli",
+    "watchOnly": "Sadece-izle",
+    "spendable": "Harcanabilir"
+  },
+  "send": {
+    "title": "Gönder",
+    "payTo": "Şuna öde",
+    "payToPlaceholder": "TWINS adresi girin (örn. D...)",
+    "label": "Etiket",
+    "labelPlaceholder": "Bu adres için bir etiket girin",
+    "amount": "Tutar",
+    "amountPlaceholder": "0,00",
+    "message": "Mesaj",
+    "messagePlaceholder": "Bir mesaj girin (isteğe bağlı)",
+    "coinControl": {
+      "title": "Koin Kontrol Özellikleri",
+      "inputs": "Girdiler",
+      "customChangeAddress": "Özel değişiklik adresi",
+      "customChangePlaceholder": "Özel değişiklik adresi girin",
+      "splitUtxo": "Bloğu böl",
+      "splitThreshold": "sonra",
+      "utxoSize": "UTXO Boyutu"
+    },
+    "recipients": {
+      "add": "Alıcı ekle",
+      "remove": "Bu girişi kaldır",
+      "useMaximum": "Mevcut bakiyeyi kullan",
+      "subtractFee": "Tutardan ücreti düş"
+    },
+    "fee": {
+      "label": "İşlem Ücreti",
+      "normal": "Normal",
+      "fast": "Hızlı",
+      "recommended": "Önerilen",
+      "custom": "Özel",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Toplam ücret: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Toplam Alıcılar",
+      "estimatedFee": "Tahmini Ücret",
+      "afterFee": "Ücret Sonrası",
+      "balance": "Bakiye: {{amount}}"
+    },
+    "buttons": {
+      "send": "Gönder",
+      "clearAll": "Hepsini Temizle"
+    },
+    "errors": {
+      "invalidAddress": "Geçersiz TWINS adres formatı",
+      "amountRequired": "Tutar gerekli",
+      "amountTooLow": "Toz önlemek için tutar en az {{min}} TWINS olmalı",
+      "insufficientFunds": "Yetersiz Bakiye",
+      "noRecipients": "En az bir alıcı ekleyin"
+    },
+    "confirmation": {
+      "title": "İşlemi Onayla",
+      "recipient": "Alıcı",
+      "recipients": "Alıcılar",
+      "amount": "Tutar",
+      "totalAmount": "Toplam Tutar",
+      "fee": "Ücret",
+      "transactionFee": "İşlem Ücreti",
+      "total": "Toplam",
+      "grandTotal": "Genel Toplam",
+      "walletPassphrase": "Cüzdan Şifresi",
+      "passphrasePlaceholder": "Cüzdan şifresini girin",
+      "passphraseRequired": "Şifrelenmiş cüzdanlar için şifre gerekli",
+      "showPassphrase": "Şifreyi göster",
+      "hidePassphrase": "Şifreyi gizle",
+      "capsLockOn": "Caps Lock AÇIK",
+      "largeTransactionWarning": "Uyarı: Bu büyük bir işlem. Lütfen tüm detayları dikkatlice kontrol edin.",
+      "confirmSend": "Gönderimi Onayla",
+      "sending": "Gönderiliyor..."
+    },
+    "success": {
+      "title": "İşlem Gönderildi",
+      "message": "İşlem ağa gönderildi.",
+      "txid": "İşlem ID",
+      "copyTxid": "TXID Kopyala",
+      "viewInExplorer": "Gezginde görüntüle",
+      "copiedToClipboard": "Panoya kopyalandı!",
+      "copyFailed": "Kopyalama başarısız - manuel olarak kopyalayın"
+    }
+  },
+  "receive": {
+    "title": "Al",
+    "currentAddress": "Geçerli alma adresi",
+    "requestPayment": "Ödeme talep et",
+    "requestingPayment": "Oluşturuluyor...",
+    "newAddress": "Yeni adres oluştur",
+    "addressList": "Alma adresleri",
+    "copyAddress": "Adresi panoya kopyala",
+    "showQR": "QR kodunu göster",
+    "qrCode": "QR Kodu",
+    "amount": "Tutar",
+    "label": "Etiket",
+    "message": "Mesaj",
+    "address": "Adres",
+    "reusePrevious": "Mevcut alma adresini yeniden kullan (önerilmez)",
+    "formInfo": "Ödeme talep etmek için bu formu kullanın. Tüm alanlar <1>isteğe bağlıdır</1>.",
+    "clear": "Temizle",
+    "receivingAddresses": "Alma Adresleri",
+    "requestedHistory": "Ödeme Talebi Geçmişi",
+    "noRequests": "Henüz ödeme talebi yok",
+    "show": "Göster",
+    "remove": "Kaldır",
+    "contextMenu": {
+      "copyLabel": "Etiketi kopyala",
+      "copyAddress": "Adresi kopyala",
+      "copyMessage": "Mesajı kopyala",
+      "copyAmount": "Tutarı kopyala"
+    },
+    "table": {
+      "date": "Tarih",
+      "label": "Etiket",
+      "address": "Adres",
+      "message": "Mesaj",
+      "amountTwins": "Tutar (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "GEÇMİŞ",
+    "recent": "Son işlemler",
+    "all": "Tüm işlemler",
+    "noTransactions": "İşlem bulunamadı",
+    "loading": "İşlemler yükleniyor...",
+    "error": "Hata: {{message}}",
+    "type": {
+      "all": "Tümü",
+      "mostCommon": "En Yaygın",
+      "sent": "Gönderildi",
+      "received": "Alındı",
+      "toYourself": "Kendine",
+      "mined": "Kazıldı",
+      "minted": "Basıldı",
+      "masternode": "Masternode Ödülü",
+      "other": "Diğer"
+    },
+    "status": {
+      "confirmed": "Onaylandı",
+      "unconfirmed": "Onaylanmadı",
+      "pending": "Bekliyor",
+      "conflicted": "Çatışmalı",
+      "abandoned": "Terk Edildi",
+      "confirmations": "{{count}} onay",
+      "confirmations_other": "{{count}} onay"
+    },
+    "details": {
+      "title": "İşlem Detayları",
+      "txid": "İşlem ID",
+      "date": "Tarih",
+      "status": "Durum",
+      "amount": "Tutar",
+      "fee": "Ücret",
+      "from": "Gönderen",
+      "to": "Alıcı",
+      "confirmations": "Onaylar",
+      "blockHash": "Blok Hash",
+      "blockHeight": "Blok Yüksekliği"
+    },
+    "filters": {
+      "all": "Tümü",
+      "today": "Bugün",
+      "thisWeek": "Bu Hafta",
+      "thisMonth": "Bu Ay",
+      "lastMonth": "Geçen Ay",
+      "thisYear": "Bu Yıl",
+      "range": "Aralık...",
+      "dateRange": "Tarih Aralığı",
+      "type": "Tip",
+      "minAmount": "Min tutar",
+      "search": "Aramak için adres veya etiket girin",
+      "rangeTo": "ile"
+    },
+    "table": {
+      "date": "Tarih",
+      "type": "Tip",
+      "address": "Adres",
+      "amount": "Tutar"
+    },
+    "contextMenu": {
+      "copyAddress": "Adresi kopyala",
+      "copyLabel": "Etiketi kopyala",
+      "copyAmount": "Tutarı kopyala",
+      "copyTxId": "İşlem ID kopyala",
+      "editLabel": "Etiketi düzenle",
+      "showDetails": "İşlem detaylarını göster",
+      "hideOrphanStakes": "Yetim stake'leri gizle"
+    },
+    "footer": {
+      "selectedAmount": "Seçili tutar:",
+      "transactions": "{{count}} işlem",
+      "transactions_other": "{{count}} işlem",
+      "export": "Dışa Aktar"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Dışa aktarılacak işlem yok",
+      "noTransactionsMessage": "Geçerli filtrelere uyan işlem bulunamadı.",
+      "exportSuccess": "Dışa aktarma başarılı",
+      "exportedCount": "{{count}} işlem CSV dosyasına aktarıldı",
+      "exportedCount_other": "{{count}} işlem CSV dosyasına aktarıldı",
+      "exportFailed": "Dışa aktarma başarısız"
+    }
+  },
+  "addressBook": {
+    "title": "Adres Defteri",
+    "add": "Adres ekle",
+    "edit": "Adresi düzenle",
+    "delete": "Adresi sil",
+    "label": "Etiket",
+    "address": "Adres",
+    "noAddresses": "Kayıtlı adres yok"
+  }
+}

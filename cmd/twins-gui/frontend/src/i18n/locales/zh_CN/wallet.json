@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "概览",
+    "recentTransactions": "最近交易"
+  },
+  "balance": {
+    "title": "余额",
+    "combined": "合计余额",
+    "twins": "TWINS余额",
+    "total": "总计",
+    "totalBalance": "总余额",
+    "available": "可用",
+    "pending": "待确认",
+    "immature": "未成熟",
+    "locked": "已锁定",
+    "watchOnly": "仅观察",
+    "spendable": "可花费"
+  },
+  "send": {
+    "title": "发送",
+    "payTo": "收款方",
+    "payToPlaceholder": "输入TWINS地址（例如：D...）",
+    "label": "标签",
+    "labelPlaceholder": "为此地址输入标签",
+    "amount": "金额",
+    "amountPlaceholder": "0.00",
+    "message": "消息",
+    "messagePlaceholder": "输入消息（可选）",
+    "coinControl": {
+      "title": "币控制功能",
+      "inputs": "输入",
+      "customChangeAddress": "自定义找零地址",
+      "customChangePlaceholder": "输入自定义找零地址",
+      "splitUtxo": "拆分区块",
+      "splitThreshold": "在",
+      "utxoSize": "UTXO大小"
+    },
+    "recipients": {
+      "add": "添加收款人",
+      "remove": "删除此条目",
+      "useMaximum": "使用全部可用余额",
+      "subtractFee": "从金额中扣除手续费"
+    },
+    "fee": {
+      "label": "交易手续费",
+      "normal": "普通",
+      "fast": "快速",
+      "recommended": "推荐",
+      "custom": "自定义",
+      "perKB": "{{rate}} TWINS/KB",
+      "total": "总手续费：{{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "收款人总计",
+      "estimatedFee": "预估手续费",
+      "afterFee": "扣除手续费后",
+      "balance": "余额：{{amount}}"
+    },
+    "buttons": {
+      "send": "发送",
+      "clearAll": "清除全部"
+    },
+    "errors": {
+      "invalidAddress": "无效的TWINS地址格式",
+      "amountRequired": "需要输入金额",
+      "amountTooLow": "金额必须至少为 {{min}} TWINS 以避免灰尘",
+      "insufficientFunds": "余额不足",
+      "noRecipients": "请添加至少一个收款人"
+    },
+    "confirmation": {
+      "title": "确认交易",
+      "recipient": "收款人",
+      "recipients": "收款人",
+      "amount": "金额",
+      "totalAmount": "总金额",
+      "fee": "手续费",
+      "transactionFee": "交易手续费",
+      "total": "总计",
+      "grandTotal": "总计",
+      "walletPassphrase": "钱包密码",
+      "passphrasePlaceholder": "输入钱包密码",
+      "passphraseRequired": "加密钱包需要密码",
+      "showPassphrase": "显示密码",
+      "hidePassphrase": "隐藏密码",
+      "capsLockOn": "大写锁定已开启",
+      "largeTransactionWarning": "警告：这是一笔大额交易。请仔细核实所有详情。",
+      "confirmSend": "确认发送",
+      "sending": "发送中..."
+    },
+    "success": {
+      "title": "交易发送成功",
+      "message": "交易已发送到网络。",
+      "txid": "交易ID",
+      "copyTxid": "复制交易ID",
+      "viewInExplorer": "在浏览器中查看",
+      "copiedToClipboard": "已复制到剪贴板！",
+      "copyFailed": "复制失败 - 请手动复制"
+    }
+  },
+  "receive": {
+    "title": "接收",
+    "currentAddress": "当前接收地址",
+    "requestPayment": "请求付款",
+    "requestingPayment": "创建中...",
+    "newAddress": "生成新地址",
+    "addressList": "接收地址",
+    "copyAddress": "复制地址到剪贴板",
+    "showQR": "显示二维码",
+    "qrCode": "二维码",
+    "amount": "金额",
+    "label": "标签",
+    "message": "消息",
+    "address": "地址",
+    "reusePrevious": "重复使用现有接收地址（不推荐）",
+    "formInfo": "使用此表单请求付款。所有字段均为<1>可选</1>。",
+    "clear": "清除",
+    "receivingAddresses": "接收地址",
+    "requestedHistory": "付款请求历史",
+    "noRequests": "暂无付款请求",
+    "show": "显示",
+    "remove": "删除",
+    "contextMenu": {
+      "copyLabel": "复制标签",
+      "copyAddress": "复制地址",
+      "copyMessage": "复制消息",
+      "copyAmount": "复制金额"
+    },
+    "table": {
+      "date": "日期",
+      "label": "标签",
+      "address": "地址",
+      "message": "消息",
+      "amountTwins": "金额 (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "历史记录",
+    "recent": "最近交易",
+    "all": "全部交易",
+    "noTransactions": "未找到交易",
+    "loading": "加载交易中...",
+    "error": "错误：{{message}}",
+    "type": {
+      "all": "全部",
+      "mostCommon": "常见",
+      "sent": "发送至",
+      "received": "接收自",
+      "toYourself": "发送给自己",
+      "mined": "挖矿所得",
+      "minted": "铸造",
+      "masternode": "主节点奖励",
+      "other": "其他"
+    },
+    "status": {
+      "confirmed": "已确认",
+      "unconfirmed": "未确认",
+      "pending": "待确认",
+      "conflicted": "冲突",
+      "abandoned": "已放弃",
+      "confirmations": "{{count}} 次确认",
+      "confirmations_other": "{{count}} 次确认"
+    },
+    "details": {
+      "title": "交易详情",
+      "txid": "交易ID",
+      "date": "日期",
+      "status": "状态",
+      "amount": "金额",
+      "fee": "手续费",
+      "from": "发送方",
+      "to": "接收方",
+      "confirmations": "确认数",
+      "blockHash": "区块哈希",
+      "blockHeight": "区块高度"
+    },
+    "filters": {
+      "all": "全部",
+      "today": "今天",
+      "thisWeek": "本周",
+      "thisMonth": "本月",
+      "lastMonth": "上个月",
+      "thisYear": "今年",
+      "range": "范围...",
+      "dateRange": "日期范围",
+      "type": "类型",
+      "minAmount": "最小金额",
+      "search": "按地址或标签搜索",
+      "rangeTo": "至"
+    },
+    "table": {
+      "date": "日期",
+      "type": "类型",
+      "address": "地址",
+      "amount": "金额"
+    },
+    "contextMenu": {
+      "copyAddress": "复制地址",
+      "copyLabel": "复制标签",
+      "copyAmount": "复制金额",
+      "copyTxId": "复制交易ID",
+      "editLabel": "编辑标签",
+      "showDetails": "显示交易详情",
+      "hideOrphanStakes": "隐藏孤立质押"
+    },
+    "footer": {
+      "selectedAmount": "已选金额：",
+      "transactions": "{{count}} 笔交易",
+      "transactions_other": "{{count}} 笔交易",
+      "export": "导出"
+    },
+    "notifications": {
+      "noTransactionsToExport": "没有可导出的交易",
+      "noTransactionsMessage": "没有符合当前筛选条件的交易。",
+      "exportSuccess": "导出成功",
+      "exportedCount": "已导出 {{count}} 笔交易到CSV文件",
+      "exportedCount_other": "已导出 {{count}} 笔交易到CSV文件",
+      "exportFailed": "导出失败"
+    }
+  },
+  "addressBook": {
+    "title": "地址簿",
+    "add": "添加地址",
+    "edit": "编辑地址",
+    "delete": "删除地址",
+    "label": "标签",
+    "address": "地址",
+    "noAddresses": "没有保存的地址"
+  }
+}

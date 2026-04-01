@@ -1,0 +1,85 @@
+{
+  "title": "Opciones",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Ventana"
+  },
+  "common": {
+    "requiresRestart": "Requiere reinicio",
+    "overriddenBy": "Anulado por {{flag}}",
+    "custom": "personalizado"
+  },
+  "main": {
+    "title": "Ajustes principales",
+    "database": "Base de datos",
+    "userInterface": "Interfaz de usuario",
+    "databaseCache": "Tamaño de caché de base de datos:",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Hilos de verificación de scripts:",
+    "scriptThreadsAuto": "(0 = auto)",
+    "language": "Idioma de la interfaz:",
+    "languageDefault": "(predeterminado)",
+    "languageNote": "Idioma activo: {{language}}",
+    "theme": "Tema de la interfaz:"
+  },
+  "wallet": {
+    "title": "Monedero",
+    "spendUnconfirmed": "Gastar cambio no confirmado",
+    "spendUnconfirmedNote": "(solo expertos)",
+    "stakeSplitThreshold": "Umbral de división de stake:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Combinar automáticamente recompensas de staking",
+    "coinControl": "Habilitar funciones de control de monedas",
+    "showMasternodes": "Mostrar pestaña de Masternodes",
+    "expert": "Experto"
+  },
+  "network": {
+    "title": "Red",
+    "mapPort": "Mapear puerto usando UPnP",
+    "allowIncoming": "Permitir conexiones entrantes",
+    "proxy": "Proxy",
+    "connectProxy": "Conectar a través de proxy SOCKS5 (proxy predeterminado):",
+    "proxyIP": "IP del proxy:",
+    "proxyPort": "Puerto",
+    "proxyHelp": "Dirección IP del proxy (ej. IPv4: 127.0.0.1:9050 / IPv6: [::1]:9050)",
+    "proxyFormatError": "Formato inválido. Use IPv4:puerto (127.0.0.1:9050) o [IPv6]:puerto"
+  },
+  "window": {
+    "title": "Ajustes de ventana",
+    "hideTrayIcon": "Ocultar icono de bandeja",
+    "minimizeToTray": "Minimizar a la bandeja en lugar de la barra de tareas",
+    "minimizeOnClose": "Minimizar al cerrar"
+  },
+  "display": {
+    "title": "Ajustes de visualización",
+    "units": "Unidades",
+    "unitLabel": "Unidad para mostrar cantidades:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (mili)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Dígitos decimales:",
+    "thirdPartyTitle": "URLs de transacciones de terceros",
+    "thirdPartyLabel": "URLs para información de transacciones:",
+    "thirdPartyHelp": "Use %s en lugar del ID de transacción. Múltiples URLs separadas por |",
+    "transactionDisplay": "Visualización de transacciones",
+    "hideOrphanStakes": "Ocultar stakes huérfanos en listas de transacciones",
+    "hideZeroBalances": "Ocultar saldos cero"
+  },
+  "buttons": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "resetDefaults": "Restablecer valores predeterminados"
+  },
+  "messages": {
+    "saved": "Ajustes guardados correctamente",
+    "restartRequired": "El cambio de idioma se aplicará después de reiniciar el monedero.",
+    "restartRequiredTitle": "Reinicio requerido",
+    "resetConfirm": "¿Está seguro de que desea restablecer todos los ajustes a sus valores predeterminados?"
+  },
+  "overridden": {
+    "title": "Ajuste anulado",
+    "message": "Este ajuste está anulado por la opción de línea de comandos: {{flag}}"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Window"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Size of database cache",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Number of script verification threads",
+    "scriptThreadsAuto": "(0 = auto, <0 = leave that many cores free)",
+    "language": "User Interface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "User Interface Theme:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Spend unconfirmed change",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Stake split threshold:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Enable coin control features",
+    "showMasternodes": "Show Masternodes Tab",
+    "expert": "Expert",
+    "encryption": "Encryption",
+    "encryptionStatusLocked": "Wallet is encrypted and locked",
+    "encryptionStatusUnlocked": "Wallet is encrypted and unlocked",
+    "encryptionStatusNotEncrypted": "Wallet is not encrypted - your funds are at risk!",
+    "encryptWalletButton": "Encrypt Wallet",
+    "unlockWalletButton": "Unlock Wallet",
+    "changePassphraseButton": "Change Passphrase",
+    "encryptionHelpEncrypted": "Your wallet is protected with a passphrase. You will need to unlock it to send transactions. Click the lock icon in the status bar to quickly lock or unlock.",
+    "encryptionHelpNotEncrypted": "Encrypting your wallet adds an extra layer of security. Anyone with access to your computer could steal your funds without encryption."
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Map port using UPnP",
+    "allowIncoming": "Allow incoming connections",
+    "proxy": "Proxy",
+    "connectProxy": "Connect through SOCKS5 proxy (default proxy):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Port:",
+    "proxyHelp": "IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimize to the tray instead of the taskbar",
+    "minimizeOnClose": "Minimize on close"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Unit to show amounts in:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimal digits",
+    "thirdPartyTitle": "Third party transaction URLs",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Hide zero balances"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "resetDefaults": "Reset Options"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Client restart required to activate changes.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Confirm options reset"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

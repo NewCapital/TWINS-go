@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Venster"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Grootte van cache gegevens",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Aantal script en verificatie threads",
+    "scriptThreadsAuto": "(0 = auto, <0 = laat dat aantal cores vrij)",
+    "language": "Gebruiksinterface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Gebruiksinterface thema:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": " Besteed onbevestigd wisselgeld",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Inzet splitdrempel:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Munt- en controlefuncties inschakelen",
+    "showMasternodes": "Toon Masternodes Tab",
+    "expert": "Expert"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Map poort gebruikt UPnP",
+    "allowIncoming": "Sta inkomende connecties toe",
+    "proxy": "Proxy",
+    "connectProxy": " Verbind via SOCKS5 proxy (standaard proxy):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Poort:",
+    "proxyHelp": "IP adres van de proxy (bijvoorbeeld IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": " Minimaliseer naar de tray in plaats van de taakbalk",
+    "minimizeOnClose": "Minimaliseer bij sluiten"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Toon Unit in volgende hoeveelheden:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimale cijfers",
+    "thirdPartyTitle": "Transactie URL's van derden",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Verberg lege saldi"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "Annuleren",
+    "apply": "Apply",
+    "resetDefaults": "Herstellings Opties"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Client herstart vereist om wijzigingen te activeren.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Bevestig reset instellingen"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}

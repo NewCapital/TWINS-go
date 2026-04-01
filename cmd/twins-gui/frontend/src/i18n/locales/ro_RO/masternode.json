@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Masternodes-urile mele",
+  "allMasternodes": "Masternodes rețea",
+  "count": {
+    "total": "Total: {{count}}",
+    "enabled": "Activate: {{count}}",
+    "missing": "Lipsă: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adresă",
+    "protocol": "Protocol",
+    "status": "Status",
+    "activeTime": "Timp activ",
+    "lastSeen": "Ultima vedere",
+    "pubkey": "Cheie publică",
+    "tier": "Nivel",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "ACTIVAT",
+    "missing": "LIPSĂ",
+    "preEnabled": "PRE_ACTIVAT",
+    "expired": "EXPIRAT",
+    "newStartRequired": "START_NOU_NECESAR",
+    "updateRequired": "ACTUALIZARE_NECESARĂ",
+    "watchdogExpired": "WATCHDOG_EXPIRAT",
+    "poseBan": "POSE_BAN",
+    "unknown": "NECUNOSCUT"
+  },
+  "tiers": {
+    "bronze": "Bronz",
+    "silver": "Argint",
+    "gold": "Aur",
+    "platinum": "Platină",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Pornește",
+    "startAlias": "Pornește alias",
+    "startAll": "Pornește toate",
+    "startMissing": "Pornește LIPSĂ",
+    "stop": "Oprește",
+    "update": "Actualizează status",
+    "edit": "Editează",
+    "remove": "Elimină",
+    "copyProTx": "Copiază hash ProTx"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Pornește masternode",
+      "message": "Ești sigur că vrei să pornești masternode-ul \"{{alias}}\"?",
+      "messageAll": "Ești sigur că vrei să pornești TOATE masternodes-urile?",
+      "messageMissing": "Ești sigur că vrei să pornești toate masternodes-urile LIPSĂ?"
+    },
+    "removeConfirm": {
+      "title": "Elimină masternode",
+      "message": "Ești sigur că vrei să elimini masternode-ul \"{{alias}}\"? Această acțiune nu poate fi anulată."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode-ul \"{{alias}}\" pornit cu succes",
+    "startAllSuccess": "Toate masternodes-urile pornite cu succes",
+    "startMissingSuccess": "{{count}} masternode(uri) lipsă pornit(e) cu succes",
+    "noMissingToStart": "Nu există masternodes lipsă de pornit",
+    "startFailed": "Pornirea masternode-ului a eșuat: {{error}}",
+    "startAllFailed": "Pornirea tuturor masternodes-urilor a eșuat: {{error}}",
+    "startMissingFailed": "Pornirea masternodes-urilor lipsă a eșuat: {{error}}",
+    "fetchFailed": "Obținerea masternodes-urilor a eșuat",
+    "updateSuccess": "Status masternode actualizat",
+    "removeSuccess": "Masternode-ul \"{{alias}}\" eliminat"
+  },
+  "note": {
+    "title": "Notă:",
+    "line1": "Statusul masternodes-urilor tale în portofelul local poate fi ușor inexact.",
+    "line2": "Așteaptă întotdeauna ca portofelul să sincronizeze datele suplimentare, apoi verifică de la un alt nod,",
+    "line3": "dacă nodul tău ar trebui să ruleze dar încă vezi \"LIPSĂ\" în câmpul de status."
+  },
+  "autoRefresh": "Reîmprospătare automată în {{seconds}}s",
+  "autoRefreshStatus": "Statusul va fi actualizat automat în (sec):",
+  "noMasternodes": "Niciun masternode configurat",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

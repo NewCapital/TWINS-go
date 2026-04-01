@@ -1,0 +1,92 @@
+{
+  "title": "Masternodes",
+  "myMasternodes": "Mine Masternodes",
+  "allMasternodes": "Netværks-masternodes",
+  "count": {
+    "total": "I alt: {{count}}",
+    "enabled": "Aktiveret: {{count}}",
+    "missing": "Mangler: {{count}}"
+  },
+  "table": {
+    "alias": "Alias",
+    "address": "Adresse",
+    "protocol": "Protokol",
+    "status": "Status",
+    "activeTime": "Aktiv tid",
+    "lastSeen": "Sidst set",
+    "pubkey": "Offentlig nøgle",
+    "tier": "Niveau",
+    "rank": "Rang"
+  },
+  "status": {
+    "enabled": "AKTIVERET",
+    "missing": "MANGLER",
+    "preEnabled": "PRE_AKTIVERET",
+    "expired": "UDLØBET",
+    "newStartRequired": "NY_START_PÅKRÆVET",
+    "updateRequired": "OPDATERING_PÅKRÆVET",
+    "watchdogExpired": "WATCHDOG_UDLØBET",
+    "poseBan": "POSE_BAN",
+    "unknown": "UKENDT"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Sølv",
+    "gold": "Guld",
+    "platinum": "Platin",
+    "collateral": {
+      "bronze": "1.000.000 TWINS",
+      "silver": "5.000.000 TWINS",
+      "gold": "20.000.000 TWINS",
+      "platinum": "100.000.000 TWINS"
+    }
+  },
+  "actions": {
+    "start": "Start",
+    "startAlias": "Start alias",
+    "startAll": "Start alle",
+    "startMissing": "Start MANGLENDE",
+    "stop": "Stop",
+    "update": "Opdater status",
+    "edit": "Rediger",
+    "remove": "Fjern",
+    "copyProTx": "Kopiér ProTx-hash"
+  },
+  "dialogs": {
+    "startConfirm": {
+      "title": "Start Masternode",
+      "message": "Er du sikker på, at du vil starte masternode \"{{alias}}\"?",
+      "messageAll": "Er du sikker på, at du vil starte alle masternodes?",
+      "messageMissing": "Er du sikker på, at du vil starte alle MANGLENDE masternodes?"
+    },
+    "removeConfirm": {
+      "title": "Fjern Masternode",
+      "message": "Er du sikker på, at du vil fjerne masternode \"{{alias}}\"? Dette kan ikke fortrydes."
+    }
+  },
+  "messages": {
+    "startSuccess": "Masternode \"{{alias}}\" startet med succes",
+    "startAllSuccess": "Alle masternodes startet med succes",
+    "startMissingSuccess": "{{count}} manglende masternode(r) startet med succes",
+    "noMissingToStart": "Ingen manglende masternodes at starte",
+    "startFailed": "Kunne ikke starte masternode: {{error}}",
+    "startAllFailed": "Kunne ikke starte alle masternodes: {{error}}",
+    "startMissingFailed": "Kunne ikke starte manglende masternodes: {{error}}",
+    "fetchFailed": "Kunne ikke hente masternodes",
+    "updateSuccess": "Masternode-status opdateret",
+    "removeSuccess": "Masternode \"{{alias}}\" fjernet"
+  },
+  "note": {
+    "title": "Bemærk:",
+    "line1": "Status for dine masternodes i den lokale tegnebog kan være let unøjagtig.",
+    "line2": "Vent altid på, at tegnebogen synkroniserer yderligere data, og dobbelttjek derefter fra en anden node,",
+    "line3": "hvis din node burde køre, men du stadig ser \"MANGLER\" i \"Status\"-feltet."
+  },
+  "autoRefresh": "Automatisk opdatering om {{seconds}}s",
+  "autoRefreshStatus": "Status opdateres automatisk om (sek):",
+  "noMasternodes": "Ingen masternodes konfigureret",
+  "refreshCountdown": {
+    "tooltip": "Next refresh in {{seconds}}s",
+    "clickToRefresh": "Click to refresh now"
+  }
+}

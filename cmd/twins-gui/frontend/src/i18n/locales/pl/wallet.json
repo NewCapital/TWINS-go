@@ -1,0 +1,229 @@
+{
+  "overview": {
+    "title": "PRZEGLĄD",
+    "recentTransactions": "Ostatnie transakcje"
+  },
+  "balance": {
+    "title": "Saldo",
+    "combined": "Połączone saldo",
+    "twins": "Saldo TWINS",
+    "total": "Całość",
+    "totalBalance": "Całkowite saldo",
+    "available": "Dostępne",
+    "pending": "Oczekujące",
+    "immature": "Niedojrzałe",
+    "locked": "Zablokowane",
+    "watchOnly": "Tylko do obejrzenia",
+    "spendable": "Możliwe do wysłania"
+  },
+  "send": {
+    "title": "Wyślij",
+    "payTo": "Zapłać do",
+    "payToPlaceholder": "Wprowadź adres TWINS (np. D...)",
+    "label": "Zakładka",
+    "labelPlaceholder": "Wprowadź zakładkę dla tego adresu",
+    "amount": "Kwota",
+    "amountPlaceholder": "0,00",
+    "message": "Wiadomość",
+    "messagePlaceholder": "Wprowadź wiadomość (opcjonalne)",
+    "coinControl": {
+      "title": "Funkcje kontroli monet",
+      "inputs": "Wejścia",
+      "customChangeAddress": "Niestandardowy adres reszty",
+      "customChangePlaceholder": "Wprowadź niestandardowy adres reszty",
+      "splitUtxo": "Podziel blok",
+      "splitThreshold": "po",
+      "utxoSize": "Rozmiar UTXO"
+    },
+    "recipients": {
+      "add": "Dodaj odbiorcę",
+      "remove": "Usuń ten wpis",
+      "useMaximum": "Użyj dostępnego salda",
+      "subtractFee": "Odejmij opłatę od kwoty"
+    },
+    "fee": {
+      "label": "Opłata transakcyjna",
+      "normal": "Normalna",
+      "fast": "Szybka",
+      "recommended": "Zalecana",
+      "custom": "Niestandardowa",
+      "perKB": "{{rate}} TWINS/kB",
+      "total": "Całkowita opłata: {{fee}} TWINS"
+    },
+    "totals": {
+      "recipientsTotal": "Suma odbiorców",
+      "estimatedFee": "Szacowana opłata",
+      "afterFee": "Po opłacie",
+      "balance": "Saldo: {{amount}}"
+    },
+    "buttons": {
+      "send": "Wyślij",
+      "clearAll": "Wyczyść wszystko"
+    },
+    "errors": {
+      "invalidAddress": "Nieprawidłowy format adresu TWINS",
+      "amountRequired": "Kwota jest wymagana",
+      "amountTooLow": "Kwota musi wynosić co najmniej {{min}} TWINS aby uniknąć kurzu",
+      "insufficientFunds": "Niewystarczające środki",
+      "noRecipients": "Dodaj co najmniej jednego odbiorcę"
+    },
+    "confirmation": {
+      "title": "Potwierdź transakcję",
+      "recipient": "Do",
+      "recipients": "Odbiorcy",
+      "amount": "Kwota",
+      "totalAmount": "Całkowita kwota",
+      "fee": "Opłata",
+      "transactionFee": "Opłata transakcyjna",
+      "total": "Razem",
+      "grandTotal": "Suma końcowa",
+      "walletPassphrase": "Hasło portfela",
+      "passphrasePlaceholder": "Wprowadź hasło portfela",
+      "passphraseRequired": "Hasło wymagane dla zakodowanych portfeli",
+      "showPassphrase": "Pokaż hasło",
+      "hidePassphrase": "Ukryj hasło",
+      "capsLockOn": "Caps Lock jest WŁĄCZONY",
+      "largeTransactionWarning": "Ostrzeżenie: To jest duża transakcja. Sprawdź dokładnie wszystkie szczegóły.",
+      "confirmSend": "Potwierdź wysłanie",
+      "sending": "Wysyłanie..."
+    },
+    "success": {
+      "title": "Transakcja wysłana pomyślnie",
+      "message": "Transakcja została wysłana do sieci.",
+      "txid": "ID transakcji",
+      "copyTxid": "Kopiuj TXID",
+      "viewInExplorer": "Zobacz w eksplorze",
+      "copiedToClipboard": "Skopiowano do schowka!",
+      "copyFailed": "Kopiowanie nie powiodło się - skopiuj ręcznie"
+    }
+  },
+  "receive": {
+    "title": "Odbierz",
+    "currentAddress": "Aktualny adres odbiorczy",
+    "requestPayment": "Żądaj płatności",
+    "requestingPayment": "Tworzenie...",
+    "newAddress": "Wygeneruj nowy adres",
+    "addressList": "Adresy odbiorcze",
+    "copyAddress": "Kopiuj adres do schowka",
+    "showQR": "Pokaż kod QR",
+    "qrCode": "Kod QR",
+    "amount": "Kwota",
+    "label": "Zakładka",
+    "message": "Wiadomość",
+    "address": "Adres",
+    "reusePrevious": "Użyj ponownie istniejącego adresu (niezalecane)",
+    "formInfo": "Użyj tego formularza, aby żądać płatności. Wszystkie pola są <1>opcjonalne</1>.",
+    "clear": "Wyczyść",
+    "receivingAddresses": "Adresy odbiorcze",
+    "requestedHistory": "Historia żądań płatności",
+    "noRequests": "Brak żądań płatności",
+    "show": "Pokaż",
+    "remove": "Usuń",
+    "contextMenu": {
+      "copyLabel": "Kopiuj zakładkę",
+      "copyAddress": "Kopiuj adres",
+      "copyMessage": "Kopiuj wiadomość",
+      "copyAmount": "Kopiuj kwotę"
+    },
+    "table": {
+      "date": "Data",
+      "label": "Zakładka",
+      "address": "Adres",
+      "message": "Wiadomość",
+      "amountTwins": "Kwota (TWINS)"
+    }
+  },
+  "transactions": {
+    "title": "HISTORIA",
+    "recent": "Ostatnie transakcje",
+    "all": "Wszystkie transakcje",
+    "noTransactions": "Nie znaleziono transakcji",
+    "loading": "Ładowanie transakcji...",
+    "error": "Błąd: {{message}}",
+    "type": {
+      "all": "Wszystkie",
+      "mostCommon": "Najczęstsze",
+      "sent": "Wysłane do",
+      "received": "Otrzymane od",
+      "toYourself": "Do siebie",
+      "mined": "Wykopane",
+      "minted": "Wybite",
+      "masternode": "Nagroda masternode",
+      "other": "Inne"
+    },
+    "status": {
+      "confirmed": "Potwierdzone",
+      "unconfirmed": "Niepotwierdzone",
+      "pending": "Oczekujące",
+      "conflicted": "Konflikt",
+      "abandoned": "Porzucone",
+      "confirmations": "{{count}} potwierdzenie",
+      "confirmations_other": "{{count}} potwierdzeń"
+    },
+    "details": {
+      "title": "Szczegóły transakcji",
+      "txid": "ID transakcji",
+      "date": "Data",
+      "status": "Status",
+      "amount": "Kwota",
+      "fee": "Opłata",
+      "from": "Od",
+      "to": "Do",
+      "confirmations": "Potwierdzenia",
+      "blockHash": "Hash bloku",
+      "blockHeight": "Wysokość bloku"
+    },
+    "filters": {
+      "all": "Wszystkie",
+      "today": "Dzisiaj",
+      "thisWeek": "Ten tydzień",
+      "thisMonth": "Ten miesiąc",
+      "lastMonth": "Poprzedni miesiąc",
+      "thisYear": "Ten rok",
+      "range": "Zakres...",
+      "dateRange": "Zakres dat",
+      "type": "Typ",
+      "minAmount": "Min kwota",
+      "search": "Wprowadź adres lub zakładkę do wyszukania",
+      "rangeTo": "do"
+    },
+    "table": {
+      "date": "Data",
+      "type": "Typ",
+      "address": "Adres",
+      "amount": "Kwota"
+    },
+    "contextMenu": {
+      "copyAddress": "Kopiuj adres",
+      "copyLabel": "Kopiuj zakładkę",
+      "copyAmount": "Kopiuj kwotę",
+      "copyTxId": "Kopiuj ID transakcji",
+      "editLabel": "Edytuj zakładkę",
+      "showDetails": "Pokaż szczegóły transakcji",
+      "hideOrphanStakes": "Ukryj osierocone stake"
+    },
+    "footer": {
+      "selectedAmount": "Wybrana kwota:",
+      "transactions": "{{count}} transakcja",
+      "transactions_other": "{{count}} transakcji",
+      "export": "Eksportuj"
+    },
+    "notifications": {
+      "noTransactionsToExport": "Brak transakcji do eksportu",
+      "noTransactionsMessage": "Żadne transakcje nie pasują do bieżących filtrów.",
+      "exportSuccess": "Eksport zakończony pomyślnie",
+      "exportedCount": "Wyeksportowano {{count}} transakcję do pliku CSV",
+      "exportedCount_other": "Wyeksportowano {{count}} transakcji do pliku CSV",
+      "exportFailed": "Eksport nieudany"
+    }
+  },
+  "addressBook": {
+    "title": "Książka adresowa",
+    "add": "Dodaj adres",
+    "edit": "Edytuj adres",
+    "delete": "Usuń adres",
+    "label": "Zakładka",
+    "address": "Adres",
+    "noAddresses": "Brak zapisanych adresów"
+  }
+}

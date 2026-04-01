@@ -1,0 +1,85 @@
+{
+  "title": "Options",
+  "tabs": {
+    "general": "General",
+    "daemon": "Daemon",
+    "window": "Window"
+  },
+  "common": {
+    "requiresRestart": "Requires restart",
+    "overriddenBy": "Overridden by {{flag}}",
+    "custom": "custom"
+  },
+  "main": {
+    "title": "Main Settings",
+    "database": "Database",
+    "userInterface": "User Interface",
+    "databaseCache": "Storlek på databasbuffert",
+    "databaseCacheMB": "MB",
+    "scriptThreads": "Script verification threads:",
+    "scriptThreadsAuto": "(0 = auto, <0 = lämna så många \"kärnor\" fria)",
+    "language": "User interface language:",
+    "languageDefault": "(default)",
+    "languageNote": "Active language: {{language}}",
+    "theme": "Användargränssnitts Tema:"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "spendUnconfirmed": "Spendera ej bekräftad växel",
+    "spendUnconfirmedNote": "(experts only)",
+    "stakeSplitThreshold": "Staking delnings tröskel:",
+    "stakeSplitThresholdNote": "TWINS",
+    "autoCombineRewards": "Auto-combine staking rewards",
+    "coinControl": "Enable coin control features",
+    "showMasternodes": "Visa Huvudnoder Flik",
+    "expert": "Expert"
+  },
+  "network": {
+    "title": "Network",
+    "mapPort": "Kartlägg port med UPnP",
+    "allowIncoming": "Tillåt inkommande anslutningar",
+    "proxy": "Proxy",
+    "connectProxy": "Connect through SOCKS5 proxy (default proxy):",
+    "proxyIP": "Proxy IP:",
+    "proxyPort": "Port:",
+    "proxyHelp": "Proxyns IP adress (t.ex. IPv4: 127.0.0.1 / IPv6: ::1)",
+    "proxyFormatError": "Invalid format. Use IPv4:port (127.0.0.1:9050) or [IPv6]:port"
+  },
+  "window": {
+    "title": "Window Settings",
+    "hideTrayIcon": "Hide tray icon",
+    "minimizeToTray": "Minimera till \"tray\" istället för aktivitetsfältet",
+    "minimizeOnClose": "Minimera på stäng"
+  },
+  "display": {
+    "title": "Display Settings",
+    "units": "Units",
+    "unitLabel": "Unit to show amounts in:",
+    "unitTwins": "TWINS",
+    "unitMilli": "mTWINS (milli)",
+    "unitMicro": "uTWINS (micro)",
+    "decimalDigits": "Decimal platser",
+    "thirdPartyTitle": "Tredjeparts transaktion URLs",
+    "thirdPartyLabel": "Third party URLs for transaction info:",
+    "thirdPartyHelp": "Use %s in place of transaction ID. Multiple URLs separated by |",
+    "transactionDisplay": "Transaction Display",
+    "hideOrphanStakes": "Hide orphan stakes in transaction lists",
+    "hideZeroBalances": "Dölj tomma saldon"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "ta bort",
+    "apply": "Apply",
+    "resetDefaults": "Reset to Defaults"
+  },
+  "messages": {
+    "saved": "Settings saved successfully",
+    "restartRequired": "Omstart av applikationen krävs för att aktivera ändringarna.",
+    "restartRequiredTitle": "Restart Required",
+    "resetConfirm": "Bekräfta omstart av alternativ"
+  },
+  "overridden": {
+    "title": "Setting Overridden",
+    "message": "This setting is currently overridden by command-line option: {{flag}}"
+  }
+}
