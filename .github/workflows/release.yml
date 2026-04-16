@@ -1,0 +1,958 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version. Leave empty to derive from git."
+        required: false
+        default: ""
+      skip_linux:
+        description: "Skip Linux builds"
+        required: false
+        type: boolean
+        default: false
+      skip_darwin:
+        description: "Skip macOS builds"
+        required: false
+        type: boolean
+        default: false
+      skip_windows:
+        description: "Skip Windows builds"
+        required: false
+        type: boolean
+        default: false
+      skip_bdb:
+        description: "Skip BerkeleyDB shared library preparation"
+        required: false
+        type: boolean
+        default: false
+      no_sign:
+        description: "Skip macOS ad-hoc signing"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  MODULE_PATH: github.com/twins-dev/twins-core
+  VERSION_PKG: github.com/twins-dev/twins-core/internal/cli
+  BUILD_DIR: build
+  DIST_DIR: dist
+  LIBS_DIR: internal/wallet/storage/berkeleydb/cgo/libs
+  BDB_VERSION: "4.8.30"
+  APP_BUNDLE_ID: com.twins.wallet
+  APP_BUNDLE_NAME: TWINS Wallet
+  GUI_SRC_DIR: cmd/twins-gui
+
+jobs:
+  metadata:
+    name: Release metadata
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      commit: ${{ steps.meta.outputs.commit }}
+      build_date: ${{ steps.meta.outputs.build_date }}
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version_override="${{ inputs.version || '' }}"
+          if [ -n "$version_override" ]; then
+            version="${version_override#v}"
+          elif tag=$(git describe --tags --exact-match 2>/dev/null); then
+            version="${tag#v}"
+          elif tag=$(git describe --tags 2>/dev/null); then
+            version="${tag#v}"
+          else
+            version="4.0.2"
+          fi
+
+          commit="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+          build_date="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+          {
+            echo "version=${version}"
+            echo "commit=${commit}"
+            echo "build_date=${build_date}"
+            echo "tag=v${version}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Version: ${version}"
+          echo "Commit: ${commit}"
+          echo "Date: ${build_date}"
+
+  macos:
+    name: macOS ${{ matrix.label }} package
+    runs-on: ${{ matrix.runner }}
+    needs: metadata
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_darwin == false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: arm64
+            runner: macos-latest
+            goarch: arm64
+            brew_prefix: /opt/homebrew/opt/berkeley-db@4
+            libs_arch: darwin_arm64
+            package_suffix: osx-arm64
+          - label: intel
+            runner: macos-15-intel
+            goarch: amd64
+            brew_prefix: /usr/local/opt/berkeley-db@4
+            libs_arch: darwin_amd64
+            package_suffix: osx-x86_64
+    env:
+      VERSION: ${{ needs.metadata.outputs.version }}
+      COMMIT: ${{ needs.metadata.outputs.commit }}
+      BUILD_DATE: ${{ needs.metadata.outputs.build_date }}
+      CODESIGN_IDENTITY: "-"
+      NO_SIGN: ${{ inputs.no_sign || false }}
+      SKIP_BDB: ${{ inputs.skip_bdb || false }}
+      DARWIN_GOARCH: ${{ matrix.goarch }}
+      DARWIN_BREW_PREFIX: ${{ matrix.brew_prefix }}
+      DARWIN_LIBS_ARCH: ${{ matrix.libs_arch }}
+      DARWIN_PACKAGE_SUFFIX: ${{ matrix.package_suffix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cmd/twins-gui/frontend/package-lock.json
+
+      - name: Install macOS dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew update
+          brew install berkeley-db@4 || brew reinstall berkeley-db@4
+
+      - name: Build GUI frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd cmd/twins-gui/frontend
+          rm -rf dist
+          npm ci --no-audit --no-fund
+          npm run build
+          test -d dist
+
+      - name: Build and package macOS binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf "$BUILD_DIR" "$DIST_DIR"
+          mkdir -p "$BUILD_DIR" "$DIST_DIR" "$LIBS_DIR"
+
+          if [ "$SKIP_BDB" != "true" ]; then
+            if [ -f "${DARWIN_BREW_PREFIX}/lib/libdb-4.8.dylib" ]; then
+              mkdir -p "${LIBS_DIR}/${DARWIN_LIBS_ARCH}"
+              cp "${DARWIN_BREW_PREFIX}/lib/libdb-4.8.dylib" "${LIBS_DIR}/${DARWIN_LIBS_ARCH}/"
+            else
+              echo "BerkeleyDB dylib not found: ${DARWIN_BREW_PREFIX}/lib/libdb-4.8.dylib"
+            fi
+          fi
+
+          ldflags="-s -w"
+          ldflags="${ldflags} -X ${VERSION_PKG}.Version=${VERSION}"
+          ldflags="${ldflags} -X ${VERSION_PKG}.GitCommit=${COMMIT}"
+          ldflags="${ldflags} -X ${VERSION_PKG}.BuildDate=${BUILD_DATE}"
+
+          generate_icns() {
+            local png_src="${GUI_SRC_DIR}/build/appicon.png"
+            local icns_dest="$1"
+
+            if [ ! -f "$png_src" ] || ! command -v iconutil >/dev/null 2>&1; then
+              return 1
+            fi
+
+            local png_black="${BUILD_DIR}/appicon-black-bg.png"
+            python3 -c "
+          from PIL import Image
+          img = Image.open('${png_src}').convert('RGBA')
+          bg = Image.new('RGBA', img.size, (0, 0, 0, 255))
+          w, h = img.size
+          new_w, new_h = int(w * 0.9), int(h * 0.9)
+          shrunk = img.resize((new_w, new_h), Image.LANCZOS)
+          padded = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+          padded.paste(shrunk, ((w - new_w) // 2, (h - new_h) // 2))
+          Image.alpha_composite(bg, padded).save('${png_black}')
+          " 2>/dev/null || true
+
+            if [ ! -f "$png_black" ]; then
+              png_black="$png_src"
+            fi
+
+            local iconset_dir="${BUILD_DIR}/AppIcon.iconset"
+            mkdir -p "$iconset_dir"
+            for size in 16 32 128 256 512; do
+              sips -z "$size" "$size" "$png_black" --out "${iconset_dir}/icon_${size}x${size}.png" >/dev/null 2>&1
+              local double=$((size * 2))
+              sips -z "$double" "$double" "$png_black" --out "${iconset_dir}/icon_${size}x${size}@2x.png" >/dev/null 2>&1
+            done
+
+            iconutil -c icns -o "$icns_dest" "$iconset_dir"
+            rm -rf "$iconset_dir"
+            [ "$png_black" = "$png_src" ] || rm -f "$png_black"
+          }
+
+          fix_macos_bdb_dylib() {
+            local app_dir="$1"
+            local bin_dir="$2"
+            local binary="${app_dir}/Contents/MacOS/twins-gui"
+            local frameworks_dir="${app_dir}/Contents/Frameworks"
+
+            local old_dylib_path
+            old_dylib_path="$(otool -L "$binary" 2>/dev/null | grep 'libdb-4.8' | awk '{print $1}' | head -1 || true)"
+            if [ -z "$old_dylib_path" ]; then
+              return 0
+            fi
+
+            local dylib_src
+            if echo "$bin_dir" | grep -q "arm64"; then
+              dylib_src="${LIBS_DIR}/darwin_arm64/libdb-4.8.dylib"
+            else
+              dylib_src="${LIBS_DIR}/darwin_amd64/libdb-4.8.dylib"
+            fi
+
+            if [ ! -f "$dylib_src" ]; then
+              return 0
+            fi
+
+            mkdir -p "$frameworks_dir"
+            cp "$dylib_src" "${frameworks_dir}/libdb-4.8.dylib"
+            install_name_tool -id "@executable_path/../Frameworks/libdb-4.8.dylib" "${frameworks_dir}/libdb-4.8.dylib"
+            install_name_tool -change "$old_dylib_path" "@executable_path/../Frameworks/libdb-4.8.dylib" "$binary"
+            codesign --force --sign - "${frameworks_dir}/libdb-4.8.dylib" 2>/dev/null || true
+            codesign --force --sign - "$binary" 2>/dev/null || true
+          }
+
+          create_macos_app_bundle() {
+            local bin_dir="$1"
+            local binary="${bin_dir}/twins-gui"
+            if [ ! -f "$binary" ]; then
+              return 1
+            fi
+
+            local app_dir="${bin_dir}/${APP_BUNDLE_NAME}.app"
+            local contents_dir="${app_dir}/Contents"
+            local macos_dir="${contents_dir}/MacOS"
+            local resources_dir="${contents_dir}/Resources"
+            mkdir -p "$macos_dir" "$resources_dir"
+
+            cp "$binary" "${macos_dir}/twins-gui"
+            chmod +x "${macos_dir}/twins-gui"
+
+            cat > "${contents_dir}/Info.plist" << PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleName</key>
+            <string>${APP_BUNDLE_NAME}</string>
+            <key>CFBundleExecutable</key>
+            <string>twins-gui</string>
+            <key>CFBundleIdentifier</key>
+            <string>${APP_BUNDLE_ID}</string>
+            <key>CFBundleVersion</key>
+            <string>${VERSION}</string>
+            <key>CFBundleGetInfoString</key>
+            <string>Modern desktop wallet for TWINS cryptocurrency</string>
+            <key>CFBundleShortVersionString</key>
+            <string>${VERSION}</string>
+            <key>CFBundleIconFile</key>
+            <string>iconfile</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.13.0</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+            <key>NSHumanReadableCopyright</key>
+            <string>Copyright (c) 2024 TWINS Foundation</string>
+            <key>NSAppTransportSecurity</key>
+            <dict>
+              <key>NSAllowsLocalNetworking</key>
+              <true/>
+            </dict>
+          </dict>
+          </plist>
+          PLIST
+
+            generate_icns "${resources_dir}/iconfile.icns" || true
+            rm -f "$binary"
+            fix_macos_bdb_dylib "$app_dir" "$bin_dir"
+          }
+
+          codesign_macos_app() {
+            local bin_dir="$1"
+            local app_path="${bin_dir}/${APP_BUNDLE_NAME}.app"
+            if [ "$NO_SIGN" = "true" ] || [ ! -d "$app_path" ]; then
+              return 0
+            fi
+
+            local sign_args=(--force --sign "$CODESIGN_IDENTITY")
+            local frameworks_path="${app_path}/Contents/Frameworks"
+            if [ -d "$frameworks_path" ]; then
+              for lib in "$frameworks_path"/*.dylib; do
+                [ -f "$lib" ] && codesign "${sign_args[@]}" "$lib"
+              done
+            fi
+
+            codesign "${sign_args[@]}" "$app_path"
+            codesign --verify --verbose "$app_path" 2>&1 | head -3 || true
+          }
+
+          create_package() {
+            local os="$1"
+            local arch="$2"
+            local suffix="$3"
+            local archive_type="$4"
+            local package_name="twins-${VERSION}-${suffix}"
+            local package_dir="${BUILD_DIR}/${package_name}"
+            local bin_dir="${BUILD_DIR}/${os}_${arch}"
+
+            mkdir -p "${package_dir}/bin" "${package_dir}/conf"
+
+            for binary in twinsd twins-cli; do
+              if [ -f "${bin_dir}/${binary}" ]; then
+                cp "${bin_dir}/${binary}" "${package_dir}/bin/"
+                chmod +x "${package_dir}/bin/${binary}"
+              fi
+            done
+
+            if [ "$os" = "darwin" ] && [ -d "${bin_dir}/${APP_BUNDLE_NAME}.app" ]; then
+              cp -R "${bin_dir}/${APP_BUNDLE_NAME}.app" "${package_dir}/"
+            elif [ -f "${bin_dir}/twins-gui" ]; then
+              cp "${bin_dir}/twins-gui" "${package_dir}/bin/"
+              chmod +x "${package_dir}/bin/twins-gui"
+            fi
+
+            for config in configs/mainnet.yml configs/testnet.yml configs/regtest.yml configs/twins.conf.example configs/masternode.conf.example configs/twinsd.yml; do
+              if [ -f "$config" ]; then
+                cp "$config" "${package_dir}/conf/"
+              fi
+            done
+
+            (cd "$BUILD_DIR" && ditto -c -k --keepParent "$package_name" "../${DIST_DIR}/${package_name}.${archive_type}")
+            rm -rf "$package_dir"
+          }
+
+          build_darwin_arch() {
+            local arch="$1"
+            local brew_prefix="$2"
+            local suffix="$3"
+
+            if [ ! -f "${brew_prefix}/lib/libdb-4.8.dylib" ]; then
+              echo "Skipping darwin/${arch}: ${brew_prefix}/lib/libdb-4.8.dylib not found"
+              return 0
+            fi
+
+            local output_dir="${BUILD_DIR}/darwin_${arch}"
+            mkdir -p "$output_dir"
+
+            for binary in "cmd/twinsd:twinsd" "cmd/twins-cli:twins-cli" "cmd/twins-gui:twins-gui"; do
+              local src_path="${binary%:*}"
+              local binary_name="${binary#*:}"
+              local build_tags=""
+              local extra_cgo_ldflags="-L${brew_prefix}/lib"
+
+              if [ "$binary_name" = "twins-gui" ]; then
+                build_tags="-tags desktop,production"
+                extra_cgo_ldflags="${extra_cgo_ldflags} -framework UniformTypeIdentifiers -framework WebKit"
+              fi
+
+              MACOSX_DEPLOYMENT_TARGET=10.15 CGO_ENABLED=1 GOOS=darwin GOARCH="$arch" \
+                CGO_CFLAGS="-I${brew_prefix}/include" \
+                CGO_LDFLAGS="${extra_cgo_ldflags}" \
+                go build ${build_tags} -ldflags "$ldflags" -o "${output_dir}/${binary_name}" "./${src_path}"
+            done
+
+            create_macos_app_bundle "$output_dir" || true
+            codesign_macos_app "$output_dir" || true
+            create_package darwin "$arch" "$suffix" zip
+          }
+
+          build_darwin_arch "$DARWIN_GOARCH" "$DARWIN_BREW_PREFIX" "$DARWIN_PACKAGE_SUFFIX"
+          ls -la "$DIST_DIR"
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-macos-${{ matrix.label }}
+          path: dist/*
+          if-no-files-found: error
+
+  linux:
+    name: Linux packages
+    runs-on: ubuntu-latest
+    needs: metadata
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_linux == false }}
+    env:
+      VERSION: ${{ needs.metadata.outputs.version }}
+      COMMIT: ${{ needs.metadata.outputs.commit }}
+      BUILD_DATE: ${{ needs.metadata.outputs.build_date }}
+      SKIP_BDB: ${{ inputs.skip_bdb || false }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cmd/twins-gui/frontend/package-lock.json
+
+      - name: Install host packaging tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y zip
+
+      - name: Build GUI frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd cmd/twins-gui/frontend
+          rm -rf dist
+          npm ci --no-audit --no-fund
+          npm run build
+          test -d dist
+
+      - name: Build BerkeleyDB shared libraries
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_bdb == false }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$LIBS_DIR"
+
+          cat > scripts/Dockerfile.bdb-shared << 'DOCKERFILE'
+          FROM debian:bookworm
+
+          RUN apt-get update && apt-get install -y \
+              build-essential wget \
+              gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+              gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+              gcc-i686-linux-gnu g++-i686-linux-gnu \
+              && rm -rf /var/lib/apt/lists/*
+
+          WORKDIR /build
+          ARG BDB_VERSION=4.8.30
+          RUN wget -q "https://download.oracle.com/berkeley-db/db-${BDB_VERSION}.tar.gz" \
+              && tar xzf "db-${BDB_VERSION}.tar.gz" \
+              && rm "db-${BDB_VERSION}.tar.gz"
+
+          RUN wget -q -O /build/db-${BDB_VERSION}/dist/config.guess \
+                  "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" \
+              && wget -q -O /build/db-${BDB_VERSION}/dist/config.sub \
+                  "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD" \
+              && chmod +x /build/db-${BDB_VERSION}/dist/config.guess /build/db-${BDB_VERSION}/dist/config.sub
+
+          COPY build-bdb-shared.sh /build/
+          RUN chmod +x /build/build-bdb-shared.sh
+
+          CMD ["/build/build-bdb-shared.sh"]
+          DOCKERFILE
+
+          cat > scripts/build-bdb-shared.sh << 'BUILDSCRIPT'
+          #!/bin/bash
+          set -e
+
+          BDB_SRC="/build/db-4.8.30"
+          OUTPUT="/output"
+          CONFIGS=(
+              "linux_amd64:gcc:x86_64-linux-gnu"
+              "linux_arm64:aarch64-linux-gnu-gcc:aarch64-linux-gnu"
+              "linux_arm:arm-linux-gnueabihf-gcc:arm-linux-gnueabihf"
+          )
+          BUILD_TYPE=$(uname -m)-linux-gnu
+
+          for config in "${CONFIGS[@]}"; do
+              IFS=':' read -r arch cc host <<< "$config"
+              rm -rf "/build/build_${arch}"
+              mkdir -p "/build/build_${arch}"
+              cd "/build/build_${arch}"
+
+              CC="$cc" \
+              "${BDB_SRC}/dist/configure" \
+                  --build="$BUILD_TYPE" \
+                  --host="$host" \
+                  --enable-cxx \
+                  --enable-shared \
+                  --disable-static \
+                  --with-pic \
+                  --prefix="/build/install_${arch}" \
+                  2>&1 || { echo "Configure failed for $arch"; continue; }
+
+              make -j$(nproc) 2>&1 || { echo "Build failed for $arch"; continue; }
+              make install 2>&1 || { echo "Install failed for $arch"; continue; }
+
+              mkdir -p "${OUTPUT}/${arch}"
+              if [ -f "/build/install_${arch}/lib/libdb-4.8.so" ]; then
+                  cp "/build/install_${arch}/lib/libdb-4.8.so" "${OUTPUT}/${arch}/"
+              else
+                  echo "WARNING: libdb-4.8.so not found for $arch"
+              fi
+          done
+
+          ls -laR /output/
+          BUILDSCRIPT
+
+          docker build --no-cache -f scripts/Dockerfile.bdb-shared -t bdb-shared-builder scripts
+          docker run --rm -v "${PWD}/${LIBS_DIR}:/output" bdb-shared-builder
+          rm -f scripts/Dockerfile.bdb-shared scripts/build-bdb-shared.sh
+
+      - name: Build Linux binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf "$BUILD_DIR" "$DIST_DIR"
+          mkdir -p "$BUILD_DIR" "$DIST_DIR"
+          chmod -R 777 "$BUILD_DIR"
+
+          docker build -f scripts/Dockerfile.build -t twins-builder:linux .
+
+          cat > "${BUILD_DIR}/docker_build.sh" << DOCKER_SCRIPT
+          #!/bin/bash
+          set -e
+
+          VERSION="${VERSION}"
+          COMMIT="${COMMIT}"
+          BUILD_DATE="${BUILD_DATE}"
+          VERSION_PKG="${VERSION_PKG}"
+
+          LDFLAGS="-s -w"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.Version=\${VERSION}"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.GitCommit=\${COMMIT}"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.BuildDate=\${BUILD_DATE}"
+
+          LINUX_PLATFORMS=(
+              "amd64:x86_64-linux-gnu-gcc:/opt/bdb/x86_64-linux-gnu:"
+              "arm64:aarch64-linux-gnu-gcc:/opt/bdb/aarch64-linux-gnu:"
+              "arm:arm-linux-gnueabihf-gcc:/opt/bdb/arm-linux-gnueabihf:7"
+          )
+          BINARIES=("cmd/twinsd:twinsd" "cmd/twins-cli:twins-cli" "cmd/twins-gui:twins-gui")
+          declare -A WEBKIT_ARCH_MAP=(
+              ["amd64"]="x86_64-linux-gnu"
+              ["arm64"]="aarch64-linux-gnu"
+              ["arm"]="arm-linux-gnueabihf"
+          )
+
+          if [ ! -d "cmd/twins-gui/frontend/dist" ]; then
+              cd cmd/twins-gui/frontend
+              npm ci --no-audit --no-fund
+              npm run build
+              cd /src
+          fi
+
+          for platform in "\${LINUX_PLATFORMS[@]}"; do
+              IFS=':' read -r arch cc bdb_path goarm <<< "\$platform"
+              mkdir -p "/build/linux_\${arch}"
+              export GOARM="\${goarm}"
+              webkit_triplet="\${WEBKIT_ARCH_MAP[\$arch]}"
+
+              for binary_spec in "\${BINARIES[@]}"; do
+                  src_path="\${binary_spec%:*}"
+                  binary_name="\${binary_spec#*:}"
+                  local_cgo_cflags="-I\${bdb_path}/include"
+                  local_cgo_ldflags="-L\${bdb_path}/lib -ldb"
+                  build_tags=""
+
+                  if [ "\$binary_name" = "twins-gui" ]; then
+                      build_tags="-tags desktop,production"
+                      webkit_pkg_dir="/usr/lib/\${webkit_triplet}/pkgconfig"
+                      if [ -n "\$webkit_triplet" ] && [ -d "\$webkit_pkg_dir" ]; then
+                          webkit_cflags=\$(PKG_CONFIG_PATH="\$webkit_pkg_dir" pkg-config --cflags webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)
+                          webkit_ldflags=\$(PKG_CONFIG_PATH="\$webkit_pkg_dir" pkg-config --libs webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)
+                          if [ -n "\$webkit_cflags" ]; then
+                              local_cgo_cflags="\${local_cgo_cflags} \${webkit_cflags}"
+                              local_cgo_ldflags="\${local_cgo_ldflags} \${webkit_ldflags}"
+                          else
+                              echo "WARN: webkit2gtk pkg-config failed for \${arch}, skipping twins-gui"
+                              continue
+                          fi
+                      else
+                          echo "WARN: webkit2gtk not found for \${arch}, skipping twins-gui"
+                          continue
+                      fi
+                  fi
+
+                  CGO_ENABLED=1 CC="\${cc}" \
+                      CGO_CFLAGS="\${local_cgo_cflags}" \
+                      CGO_LDFLAGS="\${local_cgo_ldflags}" \
+                      GOOS=linux GOARCH="\${arch}" \
+                      go build \${build_tags} -ldflags "\$LDFLAGS" \
+                      -o "/build/linux_\${arch}/\${binary_name}" \
+                      "./\${src_path}"
+              done
+          done
+
+          ls -la /build/linux_*/
+          DOCKER_SCRIPT
+
+          chmod +x "${BUILD_DIR}/docker_build.sh"
+          docker run --rm \
+            -v "${PWD}:/src" \
+            -v "${PWD}/${BUILD_DIR}:/build" \
+            -w /src \
+            twins-builder:linux \
+            bash /build/docker_build.sh
+
+      - name: Package Linux binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          create_package() {
+            local os="$1"
+            local arch="$2"
+            local suffix="$3"
+            local archive_type="$4"
+            local package_name="twins-${VERSION}-${suffix}"
+            local package_dir="${BUILD_DIR}/${package_name}"
+            local bin_dir="${BUILD_DIR}/${os}_${arch}"
+
+            mkdir -p "${package_dir}/bin" "${package_dir}/conf"
+
+            for binary in twinsd twins-cli; do
+              if [ -f "${bin_dir}/${binary}" ]; then
+                cp "${bin_dir}/${binary}" "${package_dir}/bin/"
+                chmod +x "${package_dir}/bin/${binary}"
+              fi
+            done
+
+            if [ -f "${bin_dir}/twins-gui" ]; then
+              cp "${bin_dir}/twins-gui" "${package_dir}/bin/"
+              chmod +x "${package_dir}/bin/twins-gui"
+            fi
+
+            for config in configs/mainnet.yml configs/testnet.yml configs/regtest.yml configs/twins.conf.example configs/masternode.conf.example configs/twinsd.yml; do
+              if [ -f "$config" ]; then
+                cp "$config" "${package_dir}/conf/"
+              fi
+            done
+
+            mkdir -p "$DIST_DIR"
+            (cd "$BUILD_DIR" && tar -czvf "../${DIST_DIR}/${package_name}.${archive_type}" "$package_name")
+            rm -rf "$package_dir"
+          }
+
+          create_package linux amd64 x86_64-linux-gnu tar.gz
+          create_package linux arm64 aarch64-linux-gnu tar.gz
+          create_package linux arm arm-linux-gnueabihf tar.gz
+          ls -la "$DIST_DIR"
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-linux
+          path: dist/*
+          if-no-files-found: error
+
+  windows:
+    name: Windows package
+    runs-on: ubuntu-latest
+    needs: metadata
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_windows == false }}
+    env:
+      VERSION: ${{ needs.metadata.outputs.version }}
+      COMMIT: ${{ needs.metadata.outputs.commit }}
+      BUILD_DATE: ${{ needs.metadata.outputs.build_date }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cmd/twins-gui/frontend/package-lock.json
+
+      - name: Install host packaging tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y zip
+
+      - name: Build GUI frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd cmd/twins-gui/frontend
+          rm -rf dist
+          npm ci --no-audit --no-fund
+          npm run build
+          test -d dist
+
+      - name: Build Windows binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf "$BUILD_DIR" "$DIST_DIR"
+          mkdir -p "$BUILD_DIR" "$DIST_DIR"
+          chmod -R 777 "$BUILD_DIR"
+
+          docker build -f scripts/Dockerfile.build -t twins-builder:linux .
+
+          cat > "${BUILD_DIR}/docker_build_windows.sh" << DOCKER_SCRIPT
+          #!/bin/bash
+          set -e
+
+          VERSION="${VERSION}"
+          COMMIT="${COMMIT}"
+          BUILD_DATE="${BUILD_DATE}"
+          VERSION_PKG="${VERSION_PKG}"
+
+          LDFLAGS="-s -w"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.Version=\${VERSION}"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.GitCommit=\${COMMIT}"
+          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.BuildDate=\${BUILD_DATE}"
+
+          BDB_PATH="/opt/bdb/x86_64-w64-mingw32"
+          CC="x86_64-w64-mingw32-gcc"
+          BINARIES=("cmd/twinsd:twinsd.exe" "cmd/twins-cli:twins-cli.exe" "cmd/twins-gui:twins-gui.exe")
+
+          if [ ! -d "cmd/twins-gui/frontend/dist" ]; then
+              cd cmd/twins-gui/frontend
+              npm ci --no-audit --no-fund
+              npm run build
+              cd /src
+          fi
+
+          mkdir -p "/build/windows_amd64"
+
+          python3 /src/scripts/generate_windows_ico.py \
+              --input /src/cmd/twins-gui/build/appicon.png \
+              --output /src/cmd/twins-gui/build/windows/appicon.ico
+
+          (
+              cd /src/cmd/twins-gui/build/windows
+              x86_64-w64-mingw32-windres resource.rc -O coff -o /src/cmd/twins-gui/rsrc_windows_amd64.syso
+          )
+
+          for binary_spec in "\${BINARIES[@]}"; do
+              src_path="\${binary_spec%:*}"
+              binary_name="\${binary_spec#*:}"
+              local_cgo_cflags="-I\${BDB_PATH}/include"
+              local_cgo_ldflags="-L\${BDB_PATH}/lib -ldb -lws2_32 -lshlwapi -lpthread -static"
+              build_tags=""
+
+              if [ "\$binary_name" = "twins-gui.exe" ]; then
+                  build_tags="-tags desktop,production"
+                  LDFLAGS_GUI="\${LDFLAGS} -H windowsgui"
+              else
+                  LDFLAGS_GUI="\${LDFLAGS}"
+              fi
+
+              if ! CGO_ENABLED=1 CC="\${CC}" \
+                  CGO_CFLAGS="\${local_cgo_cflags}" \
+                  CGO_LDFLAGS="\${local_cgo_ldflags}" \
+                  GOOS=windows GOARCH=amd64 \
+                  go build \${build_tags} -ldflags "\$LDFLAGS_GUI" \
+                  -o "/build/windows_amd64/\${binary_name}" \
+                  "./\${src_path}"; then
+                  if [ "\$binary_name" = "twins-gui.exe" ]; then
+                      echo "WARN: \${binary_name} build failed, skipping"
+                      continue
+                  fi
+                  exit 1
+              fi
+          done
+
+          ls -la /build/windows_amd64/
+          DOCKER_SCRIPT
+
+          chmod +x "${BUILD_DIR}/docker_build_windows.sh"
+          chmod -R a+w cmd/twins-gui/build/windows
+          chmod a+w cmd/twins-gui
+          [ ! -f cmd/twins-gui/rsrc_windows_amd64.syso ] || chmod a+w cmd/twins-gui/rsrc_windows_amd64.syso
+
+          docker run --rm \
+            -v "${PWD}:/src" \
+            -v "${PWD}/${BUILD_DIR}:/build" \
+            -w /src \
+            twins-builder:linux \
+            bash /build/docker_build_windows.sh
+
+      - name: Package Windows binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          package_name="twins-${VERSION}-win64"
+          package_dir="${BUILD_DIR}/${package_name}"
+          bin_dir="${BUILD_DIR}/windows_amd64"
+
+          mkdir -p "${package_dir}/bin" "${package_dir}/conf"
+
+          for binary in twinsd twins-cli; do
+            if [ -f "${bin_dir}/${binary}.exe" ]; then
+              cp "${bin_dir}/${binary}.exe" "${package_dir}/bin/"
+              chmod +x "${package_dir}/bin/${binary}.exe"
+            fi
+          done
+
+          if [ -f "${bin_dir}/twins-gui.exe" ]; then
+            cp "${bin_dir}/twins-gui.exe" "${package_dir}/bin/"
+            chmod +x "${package_dir}/bin/twins-gui.exe"
+          fi
+
+          for config in configs/mainnet.yml configs/testnet.yml configs/regtest.yml configs/twins.conf.example configs/masternode.conf.example configs/twinsd.yml; do
+            if [ -f "$config" ]; then
+              cp "$config" "${package_dir}/conf/"
+            fi
+          done
+
+          mkdir -p "$DIST_DIR"
+          (cd "$BUILD_DIR" && zip -ry "../${DIST_DIR}/${package_name}.zip" "$package_name")
+          rm -rf "$package_dir"
+          ls -la "$DIST_DIR"
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-windows
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    runs-on: ubuntu-latest
+    needs:
+      - metadata
+      - macos
+      - linux
+      - windows
+    if: ${{ always() && !failure() && !cancelled() }}
+    env:
+      VERSION: ${{ needs.metadata.outputs.version }}
+      RELEASE_TAG: ${{ needs.metadata.outputs.tag }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Generate checksums and release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cd dist
+          shopt -s nullglob
+          release_files=(*.tar.gz *.zip)
+          if [ "${#release_files[@]}" -eq 0 ]; then
+            echo "No release archives found"
+            exit 1
+          fi
+          sha256sum "${release_files[@]}" > SHA256SUMS.txt
+          cd ..
+
+          downloads_table="| Platform | Architecture | Download |
+          |----------|--------------|----------|"
+
+          if [ -f "dist/twins-${VERSION}-osx-arm64.zip" ]; then
+            downloads_table="${downloads_table}
+          | macOS | Apple Silicon (M1/M2/M3) | twins-${VERSION}-osx-arm64.zip |"
+          fi
+          if [ -f "dist/twins-${VERSION}-osx-x86_64.zip" ]; then
+            downloads_table="${downloads_table}
+          | macOS | Intel x86_64 | twins-${VERSION}-osx-x86_64.zip |"
+          fi
+          if [ -f "dist/twins-${VERSION}-x86_64-linux-gnu.tar.gz" ]; then
+            downloads_table="${downloads_table}
+          | Linux | x86_64 | twins-${VERSION}-x86_64-linux-gnu.tar.gz |"
+          fi
+          if [ -f "dist/twins-${VERSION}-aarch64-linux-gnu.tar.gz" ]; then
+            downloads_table="${downloads_table}
+          | Linux | ARM64 | twins-${VERSION}-aarch64-linux-gnu.tar.gz |"
+          fi
+          if [ -f "dist/twins-${VERSION}-arm-linux-gnueabihf.tar.gz" ]; then
+            downloads_table="${downloads_table}
+          | Linux | ARM32 | twins-${VERSION}-arm-linux-gnueabihf.tar.gz |"
+          fi
+          if [ -f "dist/twins-${VERSION}-win64.zip" ]; then
+            downloads_table="${downloads_table}
+          | Windows | x86_64 | twins-${VERSION}-win64.zip |"
+          fi
+
+          cat > RELEASE_NOTES.md << NOTES
+          ## TWINS Core v${VERSION}
+
+          ### Downloads
+
+          ${downloads_table}
+
+          ### Verification
+
+          Verify downloads using SHA256SUMS.txt:
+
+          \`\`\`bash
+          sha256sum -c SHA256SUMS.txt
+          \`\`\`
+
+          ### Changes
+
+          - Full Go implementation with Proof-of-Stake consensus
+          - 4-tier masternode system (Bronze/Silver/Gold/Platinum)
+          - HD wallet with BIP32/44 support
+          - Legacy wallet migration from C++ version
+          - Pebble database backend (40% faster than LevelDB)
+          NOTES
+
+          cat dist/SHA256SUMS.txt
+
+      - name: Publish release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release delete "$RELEASE_TAG" --yes
+          fi
+
+          gh release create "$RELEASE_TAG" dist/* \
+            --title "TWINS Core v${VERSION}" \
+            --notes-file RELEASE_NOTES.md \
+            --target "$GITHUB_SHA"

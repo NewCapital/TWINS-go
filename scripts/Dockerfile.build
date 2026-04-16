@@ -1,0 +1,192 @@
+# TWINS Core Build Container
+# Multi-arch Linux + Windows build environment with Go 1.25 and GUI (Wails/WebKit2GTK) support
+#
+# Usage:
+#   docker build -f scripts/Dockerfile.build -t twins-builder:linux .
+#   docker run --rm -v $(pwd):/src -v $(pwd)/build:/build twins-builder:linux /build/docker_build.sh
+#
+
+FROM golang:1.25-bookworm AS builder
+
+LABEL maintainer="TWINS Development Team"
+LABEL description="Multi-architecture Linux and Windows build environment for TWINS Core"
+
+# BerkeleyDB version to build
+ENV BDB_VERSION=5.3.28
+
+# Install build essentials and cross-compilation tools for ALL architectures
+# NOTE: Do NOT add dpkg --add-architecture before this step - it breaks cross-compiler resolution
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    ca-certificates \
+    wget \
+    curl \
+    python3 \
+    python3-pil \
+    pkg-config \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu \
+    gcc-arm-linux-gnueabihf \
+    g++-arm-linux-gnueabihf \
+    gcc-i686-linux-gnu \
+    g++-i686-linux-gnu \
+    gcc-x86-64-linux-gnu \
+    g++-x86-64-linux-gnu \
+    libc6-dev-arm64-cross \
+    libc6-dev-armhf-cross \
+    libc6-dev-i386-cross \
+    libc6-dev-amd64-cross \
+    # MinGW-w64 cross-compiler for Windows builds
+    gcc-mingw-w64-x86-64 \
+    g++-mingw-w64-x86-64 \
+    binutils-mingw-w64-x86-64 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20.x for GUI frontend build
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install webkit2gtk and gtk3 dev libraries for native (amd64)
+RUN apt-get update && apt-get install -y \
+    libgtk-3-dev \
+    libwebkit2gtk-4.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Enable multi-arch AFTER cross-compilers are installed, then install cross-arch webkit2gtk
+# Soft-fail: cross-arch webkit2gtk may not be available for all architectures
+RUN dpkg --add-architecture arm64 && \
+    dpkg --add-architecture armhf && \
+    dpkg --add-architecture i386 && \
+    apt-get update && \
+    (apt-get install -y libgtk-3-dev:arm64 libwebkit2gtk-4.0-dev:arm64 || \
+        echo "WARN: arm64 webkit2gtk not available, twins-gui will be skipped for arm64") && \
+    (apt-get install -y libgtk-3-dev:armhf libwebkit2gtk-4.0-dev:armhf || \
+        echo "WARN: armhf webkit2gtk not available, twins-gui will be skipped for armhf") && \
+    (apt-get install -y libgtk-3-dev:i386 libwebkit2gtk-4.0-dev:i386 || \
+        echo "WARN: i386 webkit2gtk not available, twins-gui will be skipped for i386") && \
+    rm -rf /var/lib/apt/lists/*
+
+# Download and extract BerkeleyDB source
+WORKDIR /tmp
+RUN wget -q "https://download.oracle.com/berkeley-db/db-${BDB_VERSION}.tar.gz" \
+    && tar xzf "db-${BDB_VERSION}.tar.gz" \
+    && rm "db-${BDB_VERSION}.tar.gz"
+
+# Update config.guess and config.sub to support aarch64 (original from 2011 is too old)
+# Patch atomic.h to fix GCC 12+ compatibility (rename conflicting function)
+# Patch win_db.h for MinGW cross-compilation: fix case-sensitive include (WinIoCtl.h → winioctl.h)
+RUN wget -q -O /tmp/db-${BDB_VERSION}/dist/config.guess \
+        "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" \
+    && wget -q -O /tmp/db-${BDB_VERSION}/dist/config.sub \
+        "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD" \
+    && chmod +x /tmp/db-${BDB_VERSION}/dist/config.guess /tmp/db-${BDB_VERSION}/dist/config.sub \
+    && sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' /tmp/db-${BDB_VERSION}/src/dbinc/atomic.h \
+    && sed -i 's/WinIoCtl\.h/winioctl.h/g' /tmp/db-${BDB_VERSION}/src/dbinc/win_db.h
+
+# Build BerkeleyDB for x86_64-linux-gnu (static, C only - CGO doesn't need C++)
+RUN cd /tmp/db-${BDB_VERSION}/build_unix && \
+    ../dist/configure \
+        --build=aarch64-linux-gnu \
+        --host=x86_64-linux-gnu \
+        --prefix=/opt/bdb/x86_64-linux-gnu \
+        --disable-cxx \
+        --disable-shared \
+        --enable-static \
+        CC=x86_64-linux-gnu-gcc \
+        CFLAGS="-fPIC" && \
+    make -j$(nproc) && \
+    make install && \
+    make clean
+
+# Build BerkeleyDB for aarch64-linux-gnu (static) - native build on arm64
+RUN cd /tmp/db-${BDB_VERSION}/build_unix && \
+    ../dist/configure \
+        --build=aarch64-linux-gnu \
+        --host=aarch64-linux-gnu \
+        --prefix=/opt/bdb/aarch64-linux-gnu \
+        --disable-cxx \
+        --disable-shared \
+        --enable-static \
+        CC=gcc \
+        CFLAGS="-fPIC" && \
+    make -j$(nproc) && \
+    make install && \
+    make clean
+
+# Build BerkeleyDB for arm-linux-gnueabihf (static)
+RUN cd /tmp/db-${BDB_VERSION}/build_unix && \
+    ../dist/configure \
+        --build=aarch64-linux-gnu \
+        --host=arm-linux-gnueabihf \
+        --prefix=/opt/bdb/arm-linux-gnueabihf \
+        --disable-cxx \
+        --disable-shared \
+        --enable-static \
+        CC=arm-linux-gnueabihf-gcc \
+        CFLAGS="-fPIC" && \
+    make -j$(nproc) && \
+    make install && \
+    make clean
+
+# Build BerkeleyDB for i686-linux-gnu (static)
+RUN cd /tmp/db-${BDB_VERSION}/build_unix && \
+    ../dist/configure \
+        --build=aarch64-linux-gnu \
+        --host=i686-linux-gnu \
+        --prefix=/opt/bdb/i686-linux-gnu \
+        --disable-cxx \
+        --disable-shared \
+        --enable-static \
+        CC=i686-linux-gnu-gcc \
+        CFLAGS="-fPIC -m32" && \
+    make -j$(nproc) && \
+    make install && \
+    make clean
+
+# Build BerkeleyDB for x86_64-w64-mingw32 (static, Windows cross-compilation)
+RUN cd /tmp/db-${BDB_VERSION}/build_unix && \
+    ../dist/configure \
+        --build=x86_64-linux-gnu \
+        --host=x86_64-w64-mingw32 \
+        --prefix=/opt/bdb/x86_64-w64-mingw32 \
+        --disable-cxx \
+        --disable-shared \
+        --enable-static \
+        --enable-mingw \
+        CC=x86_64-w64-mingw32-gcc && \
+    make -j$(nproc) && \
+    make install && \
+    make clean
+
+# Clean up BerkeleyDB source
+RUN rm -rf /tmp/db-${BDB_VERSION}
+
+# Set Go environment for reproducible builds
+ENV CGO_ENABLED=1
+ENV GOPROXY=https://proxy.golang.org,direct
+ENV GOFLAGS="-trimpath"
+
+# Set working directory
+WORKDIR /src
+
+# Copy go.mod and go.sum first for better layer caching
+COPY go.mod go.sum ./
+
+# Download dependencies (cached unless go.mod/go.sum change)
+RUN go mod download && go mod verify
+
+# Copy source code (relies on .dockerignore to exclude secrets and unnecessary files)
+COPY . .
+
+# Create non-root build user for safer execution
+RUN useradd -m builder && chown -R builder:builder /src
+USER builder
+
+# Keep Go caches writable for the non-root build user.
+ENV GOCACHE=/tmp/.gocache
+ENV GOMODCACHE=/tmp/.gomodcache
+
+# Default command
+CMD ["bash"]
