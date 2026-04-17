@@ -554,6 +554,7 @@ jobs:
           chmod +x "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
           test -x "${src_dir}/dist/config.guess"
           test -x "${src_dir}/dist/config.sub"
+          sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' "${src_dir}/src/dbinc/atomic.h"
 
           build_type="$(gcc -dumpmachine)"
           cd "$build_dir"
