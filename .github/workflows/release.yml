@@ -554,7 +554,12 @@ jobs:
           chmod +x "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
           test -x "${src_dir}/dist/config.guess"
           test -x "${src_dir}/dist/config.sub"
-          sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' "${src_dir}/src/dbinc/atomic.h"
+          atomic_h="$(find "$src_dir" -path '*/dbinc/atomic.h' -print -quit)"
+          if [ -n "$atomic_h" ]; then
+            sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' "$atomic_h"
+          else
+            echo "WARN: BerkeleyDB atomic.h not found; skipping GCC atomic patch"
+          fi
 
           build_type="$(gcc -dumpmachine)"
           cd "$build_dir"
