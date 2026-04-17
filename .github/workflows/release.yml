@@ -745,6 +745,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -757,7 +762,20 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y zip
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            ca-certificates \
+            wget \
+            curl \
+            autotools-dev \
+            python3 \
+            python3-pil \
+            pkg-config \
+            zip \
+            gcc-mingw-w64-x86-64 \
+            g++-mingw-w64-x86-64 \
+            binutils-mingw-w64-x86-64
 
       - name: Build GUI frontend
         shell: bash
@@ -769,6 +787,52 @@ jobs:
           npm run build
           test -d dist
 
+      - name: Build Windows BerkeleyDB static library
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bdb_version="5.3.28"
+          src_dir="${RUNNER_TEMP}/bdb-windows-src"
+          build_dir="${src_dir}/build_unix"
+          install_dir="${RUNNER_TEMP}/bdb/x86_64-w64-mingw32"
+          rm -rf "$src_dir" "$install_dir"
+
+          wget -q "https://download.oracle.com/berkeley-db/db-${bdb_version}.tar.gz" -O "${RUNNER_TEMP}/db-${bdb_version}-windows.tar.gz"
+          tar xzf "${RUNNER_TEMP}/db-${bdb_version}-windows.tar.gz" -C "$RUNNER_TEMP"
+          mv "${RUNNER_TEMP}/db-${bdb_version}" "$src_dir"
+
+          chmod u+w "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub" 2>/dev/null || true
+          rm -f "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
+          if [ -f /usr/share/misc/config.guess ] && [ -f /usr/share/misc/config.sub ]; then
+            cp /usr/share/misc/config.guess "${src_dir}/dist/config.guess"
+            cp /usr/share/misc/config.sub "${src_dir}/dist/config.sub"
+          else
+            wget -q -O "${src_dir}/dist/config.guess" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+            wget -q -O "${src_dir}/dist/config.sub" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
+          fi
+          chmod +x "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
+          test -x "${src_dir}/dist/config.guess"
+          test -x "${src_dir}/dist/config.sub"
+          sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' "${src_dir}/src/dbinc/atomic.h"
+          sed -i 's/WinIoCtl\.h/winioctl.h/g' "${src_dir}/src/dbinc/win_db.h"
+
+          build_type="$(gcc -dumpmachine)"
+          cd "$build_dir"
+          CC=x86_64-w64-mingw32-gcc CONFIG_SHELL=/bin/bash SHELL=/bin/bash \
+            bash ../dist/configure \
+            --build="$build_type" \
+            --host=x86_64-w64-mingw32 \
+            --prefix="$install_dir" \
+            --disable-cxx \
+            --disable-shared \
+            --enable-static \
+            --enable-mingw
+
+          make -j"$(nproc)"
+          make install
+          test -f "${install_dir}/lib/libdb.a"
+
       - name: Build Windows binaries
         shell: bash
         run: |
@@ -776,89 +840,59 @@ jobs:
 
           rm -rf "$BUILD_DIR" "$DIST_DIR"
           mkdir -p "$BUILD_DIR" "$DIST_DIR"
-          chmod -R 777 "$BUILD_DIR"
-
-          docker build -f scripts/Dockerfile.build -t twins-builder:linux .
-
-          cat > "${BUILD_DIR}/docker_build_windows.sh" << DOCKER_SCRIPT
-          #!/bin/bash
-          set -e
-
-          VERSION="${VERSION}"
-          COMMIT="${COMMIT}"
-          BUILD_DATE="${BUILD_DATE}"
-          VERSION_PKG="${VERSION_PKG}"
 
           LDFLAGS="-s -w"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.Version=\${VERSION}"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.GitCommit=\${COMMIT}"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.BuildDate=\${BUILD_DATE}"
+          LDFLAGS="${LDFLAGS} -X ${VERSION_PKG}.Version=${VERSION}"
+          LDFLAGS="${LDFLAGS} -X ${VERSION_PKG}.GitCommit=${COMMIT}"
+          LDFLAGS="${LDFLAGS} -X ${VERSION_PKG}.BuildDate=${BUILD_DATE}"
 
-          BDB_PATH="/opt/bdb/x86_64-w64-mingw32"
+          BDB_PATH="${RUNNER_TEMP}/bdb/x86_64-w64-mingw32"
           CC="x86_64-w64-mingw32-gcc"
           BINARIES=("cmd/twinsd:twinsd.exe" "cmd/twins-cli:twins-cli.exe" "cmd/twins-gui:twins-gui.exe")
 
-          if [ ! -d "cmd/twins-gui/frontend/dist" ]; then
-              cd cmd/twins-gui/frontend
-              npm ci --no-audit --no-fund
-              npm run build
-              cd /src
-          fi
+          mkdir -p "${BUILD_DIR}/windows_amd64"
 
-          mkdir -p "/build/windows_amd64"
-
-          python3 /src/scripts/generate_windows_ico.py \
-              --input /src/cmd/twins-gui/build/appicon.png \
-              --output /src/cmd/twins-gui/build/windows/appicon.ico
+          python3 scripts/generate_windows_ico.py \
+              --input cmd/twins-gui/build/appicon.png \
+              --output cmd/twins-gui/build/windows/appicon.ico
 
           (
-              cd /src/cmd/twins-gui/build/windows
-              x86_64-w64-mingw32-windres resource.rc -O coff -o /src/cmd/twins-gui/rsrc_windows_amd64.syso
+              cd cmd/twins-gui/build/windows
+              x86_64-w64-mingw32-windres resource.rc -O coff -o ../../rsrc_windows_amd64.syso
           )
 
-          for binary_spec in "\${BINARIES[@]}"; do
-              src_path="\${binary_spec%:*}"
-              binary_name="\${binary_spec#*:}"
-              local_cgo_cflags="-I\${BDB_PATH}/include"
-              local_cgo_ldflags="-L\${BDB_PATH}/lib -ldb -lws2_32 -lshlwapi -lpthread -static"
+          export GOFLAGS="-trimpath"
+
+          for binary_spec in "${BINARIES[@]}"; do
+              src_path="${binary_spec%:*}"
+              binary_name="${binary_spec#*:}"
+              local_cgo_cflags="-I${BDB_PATH}/include"
+              local_cgo_ldflags="-L${BDB_PATH}/lib -ldb -lws2_32 -lshlwapi -lpthread -static"
               build_tags=""
 
-              if [ "\$binary_name" = "twins-gui.exe" ]; then
+              if [ "$binary_name" = "twins-gui.exe" ]; then
                   build_tags="-tags desktop,production"
-                  LDFLAGS_GUI="\${LDFLAGS} -H windowsgui"
+                  LDFLAGS_GUI="${LDFLAGS} -H windowsgui"
               else
-                  LDFLAGS_GUI="\${LDFLAGS}"
+                  LDFLAGS_GUI="${LDFLAGS}"
               fi
 
-              if ! CGO_ENABLED=1 CC="\${CC}" \
-                  CGO_CFLAGS="\${local_cgo_cflags}" \
-                  CGO_LDFLAGS="\${local_cgo_ldflags}" \
+              if ! CGO_ENABLED=1 CC="${CC}" \
+                  CGO_CFLAGS="${local_cgo_cflags}" \
+                  CGO_LDFLAGS="${local_cgo_ldflags}" \
                   GOOS=windows GOARCH=amd64 \
-                  go build \${build_tags} -ldflags "\$LDFLAGS_GUI" \
-                  -o "/build/windows_amd64/\${binary_name}" \
-                  "./\${src_path}"; then
-                  if [ "\$binary_name" = "twins-gui.exe" ]; then
-                      echo "WARN: \${binary_name} build failed, skipping"
+                  go build ${build_tags} -ldflags "$LDFLAGS_GUI" \
+                  -o "${BUILD_DIR}/windows_amd64/${binary_name}" \
+                  "./${src_path}"; then
+                  if [ "$binary_name" = "twins-gui.exe" ]; then
+                      echo "WARN: ${binary_name} build failed, skipping"
                       continue
                   fi
                   exit 1
               fi
           done
 
-          ls -la /build/windows_amd64/
-          DOCKER_SCRIPT
-
-          chmod +x "${BUILD_DIR}/docker_build_windows.sh"
-          chmod -R a+w cmd/twins-gui/build/windows
-          chmod a+w cmd/twins-gui
-          [ ! -f cmd/twins-gui/rsrc_windows_amd64.syso ] || chmod a+w cmd/twins-gui/rsrc_windows_amd64.syso
-
-          docker run --rm \
-            -v "${PWD}:/src" \
-            -v "${PWD}/${BUILD_DIR}:/build" \
-            -w /src \
-            twins-builder:linux \
-            bash /build/docker_build_windows.sh
+          ls -la "${BUILD_DIR}/windows_amd64/"
 
       - name: Package Windows binaries
         shell: bash
