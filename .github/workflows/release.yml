@@ -411,20 +411,68 @@ jobs:
           if-no-files-found: error
 
   linux:
-    name: Linux packages
-    runs-on: ubuntu-latest
+    name: Linux ${{ matrix.label }} package
+    runs-on: ubuntu-22.04
     needs: metadata
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_linux == false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: x86_64
+            goarch: amd64
+            goarm: ""
+            cc: x86_64-linux-gnu-gcc
+            host: x86_64-linux-gnu
+            pkg_config_arch: x86_64-linux-gnu
+            ubuntu_arch: ""
+            apt_packages: gcc-x86-64-linux-gnu g++-x86-64-linux-gnu libc6-dev-amd64-cross
+            libs_arch: linux_amd64
+            package_suffix: x86_64-linux-gnu
+          - label: arm64
+            goarch: arm64
+            goarm: ""
+            cc: aarch64-linux-gnu-gcc
+            host: aarch64-linux-gnu
+            pkg_config_arch: aarch64-linux-gnu
+            ubuntu_arch: arm64
+            apt_packages: gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
+            libs_arch: linux_arm64
+            package_suffix: aarch64-linux-gnu
+          - label: armhf
+            goarch: arm
+            goarm: "7"
+            cc: arm-linux-gnueabihf-gcc
+            host: arm-linux-gnueabihf
+            pkg_config_arch: arm-linux-gnueabihf
+            ubuntu_arch: armhf
+            apt_packages: gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
+            libs_arch: linux_arm
+            package_suffix: arm-linux-gnueabihf
     env:
       VERSION: ${{ needs.metadata.outputs.version }}
       COMMIT: ${{ needs.metadata.outputs.commit }}
       BUILD_DATE: ${{ needs.metadata.outputs.build_date }}
       SKIP_BDB: ${{ inputs.skip_bdb || false }}
+      LINUX_GOARCH: ${{ matrix.goarch }}
+      LINUX_GOARM: ${{ matrix.goarm }}
+      LINUX_CC: ${{ matrix.cc }}
+      LINUX_HOST: ${{ matrix.host }}
+      LINUX_PKG_CONFIG_ARCH: ${{ matrix.pkg_config_arch }}
+      LINUX_UBUNTU_ARCH: ${{ matrix.ubuntu_arch }}
+      LINUX_APT_PACKAGES: ${{ matrix.apt_packages }}
+      LINUX_LIBS_ARCH: ${{ matrix.libs_arch }}
+      LINUX_PACKAGE_SUFFIX: ${{ matrix.package_suffix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -433,12 +481,34 @@ jobs:
           cache: npm
           cache-dependency-path: cmd/twins-gui/frontend/package-lock.json
 
-      - name: Install host packaging tools
+      - name: Install Linux build dependencies
         shell: bash
         run: |
           set -euo pipefail
+
           sudo apt-get update
-          sudo apt-get install -y zip
+          sudo apt-get install -y \
+            build-essential \
+            git \
+            ca-certificates \
+            wget \
+            curl \
+            pkg-config \
+            tar \
+            zip \
+            $LINUX_APT_PACKAGES
+
+          if [ -n "$LINUX_UBUNTU_ARCH" ]; then
+            sudo dpkg --add-architecture "$LINUX_UBUNTU_ARCH"
+            sudo apt-get update
+            if ! sudo apt-get install -y \
+              "libgtk-3-dev:${LINUX_UBUNTU_ARCH}" \
+              "libwebkit2gtk-4.0-dev:${LINUX_UBUNTU_ARCH}"; then
+              echo "WARN: cross-architecture WebKit dependencies unavailable for ${LINUX_UBUNTU_ARCH}; twins-gui will be skipped for this target"
+            fi
+          else
+            sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+          fi
 
       - name: Build GUI frontend
         shell: bash
@@ -456,83 +526,75 @@ jobs:
         run: |
           set -euo pipefail
 
-          mkdir -p "$LIBS_DIR"
+          src_dir="${RUNNER_TEMP}/bdb-shared-src"
+          build_dir="${RUNNER_TEMP}/bdb-shared-build-${LINUX_LIBS_ARCH}"
+          install_dir="${RUNNER_TEMP}/bdb-shared-install-${LINUX_LIBS_ARCH}"
+          rm -rf "$src_dir" "$build_dir" "$install_dir"
+          mkdir -p "$src_dir" "$build_dir" "${LIBS_DIR}/${LINUX_LIBS_ARCH}"
 
-          cat > scripts/Dockerfile.bdb-shared << 'DOCKERFILE'
-          FROM debian:bookworm
+          wget -q "https://download.oracle.com/berkeley-db/db-${BDB_VERSION}.tar.gz" -O "${RUNNER_TEMP}/db-${BDB_VERSION}.tar.gz"
+          tar xzf "${RUNNER_TEMP}/db-${BDB_VERSION}.tar.gz" -C "$src_dir" --strip-components=1
+          wget -q -O "${src_dir}/dist/config.guess" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+          wget -q -O "${src_dir}/dist/config.sub" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
+          chmod +x "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
 
-          RUN apt-get update && apt-get install -y \
-              build-essential wget \
-              gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-              gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
-              gcc-i686-linux-gnu g++-i686-linux-gnu \
-              && rm -rf /var/lib/apt/lists/*
+          build_type="$(gcc -dumpmachine)"
+          cd "$build_dir"
+          CC="$LINUX_CC" \
+            "${src_dir}/dist/configure" \
+            --build="$build_type" \
+            --host="$LINUX_HOST" \
+            --enable-cxx \
+            --enable-shared \
+            --disable-static \
+            --with-pic \
+            --prefix="$install_dir"
 
-          WORKDIR /build
-          ARG BDB_VERSION=4.8.30
-          RUN wget -q "https://download.oracle.com/berkeley-db/db-${BDB_VERSION}.tar.gz" \
-              && tar xzf "db-${BDB_VERSION}.tar.gz" \
-              && rm "db-${BDB_VERSION}.tar.gz"
+          make -j"$(nproc)"
+          make install
 
-          RUN wget -q -O /build/db-${BDB_VERSION}/dist/config.guess \
-                  "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" \
-              && wget -q -O /build/db-${BDB_VERSION}/dist/config.sub \
-                  "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD" \
-              && chmod +x /build/db-${BDB_VERSION}/dist/config.guess /build/db-${BDB_VERSION}/dist/config.sub
+          if [ ! -f "${install_dir}/lib/libdb-4.8.so" ]; then
+            echo "libdb-4.8.so not found for ${LINUX_LIBS_ARCH}"
+            exit 1
+          fi
 
-          COPY build-bdb-shared.sh /build/
-          RUN chmod +x /build/build-bdb-shared.sh
+          cp "${install_dir}/lib/libdb-4.8.so" "${LIBS_DIR}/${LINUX_LIBS_ARCH}/"
+          ls -la "${LIBS_DIR}/${LINUX_LIBS_ARCH}/"
 
-          CMD ["/build/build-bdb-shared.sh"]
-          DOCKERFILE
+      - name: Build BerkeleyDB static library
+        shell: bash
+        run: |
+          set -euo pipefail
 
-          cat > scripts/build-bdb-shared.sh << 'BUILDSCRIPT'
-          #!/bin/bash
-          set -e
+          static_bdb_version="5.3.28"
+          src_dir="${RUNNER_TEMP}/bdb-static-src-${LINUX_HOST}"
+          build_dir="${src_dir}/build_unix"
+          install_dir="${RUNNER_TEMP}/bdb/${LINUX_HOST}"
+          rm -rf "$src_dir" "$install_dir"
 
-          BDB_SRC="/build/db-4.8.30"
-          OUTPUT="/output"
-          CONFIGS=(
-              "linux_amd64:gcc:x86_64-linux-gnu"
-              "linux_arm64:aarch64-linux-gnu-gcc:aarch64-linux-gnu"
-              "linux_arm:arm-linux-gnueabihf-gcc:arm-linux-gnueabihf"
-          )
-          BUILD_TYPE=$(uname -m)-linux-gnu
+          wget -q "https://download.oracle.com/berkeley-db/db-${static_bdb_version}.tar.gz" -O "${RUNNER_TEMP}/db-${static_bdb_version}-${LINUX_HOST}.tar.gz"
+          tar xzf "${RUNNER_TEMP}/db-${static_bdb_version}-${LINUX_HOST}.tar.gz" -C "$RUNNER_TEMP"
+          mv "${RUNNER_TEMP}/db-${static_bdb_version}" "$src_dir"
 
-          for config in "${CONFIGS[@]}"; do
-              IFS=':' read -r arch cc host <<< "$config"
-              rm -rf "/build/build_${arch}"
-              mkdir -p "/build/build_${arch}"
-              cd "/build/build_${arch}"
+          wget -q -O "${src_dir}/dist/config.guess" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+          wget -q -O "${src_dir}/dist/config.sub" "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
+          chmod +x "${src_dir}/dist/config.guess" "${src_dir}/dist/config.sub"
+          sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' "${src_dir}/src/dbinc/atomic.h"
 
-              CC="$cc" \
-              "${BDB_SRC}/dist/configure" \
-                  --build="$BUILD_TYPE" \
-                  --host="$host" \
-                  --enable-cxx \
-                  --enable-shared \
-                  --disable-static \
-                  --with-pic \
-                  --prefix="/build/install_${arch}" \
-                  2>&1 || { echo "Configure failed for $arch"; continue; }
+          build_type="$(gcc -dumpmachine)"
+          cd "$build_dir"
+          CC="$LINUX_CC" CFLAGS="-fPIC" \
+            ../dist/configure \
+            --build="$build_type" \
+            --host="$LINUX_HOST" \
+            --prefix="$install_dir" \
+            --disable-cxx \
+            --disable-shared \
+            --enable-static
 
-              make -j$(nproc) 2>&1 || { echo "Build failed for $arch"; continue; }
-              make install 2>&1 || { echo "Install failed for $arch"; continue; }
-
-              mkdir -p "${OUTPUT}/${arch}"
-              if [ -f "/build/install_${arch}/lib/libdb-4.8.so" ]; then
-                  cp "/build/install_${arch}/lib/libdb-4.8.so" "${OUTPUT}/${arch}/"
-              else
-                  echo "WARNING: libdb-4.8.so not found for $arch"
-              fi
-          done
-
-          ls -laR /output/
-          BUILDSCRIPT
-
-          docker build --no-cache -f scripts/Dockerfile.bdb-shared -t bdb-shared-builder scripts
-          docker run --rm -v "${PWD}/${LIBS_DIR}:/output" bdb-shared-builder
-          rm -f scripts/Dockerfile.bdb-shared scripts/build-bdb-shared.sh
+          make -j"$(nproc)"
+          make install
+          test -f "${install_dir}/lib/libdb.a"
 
       - name: Build Linux binaries
         shell: bash
@@ -541,144 +603,93 @@ jobs:
 
           rm -rf "$BUILD_DIR" "$DIST_DIR"
           mkdir -p "$BUILD_DIR" "$DIST_DIR"
-          chmod -R 777 "$BUILD_DIR"
 
-          docker build -f scripts/Dockerfile.build -t twins-builder:linux .
+          ldflags="-s -w"
+          ldflags="${ldflags} -X ${VERSION_PKG}.Version=${VERSION}"
+          ldflags="${ldflags} -X ${VERSION_PKG}.GitCommit=${COMMIT}"
+          ldflags="${ldflags} -X ${VERSION_PKG}.BuildDate=${BUILD_DATE}"
 
-          cat > "${BUILD_DIR}/docker_build.sh" << DOCKER_SCRIPT
-          #!/bin/bash
-          set -e
+          output_dir="${BUILD_DIR}/linux_${LINUX_GOARCH}"
+          bdb_path="${RUNNER_TEMP}/bdb/${LINUX_HOST}"
+          mkdir -p "$output_dir"
+          export GOFLAGS="-trimpath"
+          export GOARM="$LINUX_GOARM"
 
-          VERSION="${VERSION}"
-          COMMIT="${COMMIT}"
-          BUILD_DATE="${BUILD_DATE}"
-          VERSION_PKG="${VERSION_PKG}"
+          for binary_spec in "cmd/twinsd:twinsd" "cmd/twins-cli:twins-cli" "cmd/twins-gui:twins-gui"; do
+            src_path="${binary_spec%:*}"
+            binary_name="${binary_spec#*:}"
+            local_cgo_cflags="-I${bdb_path}/include"
+            local_cgo_ldflags="-L${bdb_path}/lib -ldb"
+            build_tags=""
 
-          LDFLAGS="-s -w"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.Version=\${VERSION}"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.GitCommit=\${COMMIT}"
-          LDFLAGS="\${LDFLAGS} -X \${VERSION_PKG}.BuildDate=\${BUILD_DATE}"
+            if [ "$binary_name" = "twins-gui" ]; then
+              build_tags="-tags desktop,production"
+              webkit_pkg_dir="/usr/lib/${LINUX_PKG_CONFIG_ARCH}/pkgconfig"
+              if [ -d "$webkit_pkg_dir" ]; then
+                webkit_cflags="$(PKG_CONFIG_PATH="$webkit_pkg_dir" pkg-config --cflags webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)"
+                webkit_ldflags="$(PKG_CONFIG_PATH="$webkit_pkg_dir" pkg-config --libs webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)"
+                if [ -n "$webkit_cflags" ]; then
+                  local_cgo_cflags="${local_cgo_cflags} ${webkit_cflags}"
+                  local_cgo_ldflags="${local_cgo_ldflags} ${webkit_ldflags}"
+                else
+                  echo "WARN: webkit2gtk pkg-config failed for ${LINUX_GOARCH}, skipping twins-gui"
+                  continue
+                fi
+              else
+                echo "WARN: webkit2gtk not found for ${LINUX_GOARCH}, skipping twins-gui"
+                continue
+              fi
+            fi
 
-          LINUX_PLATFORMS=(
-              "amd64:x86_64-linux-gnu-gcc:/opt/bdb/x86_64-linux-gnu:"
-              "arm64:aarch64-linux-gnu-gcc:/opt/bdb/aarch64-linux-gnu:"
-              "arm:arm-linux-gnueabihf-gcc:/opt/bdb/arm-linux-gnueabihf:7"
-          )
-          BINARIES=("cmd/twinsd:twinsd" "cmd/twins-cli:twins-cli" "cmd/twins-gui:twins-gui")
-          declare -A WEBKIT_ARCH_MAP=(
-              ["amd64"]="x86_64-linux-gnu"
-              ["arm64"]="aarch64-linux-gnu"
-              ["arm"]="arm-linux-gnueabihf"
-          )
-
-          if [ ! -d "cmd/twins-gui/frontend/dist" ]; then
-              cd cmd/twins-gui/frontend
-              npm ci --no-audit --no-fund
-              npm run build
-              cd /src
-          fi
-
-          for platform in "\${LINUX_PLATFORMS[@]}"; do
-              IFS=':' read -r arch cc bdb_path goarm <<< "\$platform"
-              mkdir -p "/build/linux_\${arch}"
-              export GOARM="\${goarm}"
-              webkit_triplet="\${WEBKIT_ARCH_MAP[\$arch]}"
-
-              for binary_spec in "\${BINARIES[@]}"; do
-                  src_path="\${binary_spec%:*}"
-                  binary_name="\${binary_spec#*:}"
-                  local_cgo_cflags="-I\${bdb_path}/include"
-                  local_cgo_ldflags="-L\${bdb_path}/lib -ldb"
-                  build_tags=""
-
-                  if [ "\$binary_name" = "twins-gui" ]; then
-                      build_tags="-tags desktop,production"
-                      webkit_pkg_dir="/usr/lib/\${webkit_triplet}/pkgconfig"
-                      if [ -n "\$webkit_triplet" ] && [ -d "\$webkit_pkg_dir" ]; then
-                          webkit_cflags=\$(PKG_CONFIG_PATH="\$webkit_pkg_dir" pkg-config --cflags webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)
-                          webkit_ldflags=\$(PKG_CONFIG_PATH="\$webkit_pkg_dir" pkg-config --libs webkit2gtk-4.0 gtk+-3.0 2>/dev/null || true)
-                          if [ -n "\$webkit_cflags" ]; then
-                              local_cgo_cflags="\${local_cgo_cflags} \${webkit_cflags}"
-                              local_cgo_ldflags="\${local_cgo_ldflags} \${webkit_ldflags}"
-                          else
-                              echo "WARN: webkit2gtk pkg-config failed for \${arch}, skipping twins-gui"
-                              continue
-                          fi
-                      else
-                          echo "WARN: webkit2gtk not found for \${arch}, skipping twins-gui"
-                          continue
-                      fi
-                  fi
-
-                  CGO_ENABLED=1 CC="\${cc}" \
-                      CGO_CFLAGS="\${local_cgo_cflags}" \
-                      CGO_LDFLAGS="\${local_cgo_ldflags}" \
-                      GOOS=linux GOARCH="\${arch}" \
-                      go build \${build_tags} -ldflags "\$LDFLAGS" \
-                      -o "/build/linux_\${arch}/\${binary_name}" \
-                      "./\${src_path}"
-              done
+            CGO_ENABLED=1 CC="$LINUX_CC" \
+              CGO_CFLAGS="$local_cgo_cflags" \
+              CGO_LDFLAGS="$local_cgo_ldflags" \
+              GOOS=linux GOARCH="$LINUX_GOARCH" \
+              go build ${build_tags} -ldflags "$ldflags" \
+              -o "${output_dir}/${binary_name}" \
+              "./${src_path}"
           done
 
-          ls -la /build/linux_*/
-          DOCKER_SCRIPT
-
-          chmod +x "${BUILD_DIR}/docker_build.sh"
-          docker run --rm \
-            -v "${PWD}:/src" \
-            -v "${PWD}/${BUILD_DIR}:/build" \
-            -w /src \
-            twins-builder:linux \
-            bash /build/docker_build.sh
+          ls -la "$output_dir"
 
       - name: Package Linux binaries
         shell: bash
         run: |
           set -euo pipefail
 
-          create_package() {
-            local os="$1"
-            local arch="$2"
-            local suffix="$3"
-            local archive_type="$4"
-            local package_name="twins-${VERSION}-${suffix}"
-            local package_dir="${BUILD_DIR}/${package_name}"
-            local bin_dir="${BUILD_DIR}/${os}_${arch}"
+          package_name="twins-${VERSION}-${LINUX_PACKAGE_SUFFIX}"
+          package_dir="${BUILD_DIR}/${package_name}"
+          bin_dir="${BUILD_DIR}/linux_${LINUX_GOARCH}"
 
-            mkdir -p "${package_dir}/bin" "${package_dir}/conf"
+          mkdir -p "${package_dir}/bin" "${package_dir}/conf"
 
-            for binary in twinsd twins-cli; do
-              if [ -f "${bin_dir}/${binary}" ]; then
-                cp "${bin_dir}/${binary}" "${package_dir}/bin/"
-                chmod +x "${package_dir}/bin/${binary}"
-              fi
-            done
-
-            if [ -f "${bin_dir}/twins-gui" ]; then
-              cp "${bin_dir}/twins-gui" "${package_dir}/bin/"
-              chmod +x "${package_dir}/bin/twins-gui"
+          for binary in twinsd twins-cli; do
+            if [ -f "${bin_dir}/${binary}" ]; then
+              cp "${bin_dir}/${binary}" "${package_dir}/bin/"
+              chmod +x "${package_dir}/bin/${binary}"
             fi
+          done
 
-            for config in configs/mainnet.yml configs/testnet.yml configs/regtest.yml configs/twins.conf.example configs/masternode.conf.example configs/twinsd.yml; do
-              if [ -f "$config" ]; then
-                cp "$config" "${package_dir}/conf/"
-              fi
-            done
+          if [ -f "${bin_dir}/twins-gui" ]; then
+            cp "${bin_dir}/twins-gui" "${package_dir}/bin/"
+            chmod +x "${package_dir}/bin/twins-gui"
+          fi
 
-            mkdir -p "$DIST_DIR"
-            (cd "$BUILD_DIR" && tar -czvf "../${DIST_DIR}/${package_name}.${archive_type}" "$package_name")
-            rm -rf "$package_dir"
-          }
+          for config in configs/mainnet.yml configs/testnet.yml configs/regtest.yml configs/twins.conf.example configs/masternode.conf.example configs/twinsd.yml; do
+            if [ -f "$config" ]; then
+              cp "$config" "${package_dir}/conf/"
+            fi
+          done
 
-          create_package linux amd64 x86_64-linux-gnu tar.gz
-          create_package linux arm64 aarch64-linux-gnu tar.gz
-          create_package linux arm arm-linux-gnueabihf tar.gz
+          mkdir -p "$DIST_DIR"
+          (cd "$BUILD_DIR" && tar -czvf "../${DIST_DIR}/${package_name}.tar.gz" "$package_name")
+          rm -rf "$package_dir"
           ls -la "$DIST_DIR"
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-linux
+          name: release-linux-${{ matrix.label }}
           path: dist/*
           if-no-files-found: error
 
