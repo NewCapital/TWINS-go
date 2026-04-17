@@ -536,8 +536,9 @@ jobs:
           src_dir="${RUNNER_TEMP}/bdb-shared-src"
           build_dir="${RUNNER_TEMP}/bdb-shared-build-${LINUX_LIBS_ARCH}"
           install_dir="${RUNNER_TEMP}/bdb-shared-install-${LINUX_LIBS_ARCH}"
+          libs_dest="${GITHUB_WORKSPACE}/${LIBS_DIR}/${LINUX_LIBS_ARCH}"
           rm -rf "$src_dir" "$build_dir" "$install_dir"
-          mkdir -p "$src_dir" "$build_dir" "${LIBS_DIR}/${LINUX_LIBS_ARCH}"
+          mkdir -p "$src_dir" "$build_dir" "$libs_dest"
 
           wget -q "https://download.oracle.com/berkeley-db/db-${BDB_VERSION}.tar.gz" -O "${RUNNER_TEMP}/db-${BDB_VERSION}.tar.gz"
           tar xzf "${RUNNER_TEMP}/db-${BDB_VERSION}.tar.gz" -C "$src_dir" --strip-components=1
@@ -574,8 +575,8 @@ jobs:
             exit 1
           fi
 
-          cp "${install_dir}/lib/libdb-4.8.so" "${LIBS_DIR}/${LINUX_LIBS_ARCH}/"
-          ls -la "${LIBS_DIR}/${LINUX_LIBS_ARCH}/"
+          cp "${install_dir}/lib/libdb-4.8.so" "$libs_dest/"
+          ls -la "$libs_dest/"
 
       - name: Build BerkeleyDB static library
         shell: bash
