@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/twins-dev/twins-core/internal/blockchain"
 	"github.com/twins-dev/twins-core/internal/consensus"
+	"github.com/twins-dev/twins-core/pkg/script"
 	"github.com/twins-dev/twins-core/pkg/types"
 )
 
@@ -215,13 +216,17 @@ func (mp *TxMempool) addTransaction(tx *types.Transaction, processDependents boo
 		return NewMempoolError(RejectOrphan, "missing inputs (stored as orphan)", txHash)
 	}
 
-	// Validate transaction
-	if err := mp.validateTransaction(tx); err != nil {
-		mp.incrementRejections()
+	// Check for conflicts FIRST. This is an O(1) map lookup and must happen
+	// before the expensive per-input script verification in validateTransaction,
+	// otherwise a peer can flood conflicting variants of an already-pooled spend
+	// and force repeated ECDSA work for transactions guaranteed to be rejected.
+	if err := mp.checkConflicts(tx, txHash); err != nil {
 		return err
 	}
-	// Check for conflicts
-	if err := mp.checkConflicts(tx, txHash); err != nil {
+
+	// Validate transaction (includes per-input ECDSA signature verification).
+	if err := mp.validateTransaction(tx); err != nil {
+		mp.incrementRejections()
 		return err
 	}
 
@@ -749,8 +754,42 @@ func (mp *TxMempool) validateTransaction(tx *types.Transaction) error {
 			txHash)
 	}
 
-	// TODO: Add consensus.ValidateTransaction() for full script/signature verification.
-	// Legacy AllowFree priority (fee-based only in PoS; see main.h:217).
+	// Full script and ECDSA signature verification for every input.
+	//
+	// Without this check, an incoming transaction whose DER structure parses
+	// but whose signatures do not verify against (pubkey, sighash) is accepted
+	// into our mempool and relayed to peers. Legacy C++ nodes then reject the
+	// same transaction at CScriptCheck and ban us for propagating invalid data
+	// (see legacy/src/main.cpp:2102-2107 CScriptCheck::operator()).
+	//
+	// Mirrors the per-input loop in consensus/validation.go:773-787 used by
+	// block validation. StandardScriptVerifyFlags is an intentional subset of
+	// legacy STANDARD_SCRIPT_VERIFY_FLAGS (P2SH + strict DER + strict encoding),
+	// chosen so the Go mempool never rejects a tx that legacy would accept.
+	for i, input := range tx.Inputs {
+		utxo, err := mp.utxoSet.GetUTXO(input.PreviousOutput)
+		if err != nil || utxo == nil || utxo.Output == nil {
+			// Defensive: the earlier orphan loop already rejected missing-input
+			// txs, but the UTXO-set view can shift between the two reads.
+			return NewMempoolError(RejectOrphan,
+				fmt.Sprintf("input UTXO missing during script verification: %s:%d",
+					input.PreviousOutput.Hash.String(), input.PreviousOutput.Index),
+				txHash)
+		}
+
+		if err := script.VerifyScript(
+			input.ScriptSig,
+			utxo.Output.ScriptPubKey,
+			tx,
+			i,
+			script.StandardScriptVerifyFlags,
+		); err != nil {
+			return NewMempoolError(RejectInvalid,
+				fmt.Sprintf("script verification failed for input %d (%s:%d): %v",
+					i, input.PreviousOutput.Hash.String(), input.PreviousOutput.Index, err),
+				txHash)
+		}
+	}
 
 	return nil
 }

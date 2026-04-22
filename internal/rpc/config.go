@@ -31,10 +31,34 @@ type Config struct {
 	// Supports CIDR notation (192.168.1.0/24) and single IPs
 	AllowedIPs []string
 
+	// Safety double-gate: both YAML and CLI flag required for plaintext on non-loopback
+	AllowPlaintextPublic bool
+
 	// TLS settings
-	TLSEnabled bool
-	CertFile   string
-	KeyFile    string
+	TLS TLSConfig
+}
+
+// TLSConfig holds TLS settings for the RPC server runtime
+type TLSConfig struct {
+	Enabled              bool
+	CertFile             string
+	KeyFile              string
+	ExpiryWarnDays       int
+	ReloadPassphraseFile string
+	MTLS                 MTLSConfig
+	Client               ClientTLSConfig
+}
+
+// MTLSConfig holds mutual TLS settings
+type MTLSConfig struct {
+	Enabled      bool
+	ClientCAFile string
+}
+
+// ClientTLSConfig holds client-side TLS verification settings
+type ClientTLSConfig struct {
+	CAFile    string
+	PinSHA256 string
 }
 
 // DefaultConfig returns a default RPC configuration

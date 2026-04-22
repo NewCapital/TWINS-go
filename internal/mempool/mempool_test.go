@@ -1,6 +1,8 @@
 package mempool
 
 import (
+	"encoding/hex"
+	"sync"
 	"testing"
 	"time"
 
@@ -11,8 +13,64 @@ import (
 	"github.com/twins-dev/twins-core/internal/consensus"
 	"github.com/twins-dev/twins-core/internal/storage"
 	"github.com/twins-dev/twins-core/internal/storage/binary"
+	"github.com/twins-dev/twins-core/pkg/crypto"
 	"github.com/twins-dev/twins-core/pkg/types"
 )
+
+// Shared deterministic signing key for tests. sync.Once ensures a single key
+// is used across the whole package so fixtures and regression tests share the
+// same P2PKH scriptPubKey.
+var (
+	testKeyOnce     sync.Once
+	testPrivKey     *crypto.PrivateKey
+	testPubKeyBytes []byte
+	testP2PKHScript []byte
+)
+
+// getTestSigningKey is nil-safe for t so it can be called from helpers without
+// a testing.TB (e.g. from createTestTransaction).
+func getTestSigningKey(t testing.TB) (*crypto.PrivateKey, []byte, []byte) {
+	if t != nil {
+		t.Helper()
+	}
+	testKeyOnce.Do(func() {
+		raw, _ := hex.DecodeString("1111111111111111111111111111111111111111111111111111111111111111")
+		pk, err := crypto.ParsePrivateKeyFromBytes(raw)
+		if err != nil {
+			panic(err)
+		}
+		testPrivKey = pk
+		testPubKeyBytes = pk.PublicKey().SerializeCompressed()
+		pkh := crypto.Hash160(testPubKeyBytes)
+		testP2PKHScript = append([]byte{0x76, 0xa9, 0x14}, pkh...)
+		testP2PKHScript = append(testP2PKHScript, 0x88, 0xac)
+	})
+	return testPrivKey, testPubKeyBytes, testP2PKHScript
+}
+
+// signTxInput signs input[i] of tx for a UTXO with the shared test P2PKH
+// scriptPubKey and writes the assembled scriptSig back into tx.Inputs[i].
+func signTxInput(t testing.TB, tx *types.Transaction, i int) {
+	if t != nil {
+		t.Helper()
+	}
+	priv, pubKeyBytes, scriptPubKey := getTestSigningKey(t)
+
+	sigHash := tx.SignatureHash(i, scriptPubKey, types.SigHashAll)
+	sig, err := priv.Sign(sigHash[:])
+	if err != nil {
+		panic(err)
+	}
+	sigWithHashType := append(sig.Bytes(), byte(types.SigHashAll))
+
+	scriptSig := make([]byte, 0, 1+len(sigWithHashType)+1+len(pubKeyBytes))
+	scriptSig = append(scriptSig, byte(len(sigWithHashType)))
+	scriptSig = append(scriptSig, sigWithHashType...)
+	scriptSig = append(scriptSig, byte(len(pubKeyBytes)))
+	scriptSig = append(scriptSig, pubKeyBytes...)
+
+	tx.Inputs[i].ScriptSig = scriptSig
+}
 
 type testMempoolEnv struct {
 	mp    *TxMempool
@@ -77,33 +135,40 @@ func createTestMempoolEnv(t testing.TB) *testMempoolEnv {
 	return &testMempoolEnv{mp: mp, store: store}
 }
 
+// createTestTransaction builds a 1-in 1-out transaction signed by the shared
+// test key against a P2PKH funding UTXO. Must be paired with seedUTXOForTx
+// (which stores the matching scriptPubKey) so mempool signature verification
+// passes.
 func createTestTransaction(nonce uint32) *types.Transaction {
-	return &types.Transaction{
+	_, pubKeyBytes, _ := getTestSigningKey(nil)
+	pkh := crypto.Hash160(pubKeyBytes)
+	outScript := append([]byte{0x76, 0xa9, 0x14}, pkh...)
+	outScript = append(outScript, 0x88, 0xac)
+
+	tx := &types.Transaction{
 		Version: 1,
-		Inputs: []*types.TxInput{
-			{
-				PreviousOutput: types.Outpoint{
-					Hash:  types.NewHash([]byte{byte(nonce)}),
-					Index: nonce,
-				},
-				ScriptSig: []byte{byte(nonce)},
-				Sequence:  0xffffffff,
+		Inputs: []*types.TxInput{{
+			PreviousOutput: types.Outpoint{
+				Hash:  types.NewHash([]byte{byte(nonce)}),
+				Index: nonce,
 			},
-		},
-		Outputs: []*types.TxOutput{
-			{
-				Value:        1000000,
-				ScriptPubKey: []byte("test output"),
-			},
-		},
+			Sequence: 0xffffffff,
+		}},
+		Outputs: []*types.TxOutput{{
+			Value:        1000000,
+			ScriptPubKey: outScript,
+		}},
 		LockTime: 0,
 	}
+	signTxInput(nil, tx, 0)
+	return tx
 }
 
 // seedUTXOForTx pre-seeds the UTXO referenced by a test transaction so
-// mempool validation doesn't reject it as an orphan.
+// mempool validation doesn't reject it as an orphan, using the shared test
+// key's P2PKH scriptPubKey so signature verification succeeds.
 func seedUTXOForTx(t testing.TB, store storage.Storage, tx *types.Transaction) {
-	// Calculate total output value so input = output + small fee
+	_, _, scriptPubKey := getTestSigningKey(t)
 	var totalOutput int64
 	for _, out := range tx.Outputs {
 		totalOutput += out.Value
@@ -111,7 +176,7 @@ func seedUTXOForTx(t testing.TB, store storage.Storage, tx *types.Transaction) {
 	for _, in := range tx.Inputs {
 		err := store.StoreUTXO(in.PreviousOutput, &types.TxOutput{
 			Value:        totalOutput + 10000, // output + 0.0001 TWINS fee
-			ScriptPubKey: []byte("test funding output"),
+			ScriptPubKey: scriptPubKey,
 		}, 1, false)
 		require.NoError(t, err)
 	}
@@ -168,6 +233,53 @@ func TestAddTransaction(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, 1, env.mp.Count())
+	assert.True(t, env.mp.HasTransaction(tx.Hash()))
+}
+
+// TestAddTransaction_RejectsInvalidSignature pins the fix for the mempool
+// signature-verification gap: a tx with properly-formed DER that fails actual
+// secp256k1 verification (flipped last byte of S) must be rejected, not
+// accepted and relayed (which would earn a ban from legacy peers at
+// CScriptCheck — see legacy/src/main.cpp:2102-2107).
+func TestAddTransaction_RejectsInvalidSignature(t *testing.T) {
+	env := createTestMempoolEnv(t)
+
+	tx := createTestTransaction(1)
+	seedUTXOForTx(t, env.store, tx)
+
+	// Corrupt the signature by flipping the last byte of the DER-encoded S
+	// component. The result is still valid DER that parses fine but fails to
+	// verify against (pubkey, sighash).
+	//
+	// scriptSig layout: ss[0] = push opcode (= len(sigWithHashType)),
+	//                   ss[1..1+sigLen-1] = sigWithHashType,
+	//                   sigWithHashType = DER || 0x01.
+	// Index of sighash byte = sigLen. Last byte of S = sigLen-1.
+	ss := tx.Inputs[0].ScriptSig
+	require.Greater(t, len(ss), 2, "scriptSig too short")
+	sigLen := int(ss[0])
+	require.GreaterOrEqual(t, len(ss), 1+sigLen)
+	ss[sigLen-1] ^= 0x01
+
+	err := env.mp.AddTransaction(tx)
+	require.Error(t, err)
+	me, ok := err.(*MempoolError)
+	require.True(t, ok, "expected MempoolError, got %T", err)
+	assert.Equal(t, RejectInvalid, me.Code)
+	assert.Contains(t, err.Error(), "script verification failed")
+}
+
+// TestAddTransaction_AcceptsValidSignature is the positive control: an
+// unmodified, properly-signed test transaction is accepted. Guards against an
+// over-eager rejection path in the new verification loop.
+func TestAddTransaction_AcceptsValidSignature(t *testing.T) {
+	env := createTestMempoolEnv(t)
+
+	tx := createTestTransaction(42)
+	seedUTXOForTx(t, env.store, tx)
+
+	err := env.mp.AddTransaction(tx)
+	assert.NoError(t, err)
 	assert.True(t, env.mp.HasTransaction(tx.Hash()))
 }
 

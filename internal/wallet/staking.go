@@ -1,8 +1,10 @@
 package wallet
 
 import (
-	"encoding/binary"
+	"encoding/hex"
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/twins-dev/twins-core/pkg/crypto"
 	"github.com/twins-dev/twins-core/pkg/types"
@@ -402,46 +404,41 @@ func createP2PKScript(pubKeyBytes []byte) []byte {
 }
 
 // signCoinstakeTransaction signs a coinstake transaction.
+//
+// Uses the canonical Transaction.SignatureHash path (pkg/types/transaction.go)
+// to compute the sighash, matching the regular Wallet.SignTransaction flow and
+// the byte-level layout of legacy C++ CTransactionSignatureSerializer
+// (legacy/src/script/interpreter.cpp:983-1104), including OP_CODESEPARATOR
+// stripping inherited from Transaction.SignatureHash.
 func (w *Wallet) signCoinstakeTransaction(
 	tx *types.Transaction,
 	stakeUTXO *StakeableUTXO,
 	privKey *crypto.PrivateKey,
 ) (*types.Transaction, error) {
-	// Clone the transaction for signing
-	txCopy := cloneTransaction(tx)
+	// Canonical sighash: double-SHA256 of the serialized tx with the signed
+	// input's scriptSig replaced by the UTXO's scriptPubKey (OP_CODESEPARATOR
+	// stripped), other inputs' scripts blanked, and nHashType appended.
+	sigHash := tx.SignatureHash(0, stakeUTXO.ScriptPubKey, types.SigHashAll)
 
-	// For P2PKH, we need to sign with the scriptPubKey of the input
-	txCopy.Inputs[0].ScriptSig = stakeUTXO.ScriptPubKey
-
-	// Serialize and hash
-	serialized := serializeTransactionForSigning(txCopy, 0)
-
-	// Double SHA256
-	hash := crypto.DoubleHash256(serialized)
-
-	// Sign
-	signature, err := privKey.Sign(hash)
+	signature, err := privKey.Sign(sigHash[:])
 	if err != nil {
 		return nil, fmt.Errorf("signing failed: %w", err)
 	}
 
-	// Get signature bytes and add SIGHASH_ALL
+	// Append SIGHASH_ALL byte to the DER signature (legacy script convention).
 	sigBytes := signature.Bytes()
-	sigWithHashType := append(sigBytes, byte(0x01)) // SIGHASH_ALL
+	sigWithHashType := append(sigBytes, byte(types.SigHashAll))
 
-	// Build scriptSig based on script type
-	// P2PK: <signature> only (pubkey is in scriptPubKey)
-	// P2PKH: <signature> <pubkey>
+	// Build scriptSig based on the UTXO's scriptPubKey type.
+	// P2PK:   <signature>          (pubkey already in scriptPubKey)
+	// P2PKH:  <signature> <pubkey>
 	var scriptSig []byte
 	if isP2PKScript(stakeUTXO.ScriptPubKey) {
-		// P2PK: only signature needed
 		scriptSig = make([]byte, 0, len(sigWithHashType)+1)
 		scriptSig = append(scriptSig, byte(len(sigWithHashType)))
 		scriptSig = append(scriptSig, sigWithHashType...)
 	} else {
-		// P2PKH: signature + pubkey
-		pubKey := privKey.PublicKey()
-		pubKeyBytes := pubKey.SerializeCompressed()
+		pubKeyBytes := privKey.PublicKey().SerializeCompressed()
 		scriptSig = make([]byte, 0, len(sigWithHashType)+len(pubKeyBytes)+2)
 		scriptSig = append(scriptSig, byte(len(sigWithHashType)))
 		scriptSig = append(scriptSig, sigWithHashType...)
@@ -451,106 +448,18 @@ func (w *Wallet) signCoinstakeTransaction(
 
 	tx.Inputs[0].ScriptSig = scriptSig
 
+	// Trace-level diagnostic: gate the hex encodes behind the level check so
+	// the signing hot path pays zero hex/allocation overhead when trace is off.
+	if w.logger != nil && w.logger.Logger.IsLevelEnabled(logrus.TraceLevel) {
+		w.logger.WithFields(map[string]interface{}{
+			"sighash":       hex.EncodeToString(sigHash[:]),
+			"sig_der":       hex.EncodeToString(sigBytes),
+			"script_sig":    hex.EncodeToString(scriptSig),
+			"script_pubkey": hex.EncodeToString(stakeUTXO.ScriptPubKey),
+		}).Trace("coinstake input signed")
+	}
+
 	return tx, nil
-}
-
-// cloneTransaction creates a deep copy of a transaction for signing.
-func cloneTransaction(tx *types.Transaction) *types.Transaction {
-	clone := &types.Transaction{
-		Version:  tx.Version,
-		LockTime: tx.LockTime,
-	}
-
-	// Clone inputs
-	clone.Inputs = make([]*types.TxInput, len(tx.Inputs))
-	for i, input := range tx.Inputs {
-		clone.Inputs[i] = &types.TxInput{
-			PreviousOutput: input.PreviousOutput,
-			Sequence:       input.Sequence,
-		}
-		if input.ScriptSig != nil {
-			clone.Inputs[i].ScriptSig = make([]byte, len(input.ScriptSig))
-			copy(clone.Inputs[i].ScriptSig, input.ScriptSig)
-		}
-	}
-
-	// Clone outputs
-	clone.Outputs = make([]*types.TxOutput, len(tx.Outputs))
-	for i, output := range tx.Outputs {
-		clone.Outputs[i] = &types.TxOutput{
-			Value: output.Value,
-		}
-		if output.ScriptPubKey != nil {
-			clone.Outputs[i].ScriptPubKey = make([]byte, len(output.ScriptPubKey))
-			copy(clone.Outputs[i].ScriptPubKey, output.ScriptPubKey)
-		}
-	}
-
-	return clone
-}
-
-// serializeTransactionForSigning serializes transaction for signature hash.
-func serializeTransactionForSigning(tx *types.Transaction, inputIndex int) []byte {
-	var buf []byte
-
-	// Version (4 bytes, little endian)
-	versionBytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(versionBytes, tx.Version)
-	buf = append(buf, versionBytes...)
-
-	// Number of inputs (varint)
-	buf = append(buf, encodeVarInt(uint64(len(tx.Inputs)))...)
-
-	// Inputs
-	for i, input := range tx.Inputs {
-		// Previous output hash (32 bytes)
-		buf = append(buf, input.PreviousOutput.Hash[:]...)
-
-		// Previous output index (4 bytes, little endian)
-		indexBytes := make([]byte, 4)
-		binary.LittleEndian.PutUint32(indexBytes, input.PreviousOutput.Index)
-		buf = append(buf, indexBytes...)
-
-		// Script (only for the input being signed)
-		if i == inputIndex {
-			buf = append(buf, encodeVarInt(uint64(len(input.ScriptSig)))...)
-			buf = append(buf, input.ScriptSig...)
-		} else {
-			buf = append(buf, 0x00) // Empty script
-		}
-
-		// Sequence (4 bytes, little endian)
-		seqBytes := make([]byte, 4)
-		binary.LittleEndian.PutUint32(seqBytes, input.Sequence)
-		buf = append(buf, seqBytes...)
-	}
-
-	// Number of outputs (varint)
-	buf = append(buf, encodeVarInt(uint64(len(tx.Outputs)))...)
-
-	// Outputs
-	for _, output := range tx.Outputs {
-		// Value (8 bytes, little endian)
-		valueBytes := make([]byte, 8)
-		binary.LittleEndian.PutUint64(valueBytes, uint64(output.Value))
-		buf = append(buf, valueBytes...)
-
-		// Script
-		buf = append(buf, encodeVarInt(uint64(len(output.ScriptPubKey)))...)
-		buf = append(buf, output.ScriptPubKey...)
-	}
-
-	// Lock time (4 bytes, little endian)
-	lockTimeBytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(lockTimeBytes, tx.LockTime)
-	buf = append(buf, lockTimeBytes...)
-
-	// SIGHASH_ALL (4 bytes, little endian)
-	hashTypeBytes := make([]byte, 4)
-	binary.LittleEndian.PutUint32(hashTypeBytes, 0x01) // SIGHASH_ALL
-	buf = append(buf, hashTypeBytes...)
-
-	return buf
 }
 
 // isP2PKScript checks if script is Pay-to-PubKey (P2PK).
@@ -564,29 +473,6 @@ func isP2PKScript(script []byte) bool {
 		return true // Uncompressed P2PK
 	}
 	return false
-}
-
-// encodeVarInt encodes an integer as a Bitcoin varint.
-func encodeVarInt(v uint64) []byte {
-	if v < 0xfd {
-		return []byte{byte(v)}
-	}
-	if v <= 0xffff {
-		buf := make([]byte, 3)
-		buf[0] = 0xfd
-		binary.LittleEndian.PutUint16(buf[1:], uint16(v))
-		return buf
-	}
-	if v <= 0xffffffff {
-		buf := make([]byte, 5)
-		buf[0] = 0xfe
-		binary.LittleEndian.PutUint32(buf[1:], uint32(v))
-		return buf
-	}
-	buf := make([]byte, 9)
-	buf[0] = 0xff
-	binary.LittleEndian.PutUint64(buf[1:], v)
-	return buf
 }
 
 // getPrivateKeyForAddressLocked returns the private key for a given address.

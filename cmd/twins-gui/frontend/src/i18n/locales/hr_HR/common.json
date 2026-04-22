@@ -88,6 +88,7 @@
     "scanningBlock": "Skeniranje bloka {{height}}",
     "upToDate": "Ažurirano",
     "hdEnabled": "HD novčanik omogućen",
+    "hdDisabled": "HD novčanik onemogućen",
     "torEnabled": "Tor omogućen",
     "walletEncrypted": "Novčanik šifriran",
     "walletUnlocked": "Wallet unlocked",

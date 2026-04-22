@@ -135,6 +135,7 @@ type WalletInfo struct {
 	KeypoolSize      int     `json:"keypoolsize"`
 	UnlockedUntil    int64   `json:"unlocked_until"`
 	EncryptionStatus string  `json:"encryptionstatus"`
+	HDEnabled        bool    `json:"hd_enabled"`
 }
 
 // Address represents a wallet address (simplified version for RPC)

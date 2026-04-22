@@ -88,6 +88,7 @@
     "scanningBlock": "Escanejant bloc {{height}}",
     "upToDate": "Actualitzat",
     "hdEnabled": "Moneder HD activat",
+    "hdDisabled": "Moneder HD desactivat",
     "torEnabled": "Tor activat",
     "walletEncrypted": "Moneder encriptat",
     "walletUnlocked": "Wallet unlocked",

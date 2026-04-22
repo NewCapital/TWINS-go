@@ -1655,6 +1655,7 @@ func (a *App) GetWalletEncryptionStatus() map[string]interface{} {
 			"encrypted":   false,
 			"locked":      false,
 			"initialized": false,
+			"hd_enabled":  false,
 		}
 	}
 
@@ -1680,6 +1681,7 @@ func (a *App) GetWalletEncryptionStatus() map[string]interface{} {
 		"encrypted":   isEncrypted,
 		"locked":      isLocked,
 		"initialized": true,
+		"hd_enabled":  w.IsHDEnabled(),
 	}
 }
 

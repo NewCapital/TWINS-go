@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/twins-dev/twins-core/pkg/crypto"
 	"github.com/twins-dev/twins-core/pkg/types"
 )
@@ -1137,6 +1139,20 @@ func (w *Wallet) SignTransaction(tx *types.Transaction) (*types.Transaction, err
 		}
 
 		signedTx.Inputs[i].ScriptSig = scriptSig
+
+		// Trace-level diagnostic: gate the hex encodes behind the level check so
+		// the signing hot path pays zero hex/allocation overhead when trace is off.
+		if w.logger != nil && w.logger.Logger.IsLevelEnabled(logrus.TraceLevel) {
+			w.logger.WithFields(map[string]interface{}{
+				"input":         i,
+				"prev_txid":     input.PreviousOutput.Hash.String(),
+				"prev_vout":     input.PreviousOutput.Index,
+				"sighash":       hex.EncodeToString(sigHash),
+				"sig_der":       hex.EncodeToString(sigBytes),
+				"script_sig":    hex.EncodeToString(scriptSig),
+				"script_pubkey": hex.EncodeToString(scriptPubKey),
+			}).Trace("tx input signed")
+		}
 	}
 
 	return signedTx, nil

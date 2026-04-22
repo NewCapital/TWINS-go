@@ -64,15 +64,31 @@ func DefaultConfig() *Config {
 			OnlyNet:       "",
 		},
 		RPC: RPCConfig{
-			Enabled:    true,
-			Port:       MainnetRPCPort, // TWINS mainnet RPC port
-			Host:       "127.0.0.1",
-			Username:   "",
-			Password:   "",
-			MaxClients: 100,
-			AllowedIPs: []string{"127.0.0.1", "::1"},
-			RateLimit:  100,
-			Timeout:    30,
+			Enabled:              true,
+			Port:                 MainnetRPCPort, // TWINS mainnet RPC port
+			Host:                 "127.0.0.1",
+			Username:             "",
+			Password:             "",
+			MaxClients:           100,
+			AllowedIPs:           []string{"127.0.0.1", "::1"},
+			RateLimit:            100,
+			Timeout:              30,
+			AllowPlaintextPublic: false,
+			TLS: RPCTLSConfig{
+				Enabled:              false,
+				CertFile:             "",
+				KeyFile:              "",
+				ExpiryWarnDays:       30,
+				ReloadPassphraseFile: "",
+				MTLS: RPCMTLSConfig{
+					Enabled:      false,
+					ClientCAFile: "",
+				},
+				Client: RPCClientTLSConfig{
+					CAFile:    "",
+					PinSHA256: "",
+				},
+			},
 		},
 		Masternode: MasternodeConfig{
 			Enabled:       false,

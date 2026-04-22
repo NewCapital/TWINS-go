@@ -88,6 +88,7 @@
     "scanningBlock": "Skanowanie bloku {{height}}",
     "upToDate": "Zaktualizowany",
     "hdEnabled": "Portfel HD włączony",
+    "hdDisabled": "Portfel HD wyłączony",
     "torEnabled": "Tor włączony",
     "walletEncrypted": "Portfel zakodowany",
     "walletUnlocked": "Wallet unlocked",

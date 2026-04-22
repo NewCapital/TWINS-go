@@ -88,6 +88,7 @@
     "scanningBlock": "{{height}} 블록 스캔 중",
     "upToDate": "최신 상태",
     "hdEnabled": "HD 지갑 활성화됨",
+    "hdDisabled": "HD 지갑 비활성화됨",
     "torEnabled": "Tor 활성화됨",
     "walletEncrypted": "지갑 암호화됨",
     "walletUnlocked": "Wallet unlocked",

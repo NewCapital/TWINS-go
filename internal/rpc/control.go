@@ -1472,6 +1472,7 @@ var commandHelpTexts = map[string]string{
 		"  \"keypoolsize\": xxxx,        (numeric) how many new keys are pre-generated\n" +
 		"  \"unlocked_until\": ttt,      (numeric) the timestamp in seconds since epoch (midnight Jan 1 1970 GMT) that the wallet is unlocked for transfers, or 0 if the wallet is locked\n" +
 		"  \"paytxfee\": x.xxxx,         (numeric) the transaction fee configuration, set in TWINS/kB\n" +
+		"  \"hd_enabled\": true|false,   (boolean) whether HD key derivation is enabled\n" +
 		"}\n\n" +
 		"Examples:\n" +
 		"> twins-cli getwalletinfo",

@@ -88,6 +88,7 @@
     "scanningBlock": "Skannar block {{height}}",
     "upToDate": "Aktuell",
     "hdEnabled": "HD-plånbok aktiverad",
+    "hdDisabled": "HD-plånbok inaktiverad",
     "torEnabled": "Tor aktiverad",
     "walletEncrypted": "Plånbok krypterad",
     "walletUnlocked": "Wallet unlocked",

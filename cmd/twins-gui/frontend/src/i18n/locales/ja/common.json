@@ -88,6 +88,7 @@
     "scanningBlock": "ブロック {{height}} をスキャン中",
     "upToDate": "最新",
     "hdEnabled": "HDウォレット有効",
+    "hdDisabled": "HDウォレット無効",
     "torEnabled": "Tor有効",
     "walletEncrypted": "ウォレット暗号化済み",
     "walletUnlocked": "Wallet unlocked",

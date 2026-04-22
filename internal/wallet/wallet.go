@@ -113,6 +113,9 @@ type Wallet struct {
 	onLockCallback      func()             // Called after wallet locks (e.g., to stop staking); invoked outside mutex
 	onUnlockCallback    func()             // Called after wallet unlocks (e.g., to start staking); invoked outside mutex
 
+	// HD wallet
+	hdEnabled bool // immutable after LoadWallet/CreateWallet
+
 	// Lifecycle
 	started bool
 
@@ -322,6 +325,23 @@ func (w *Wallet) CreateWallet(seed []byte, passphrase []byte) error {
 		return fmt.Errorf("failed to fill address pool: %w", err)
 	}
 
+	// Persist HD chain record to database (must be before encryption so
+	// wdb.Encrypt() -> ReadHDChain() finds and encrypts the seed)
+	hdChain := legacy.NewCHDChain(seed)
+	if account, err := w.addrMgr.GetAccount(0); err == nil {
+		// Set both MapAccounts (serialized) and convenience fields
+		hdChain.MapAccounts[0] = legacy.CHDAccount{
+			ExternalCounter: account.ExternalChain.nextIndex,
+			InternalCounter: account.InternalChain.nextIndex,
+		}
+		hdChain.ExternalCounter = account.ExternalChain.nextIndex
+		hdChain.InternalCounter = account.InternalChain.nextIndex
+	}
+	if err := wdb.WriteHDChain(hdChain); err != nil {
+		return fmt.Errorf("failed to write HD chain: %w", err)
+	}
+	w.hdEnabled = true
+
 	// Encrypt if requested
 	if w.config.EncryptWallet && len(passphrase) > 0 {
 		// Defensive copy: encryptWalletLocked zeros its argument,
@@ -389,6 +409,7 @@ func (w *Wallet) LoadWallet() error {
 	// Load HD chain state
 	hdChain, isEncrypted, err := wdb.ReadHDChain()
 	if err == nil {
+		w.hdEnabled = true
 		w.logger.WithField("external_counter", hdChain.ExternalCounter).
 			WithField("internal_counter", hdChain.InternalCounter).
 			WithField("encrypted", isEncrypted).
@@ -425,6 +446,8 @@ func (w *Wallet) LoadWallet() error {
 					Debug("Restored address counters from HD chain")
 			}
 		}
+	} else if !errors.Is(err, ErrHDChainNotFound) {
+		w.logger.WithError(err).Warn("Failed to read HD chain (possible database corruption)")
 	}
 
 	// Load all keys from wallet.dat
@@ -728,6 +751,14 @@ func (w *Wallet) IsUnlockedForStakingOnly() bool {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
 	return w.unlocked && w.unlockedStakingOnly
+}
+
+// IsHDEnabled returns whether the wallet has HD key derivation enabled.
+// This is immutable after wallet initialization (LoadWallet/CreateWallet).
+func (w *Wallet) IsHDEnabled() bool {
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	return w.hdEnabled
 }
 
 // UnlockTime returns when the wallet will auto-lock.

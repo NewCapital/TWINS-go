@@ -88,6 +88,7 @@
     "scanningBlock": "Skanante blokon {{height}}",
     "upToDate": "Ĝisdata",
     "hdEnabled": "HD monujo ebligita",
+    "hdDisabled": "HD monujo malebligita",
     "torEnabled": "Tor ebligita",
     "walletEncrypted": "Monujo ĉifrita",
     "walletUnlocked": "Wallet unlocked",

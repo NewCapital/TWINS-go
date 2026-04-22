@@ -88,6 +88,7 @@
     "scanningBlock": "Nuskaitomas blokas {{height}}",
     "upToDate": "Atnaujinta",
     "hdEnabled": "HD piniginė įjungta",
+    "hdDisabled": "HD piniginė išjungta",
     "torEnabled": "Tor įjungtas",
     "walletEncrypted": "Piniginė užšifruota",
     "walletUnlocked": "Wallet unlocked",

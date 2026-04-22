@@ -88,6 +88,7 @@
     "scanningBlock": "Scansione blocco {{height}}",
     "upToDate": "Aggiornato",
     "hdEnabled": "Portafoglio HD abilitato",
+    "hdDisabled": "Portafoglio HD disabilitato",
     "torEnabled": "Tor abilitato",
     "walletEncrypted": "Portafoglio crittografato",
     "walletUnlocked": "Wallet unlocked",
