@@ -88,6 +88,7 @@
     "scanningBlock": "ब्लॉक {{height}} स्कैन हो रहा है",
     "upToDate": "अप टू डेट",
     "hdEnabled": "HD वॉलेट सक्षम",
+    "hdDisabled": "HD वॉलेट अक्षम",
     "torEnabled": "Tor सक्षम",
     "walletEncrypted": "वॉलेट एन्क्रिप्टेड",
     "walletUnlocked": "Wallet unlocked",

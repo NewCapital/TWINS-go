@@ -88,6 +88,7 @@
     "scanningBlock": "Scannen blok {{height}}",
     "upToDate": "Bijgewerkt",
     "hdEnabled": "HD portemonnee ingeschakeld",
+    "hdDisabled": "HD portemonnee uitgeschakeld",
     "torEnabled": "Tor ingeschakeld",
     "walletEncrypted": "Portemonnee versleuteld",
     "walletUnlocked": "Wallet unlocked",

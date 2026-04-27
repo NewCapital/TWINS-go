@@ -88,6 +88,7 @@
     "scanningBlock": "正在掃描區塊 {{height}}",
     "upToDate": "已更新",
     "hdEnabled": "HD 錢包已啟用",
+    "hdDisabled": "HD 錢包已停用",
     "torEnabled": "Tor 已啟用",
     "walletEncrypted": "錢包已加密",
     "walletUnlocked": "Wallet unlocked",

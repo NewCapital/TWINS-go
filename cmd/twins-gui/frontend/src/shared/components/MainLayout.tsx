@@ -24,6 +24,8 @@ interface StatusIndicators {
   isLocked: boolean;
   isStakingOnly: boolean;
   isTor: boolean;
+  isHD: boolean;
+  initialized: boolean;
 }
 
 export const MainLayout: React.FC = () => {
@@ -50,6 +52,8 @@ export const MainLayout: React.FC = () => {
     isLocked: true,
     isStakingOnly: false,
     isTor: false,
+    isHD: false,
+    initialized: false,
   });
 
   // Wallet dialog states
@@ -85,6 +89,8 @@ export const MainLayout: React.FC = () => {
             isLocked: encryptionStatus?.locked ?? true,
             isStakingOnly: encryptionStatus?.status === 'unlocked_staking',
             isTor: torStatus?.enabled ?? false,
+            isHD: encryptionStatus?.hd_enabled ?? false,
+            initialized: encryptionStatus?.initialized ?? false,
           });
         }
       } catch (error) {
@@ -290,7 +296,8 @@ export const MainLayout: React.FC = () => {
         isEncrypted={statusIndicators.isEncrypted}
         isLocked={statusIndicators.isLocked}
         isStakingOnly={statusIndicators.isStakingOnly}
-        isHD={true}
+        isHD={statusIndicators.isHD}
+        initialized={statusIndicators.initialized}
         isTor={statusIndicators.isTor}
         displayUnit={displayUnit}
         onLockClick={handleLockClick}

@@ -88,6 +88,7 @@
     "scanningBlock": "Сканиране на блок {{height}}",
     "upToDate": "Актуален",
     "hdEnabled": "HD Портфейл активиран",
+    "hdDisabled": "HD Портфейл деактивиран",
     "torEnabled": "Tor активиран",
     "walletEncrypted": "Портфейлът е шифриран",
     "walletUnlocked": "Wallet unlocked",

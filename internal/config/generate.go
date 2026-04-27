@@ -58,17 +58,46 @@ func (cm *ConfigManager) generateCommentedYAML() error {
 		b.WriteString("# ==========================================\n")
 		fmt.Fprintf(&b, "%s:\n", cat)
 
+		// Track open sub-section path for nested YAML generation
+		// e.g., for key "rpc.tls.mtls.enabled", sectionPath is ["tls", "mtls"]
+		var openSections []string
+
 		for i, entry := range entries {
 			def := entry.def
-			// Extract the field name after the dot (e.g., "staking.enabled" → "enabled")
+			// Extract the field path after the category (e.g., "rpc.tls.enabled" → "tls.enabled")
 			parts := strings.SplitN(def.Key, ".", 2)
 			if len(parts) != 2 {
 				continue
 			}
-			fieldName := parts[1]
+
+			// Split into path components: "tls.mtls.enabled" → ["tls", "mtls", "enabled"]
+			fieldParts := strings.Split(parts[1], ".")
+			leafName := fieldParts[len(fieldParts)-1]
+			sectionPath := fieldParts[:len(fieldParts)-1] // empty for flat keys like "enabled"
+
+			// Find common prefix length between current open sections and new section path
+			commonLen := 0
+			for j := 0; j < len(openSections) && j < len(sectionPath); j++ {
+				if openSections[j] == sectionPath[j] {
+					commonLen++
+				} else {
+					break
+				}
+			}
+
+			// Emit sub-section headers for new nesting levels beyond the common prefix
+			for j := commonLen; j < len(sectionPath); j++ {
+				indent := strings.Repeat("  ", j+1) // +1 for base category indent
+				b.WriteString(indent + sectionPath[j] + ":\n")
+			}
+			openSections = sectionPath
+
+			// Calculate indent: base category indent (2 spaces) + section depth
+			depth := len(sectionPath) + 1
+			indent := strings.Repeat("  ", depth)
 
 			// Write description with (default: X) annotation
-			comment := "  # " + def.Description
+			comment := indent + "# " + def.Description
 			if def.Units != "" {
 				comment += ", " + def.Units
 			}
@@ -80,7 +109,7 @@ func (cm *ConfigManager) generateCommentedYAML() error {
 
 			// Write the current value
 			currentVal := def.getter(cm.config)
-			fmt.Fprintf(&b, "  %s: %s\n", fieldName, formatYAMLValue(currentVal))
+			fmt.Fprintf(&b, "%s%s: %s\n", indent, leafName, formatYAMLValue(currentVal))
 
 			// Blank line between settings within a category (not after last)
 			if i < len(entries)-1 {

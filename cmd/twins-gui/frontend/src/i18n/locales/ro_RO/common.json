@@ -88,6 +88,7 @@
     "scanningBlock": "Se scanează blocul {{height}}",
     "upToDate": "Actualizat",
     "hdEnabled": "Portofel HD activat",
+    "hdDisabled": "Portofel HD dezactivat",
     "torEnabled": "Tor activat",
     "walletEncrypted": "Portofel criptat",
     "walletUnlocked": "Wallet unlocked",

@@ -88,6 +88,7 @@
     "scanningBlock": "Đang quét khối {{height}}",
     "upToDate": "Cập nhật",
     "hdEnabled": "Ví HD đã bật",
+    "hdDisabled": "Ví HD đã tắt",
     "torEnabled": "Tor đã bật",
     "walletEncrypted": "Ví đã mã hóa",
     "walletUnlocked": "Wallet unlocked",

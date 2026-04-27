@@ -88,6 +88,7 @@
     "scanningBlock": "Сканування блоку {{height}}",
     "upToDate": "Актуально",
     "hdEnabled": "HD-гаманець увімкнено",
+    "hdDisabled": "HD-гаманець вимкнено",
     "torEnabled": "Tor увімкнено",
     "walletEncrypted": "Гаманець зашифровано",
     "walletUnlocked": "Wallet unlocked",

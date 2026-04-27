@@ -79,15 +79,40 @@ type NetworkConfigOverlay struct {
 
 // RPCConfigOverlay is the overlay for RPCConfig
 type RPCConfigOverlay struct {
-	Enabled    *bool    `yaml:"enabled"`
-	Port       *int     `yaml:"port"`
-	Host       *string  `yaml:"host"`
-	Username   *string  `yaml:"username"`
-	Password   *string  `yaml:"password"`
-	MaxClients *int     `yaml:"maxClients"`
-	AllowedIPs []string `yaml:"allowedIPs"`
-	RateLimit  *int     `yaml:"rateLimit"`
-	Timeout    *int     `yaml:"timeout"`
+	Enabled              *bool                    `yaml:"enabled"`
+	Port                 *int                     `yaml:"port"`
+	Host                 *string                  `yaml:"host"`
+	Username             *string                  `yaml:"username"`
+	Password             *string                  `yaml:"password"`
+	MaxClients           *int                     `yaml:"maxClients"`
+	AllowedIPs           []string                 `yaml:"allowedIPs"`
+	RateLimit            *int                     `yaml:"rateLimit"`
+	Timeout              *int                     `yaml:"timeout"`
+	AllowPlaintextPublic *bool                    `yaml:"allowPlaintextPublic"`
+	TLS                  *RPCTLSConfigOverlay     `yaml:"tls"`
+}
+
+// RPCTLSConfigOverlay is the overlay for RPCTLSConfig
+type RPCTLSConfigOverlay struct {
+	Enabled              *bool                       `yaml:"enabled"`
+	CertFile             *string                     `yaml:"certFile"`
+	KeyFile              *string                     `yaml:"keyFile"`
+	ExpiryWarnDays       *int                        `yaml:"expiryWarnDays"`
+	ReloadPassphraseFile *string                     `yaml:"reloadPassphraseFile"`
+	MTLS                 *RPCMTLSConfigOverlay       `yaml:"mtls"`
+	Client               *RPCClientTLSConfigOverlay  `yaml:"client"`
+}
+
+// RPCMTLSConfigOverlay is the overlay for RPCMTLSConfig
+type RPCMTLSConfigOverlay struct {
+	Enabled      *bool   `yaml:"enabled"`
+	ClientCAFile *string `yaml:"clientCAFile"`
+}
+
+// RPCClientTLSConfigOverlay is the overlay for RPCClientTLSConfig
+type RPCClientTLSConfigOverlay struct {
+	CAFile    *string `yaml:"caFile"`
+	PinSHA256 *string `yaml:"pinSHA256"`
 }
 
 // StakingConfigOverlay is the overlay for StakingConfig
@@ -355,6 +380,54 @@ func (r *RPCConfig) mergeFrom(o *RPCConfigOverlay) {
 	}
 	if o.Timeout != nil {
 		r.Timeout = *o.Timeout
+	}
+	if o.AllowPlaintextPublic != nil {
+		r.AllowPlaintextPublic = *o.AllowPlaintextPublic
+	}
+	if o.TLS != nil {
+		r.TLS.mergeFrom(o.TLS)
+	}
+}
+
+func (t *RPCTLSConfig) mergeFrom(o *RPCTLSConfigOverlay) {
+	if o.Enabled != nil {
+		t.Enabled = *o.Enabled
+	}
+	if o.CertFile != nil {
+		t.CertFile = *o.CertFile
+	}
+	if o.KeyFile != nil {
+		t.KeyFile = *o.KeyFile
+	}
+	if o.ExpiryWarnDays != nil {
+		t.ExpiryWarnDays = *o.ExpiryWarnDays
+	}
+	if o.ReloadPassphraseFile != nil {
+		t.ReloadPassphraseFile = *o.ReloadPassphraseFile
+	}
+	if o.MTLS != nil {
+		t.MTLS.mergeFrom(o.MTLS)
+	}
+	if o.Client != nil {
+		t.Client.mergeFrom(o.Client)
+	}
+}
+
+func (m *RPCMTLSConfig) mergeFrom(o *RPCMTLSConfigOverlay) {
+	if o.Enabled != nil {
+		m.Enabled = *o.Enabled
+	}
+	if o.ClientCAFile != nil {
+		m.ClientCAFile = *o.ClientCAFile
+	}
+}
+
+func (c *RPCClientTLSConfig) mergeFrom(o *RPCClientTLSConfigOverlay) {
+	if o.CAFile != nil {
+		c.CAFile = *o.CAFile
+	}
+	if o.PinSHA256 != nil {
+		c.PinSHA256 = *o.PinSHA256
 	}
 }
 

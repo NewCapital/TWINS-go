@@ -21,6 +21,7 @@ interface StatusBarProps {
   isLocked?: boolean;
   isStakingOnly?: boolean;
   isHD?: boolean;
+  initialized?: boolean;
   isTor?: boolean;
   displayUnit?: number;
   /** Called when the lock icon is clicked (encrypted wallets only) */
@@ -43,7 +44,8 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   isEncrypted = false,
   isLocked = true,
   isStakingOnly = false,
-  isHD = true,
+  isHD = false,
+  initialized = false,
   isTor = false,
   displayUnit = 0,
   onLockClick,
@@ -211,12 +213,15 @@ export const StatusBar: React.FC<StatusBarProps> = ({
         </div>
 
         {/* HD Wallet status */}
-        {isHD && (
-          <div className="flex items-center" title={t('statusBar.hdEnabled')}>
+        {initialized && (
+          <div
+            className="flex items-center"
+            title={isHD ? t('statusBar.hdEnabled') : t('statusBar.hdDisabled')}
+          >
             <img
-              src="/icons/status/hd_enabled.png"
-              alt={t('statusBar.hdEnabled')}
-              style={{ width: '16px', height: '16px' }}
+              src={isHD ? '/icons/status/hd_enabled.png' : '/icons/status/hd_disabled.png'}
+              alt={isHD ? t('statusBar.hdEnabled') : t('statusBar.hdDisabled')}
+              style={{ width: '16px', height: '16px', opacity: isHD ? 1 : 0.5 }}
             />
           </div>
         )}

@@ -88,6 +88,7 @@
     "scanningBlock": "Escaneando bloco {{height}}",
     "upToDate": "Atualizado",
     "hdEnabled": "Carteira HD habilitada",
+    "hdDisabled": "Carteira HD desabilitada",
     "torEnabled": "Tor habilitado",
     "walletEncrypted": "Carteira criptografada",
     "walletUnlocked": "Wallet unlocked",

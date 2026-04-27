@@ -88,6 +88,7 @@
     "scanningBlock": "Skannataan lohkoa {{height}}",
     "upToDate": "Ajan tasalla",
     "hdEnabled": "HD-lompakko käytössä",
+    "hdDisabled": "HD-lompakko pois käytöstä",
     "torEnabled": "Tor käytössä",
     "walletEncrypted": "Lompakko salattu",
     "walletUnlocked": "Wallet unlocked",

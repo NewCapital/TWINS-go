@@ -428,6 +428,116 @@ func registerAllSettings(cm *ConfigManager) {
 		getter: func(c *Config) interface{} { return c.RPC.Timeout },
 		setter: func(c *Config, v interface{}) error { c.RPC.Timeout = v.(int); return nil },
 	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.allowPlaintextPublic", Type: TypeBool, Default: false,
+			Category: "rpc", Label: "Allow Plaintext Public",
+			Description: "Allow unencrypted RPC on non-loopback (requires CLI flag too)",
+			HotReload:   false, CLIFlag: "rpc-allow-plaintext-public",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.AllowPlaintextPublic },
+		setter: func(c *Config, v interface{}) error { c.RPC.AllowPlaintextPublic = v.(bool); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.enabled", Type: TypeBool, Default: false,
+			Category: "rpc", Label: "Enable TLS",
+			Description: "Enable TLS encryption on the RPC listener",
+			HotReload:   false, CLIFlag: "rpc-tls-enabled",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.Enabled },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.Enabled = v.(bool); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.certFile", Type: TypeString, Default: "",
+			Category: "rpc", Label: "TLS Certificate",
+			Description: "Path to TLS certificate file",
+			HotReload:   false, CLIFlag: "rpc-tls-cert",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.CertFile },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.CertFile = v.(string); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.keyFile", Type: TypeString, Default: "",
+			Category: "rpc", Label: "TLS Private Key",
+			Description: "Path to TLS private key file",
+			HotReload:   false, CLIFlag: "rpc-tls-key",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.KeyFile },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.KeyFile = v.(string); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.expiryWarnDays", Type: TypeInt, Default: 30,
+			Category: "rpc", Label: "Cert Expiry Warning",
+			Description: "Days before certificate expiry to start warnings",
+			HotReload:   false, CLIFlag: "rpc-tls-expiry-warn-days",
+			Units:       "days", Validation: minmax(1, 365),
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.ExpiryWarnDays },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.ExpiryWarnDays = v.(int); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.reloadPassphraseFile", Type: TypeString, Default: "",
+			Category: "rpc", Label: "Reload Passphrase File",
+			Description: "Path to argon2id hash file for reloadrpccerts RPC",
+			HotReload:   false, CLIFlag: "rpc-tls-reload-passphrase-file",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.ReloadPassphraseFile },
+		setter: func(c *Config, v interface{}) error {
+			c.RPC.TLS.ReloadPassphraseFile = v.(string)
+			return nil
+		},
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.mtls.enabled", Type: TypeBool, Default: false,
+			Category: "rpc", Label: "Enable mTLS",
+			Description: "Require client certificates for RPC connections",
+			HotReload:   false, CLIFlag: "rpc-tls-mtls-enabled",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.MTLS.Enabled },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.MTLS.Enabled = v.(bool); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.mtls.clientCAFile", Type: TypeString, Default: "",
+			Category: "rpc", Label: "Client CA File",
+			Description: "Path to client CA bundle for mTLS verification",
+			HotReload:   false, CLIFlag: "rpc-tls-mtls-client-ca",
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.MTLS.ClientCAFile },
+		setter: func(c *Config, v interface{}) error {
+			c.RPC.TLS.MTLS.ClientCAFile = v.(string)
+			return nil
+		},
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.client.caFile", Type: TypeString, Default: "",
+			Category: "rpc", Label: "Client CA Bundle",
+			Description: "Custom CA bundle for twins-cli server verification",
+			HotReload:   false,
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.Client.CAFile },
+		setter: func(c *Config, v interface{}) error { c.RPC.TLS.Client.CAFile = v.(string); return nil },
+	})
+	cm.Register(&settingDef{
+		SettingMeta: SettingMeta{
+			Key: "rpc.tls.client.pinSHA256", Type: TypeString, Default: "",
+			Category: "rpc", Label: "SPKI Pin",
+			Description: "SPKI hash pin for certificate pinning (RFC 7469)",
+			HotReload:   false,
+		},
+		getter: func(c *Config) interface{} { return c.RPC.TLS.Client.PinSHA256 },
+		setter: func(c *Config, v interface{}) error {
+			c.RPC.TLS.Client.PinSHA256 = v.(string)
+			return nil
+		},
+	})
 
 	// ==================== Masternode ====================
 	cm.Register(&settingDef{

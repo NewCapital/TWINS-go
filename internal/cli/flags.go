@@ -93,6 +93,59 @@ func CommonDaemonFlags() []cli.Flag {
 			Usage:   "Disable wallet functionality (for pure relay/validation nodes)",
 			EnvVars: []string{"TWINS_DISABLE_WALLET"},
 		},
+
+		// === RPC TLS Flags ===
+		&cli.BoolFlag{
+			Name:    "rpc-tls-enabled",
+			Value:   false,
+			Usage:   "Enable TLS encryption on the RPC listener",
+			EnvVars: []string{"TWINS_RPC_TLS_ENABLED"},
+		},
+		&cli.StringFlag{
+			Name:    "rpc-tls-cert",
+			Usage:   "Path to TLS certificate file for RPC server",
+			EnvVars: []string{"TWINS_RPC_TLS_CERT"},
+		},
+		&cli.StringFlag{
+			Name:    "rpc-tls-key",
+			Usage:   "Path to TLS private key file for RPC server",
+			EnvVars: []string{"TWINS_RPC_TLS_KEY"},
+		},
+		&cli.IntFlag{
+			Name:    "rpc-tls-expiry-warn-days",
+			Value:   30,
+			Usage:   "Days before certificate expiry to start warnings",
+			EnvVars: []string{"TWINS_RPC_TLS_EXPIRY_WARN_DAYS"},
+		},
+		&cli.StringFlag{
+			Name:    "rpc-tls-reload-passphrase-file",
+			Usage:   "Path to argon2id hash file for reloadrpccerts RPC",
+			EnvVars: []string{"TWINS_RPC_TLS_RELOAD_PASSPHRASE_FILE"},
+		},
+		&cli.BoolFlag{
+			Name:    "rpc-tls-mtls-enabled",
+			Value:   false,
+			Usage:   "Require client certificates for RPC connections (mTLS)",
+			EnvVars: []string{"TWINS_RPC_TLS_MTLS_ENABLED"},
+		},
+		&cli.StringFlag{
+			Name:    "rpc-tls-mtls-client-ca",
+			Usage:   "Path to client CA bundle for mTLS verification",
+			EnvVars: []string{"TWINS_RPC_TLS_MTLS_CLIENT_CA"},
+		},
+		&cli.BoolFlag{
+			Name:    "rpc-allow-plaintext-public",
+			Value:   false,
+			Usage:   "Allow unencrypted RPC on non-loopback (requires rpc.allowPlaintextPublic in YAML too)",
+			EnvVars: []string{"TWINS_RPC_ALLOW_PLAINTEXT_PUBLIC"},
+		},
+
+		// === Legacy RPC SSL flags (rejected at startup) ===
+		// Hidden so they don't appear in --help but c.IsSet() detects them.
+		&cli.BoolFlag{Name: "rpcssl", Hidden: true},
+		&cli.StringFlag{Name: "rpcsslcertificatechainfile", Hidden: true},
+		&cli.StringFlag{Name: "rpcsslprivatekeyfile", Hidden: true},
+		&cli.StringFlag{Name: "rpcsslciphers", Hidden: true},
 	}
 }
 

@@ -3,6 +3,7 @@ package wallet
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -16,6 +17,9 @@ import (
 	pkgcrypto "github.com/twins-dev/twins-core/pkg/crypto"
 	"go.etcd.io/bbolt"
 )
+
+// ErrHDChainNotFound is returned when no HD chain record exists in the database.
+var ErrHDChainNotFound = errors.New("HD chain not found")
 
 // Bucket names for wallet.dat
 var (
@@ -734,7 +738,7 @@ func (wdb *WalletDB) ReadHDChain() (*legacy.CHDChain, bool, error) {
 			return legacy.DeserializeFromBytes(data, chain)
 		}
 
-		return fmt.Errorf("HD chain not found")
+		return ErrHDChainNotFound
 	})
 
 	if err != nil {

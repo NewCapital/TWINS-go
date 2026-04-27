@@ -97,15 +97,40 @@ type NetworkConfig struct {
 
 // RPCConfig contains RPC server settings
 type RPCConfig struct {
-	Enabled    bool
-	Port       int // TWINS RPC port (not Bitcoin 8332)
-	Host       string
-	Username   string
-	Password   string
-	MaxClients int
-	AllowedIPs []string
-	RateLimit  int // Requests per minute
-	Timeout    int // Request timeout in seconds
+	Enabled             bool
+	Port                int // TWINS RPC port (not Bitcoin 8332)
+	Host                string
+	Username            string
+	Password            string
+	MaxClients          int
+	AllowedIPs          []string
+	RateLimit           int  // Requests per minute
+	Timeout             int  // Request timeout in seconds
+	AllowPlaintextPublic bool // Double-gate: YAML + CLI flag both required for plaintext on non-loopback
+	TLS                 RPCTLSConfig
+}
+
+// RPCTLSConfig contains TLS settings for the RPC server
+type RPCTLSConfig struct {
+	Enabled              bool   // Enable TLS on the RPC listener
+	CertFile             string // Path to TLS certificate file
+	KeyFile              string // Path to TLS private key file
+	ExpiryWarnDays       int    // Days before cert expiry to start warnings (default 30)
+	ReloadPassphraseFile string // Path to argon2id hash file for reloadrpccerts RPC
+	MTLS                 RPCMTLSConfig
+	Client               RPCClientTLSConfig
+}
+
+// RPCMTLSConfig contains mutual TLS (client certificate) settings
+type RPCMTLSConfig struct {
+	Enabled      bool   // Require client certificates
+	ClientCAFile string // Path to client CA bundle for verification
+}
+
+// RPCClientTLSConfig contains TLS settings for the RPC client (twins-cli)
+type RPCClientTLSConfig struct {
+	CAFile    string // Custom CA bundle for server verification (empty = system roots)
+	PinSHA256 string // SPKI hash pin per RFC 7469
 }
 
 // StakingConfig contains staking-specific settings (legacy C++ compatible)

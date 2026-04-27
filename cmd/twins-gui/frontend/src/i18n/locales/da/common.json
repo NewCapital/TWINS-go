@@ -88,6 +88,7 @@
     "scanningBlock": "Scanner blok {{height}}",
     "upToDate": "Opdateret",
     "hdEnabled": "HD-tegnebog aktiveret",
+    "hdDisabled": "HD-tegnebog deaktiveret",
     "torEnabled": "Tor aktiveret",
     "walletEncrypted": "Tegnebog krypteret",
     "walletUnlocked": "Wallet unlocked",

@@ -224,6 +224,60 @@ func buildConfigManager(c *cli.Context, dataDir string) (*config.ConfigManager, 
 		}
 	}
 
+	// Reject legacy --rpcssl* flags with migration error
+	if err := rejectLegacyRPCSSLFlags(c); err != nil {
+		return nil, nil, err
+	}
+
+	// Apply RPC TLS flag overrides
+	if c.IsSet("rpc-tls-enabled") {
+		if err := cm.SetFromCLI("rpc.tls.enabled", c.Bool("rpc-tls-enabled")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-enabled: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-cert") {
+		if err := cm.SetFromCLI("rpc.tls.certFile", c.String("rpc-tls-cert")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-cert: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-key") {
+		if err := cm.SetFromCLI("rpc.tls.keyFile", c.String("rpc-tls-key")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-key: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-expiry-warn-days") {
+		if err := cm.SetFromCLI("rpc.tls.expiryWarnDays", c.Int("rpc-tls-expiry-warn-days")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-expiry-warn-days: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-reload-passphrase-file") {
+		if err := cm.SetFromCLI("rpc.tls.reloadPassphraseFile", c.String("rpc-tls-reload-passphrase-file")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-reload-passphrase-file: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-mtls-enabled") {
+		if err := cm.SetFromCLI("rpc.tls.mtls.enabled", c.Bool("rpc-tls-mtls-enabled")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-mtls-enabled: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-tls-mtls-client-ca") {
+		if err := cm.SetFromCLI("rpc.tls.mtls.clientCAFile", c.String("rpc-tls-mtls-client-ca")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-tls-mtls-client-ca: %w", err)
+		}
+	}
+
+	if c.IsSet("rpc-allow-plaintext-public") {
+		if err := cm.SetFromCLI("rpc.allowPlaintextPublic", c.Bool("rpc-allow-plaintext-public")); err != nil {
+			return nil, nil, fmt.Errorf("failed to apply --rpc-allow-plaintext-public: %w", err)
+		}
+	}
+
 	cliOnly := &CLIOnlyConfig{
 		Network:           twinslib.GetNetwork(c),
 		DataDir:           dataDir,
@@ -259,6 +313,28 @@ func splitHostPort(addr string, defaultPort int) (string, int, error) {
 		return "", 0, fmt.Errorf("invalid port %q: %w", portStr, err)
 	}
 	return host, port, nil
+}
+
+// rejectLegacyRPCSSLFlags checks for deprecated --rpcssl* flags and returns an error
+// with a migration message pointing to the modern equivalent. The legacy C++ daemon
+// never implemented these flags (hard-rejects at httpserver.cpp:384-389); we match
+// that behavior exactly.
+func rejectLegacyRPCSSLFlags(c *cli.Context) error {
+	legacyFlags := []struct {
+		flag    string
+		message string
+	}{
+		{"rpcssl", "flag --rpcssl is no longer supported; use --rpc-tls-enabled instead"},
+		{"rpcsslcertificatechainfile", "flag --rpcsslcertificatechainfile is no longer supported; use --rpc-tls-cert instead"},
+		{"rpcsslprivatekeyfile", "flag --rpcsslprivatekeyfile is no longer supported; use --rpc-tls-key instead"},
+		{"rpcsslciphers", "flag --rpcsslciphers is no longer supported; TLS 1.3 manages cipher selection automatically"},
+	}
+	for _, lf := range legacyFlags {
+		if c.IsSet(lf.flag) {
+			return fmt.Errorf("%s", lf.message)
+		}
+	}
+	return nil
 }
 
 // stopDaemon stops a running daemon via RPC

@@ -437,6 +437,7 @@ func (a *WalletAdapter) GetWalletInfo() (*WalletInfo, error) {
 		KeypoolSize:      a.w.GetKeypoolSize(),
 		UnlockedUntil:    unlockedUntil,
 		EncryptionStatus: encryptionStatus,
+		HDEnabled:        a.w.IsHDEnabled(),
 	}, nil
 }
 

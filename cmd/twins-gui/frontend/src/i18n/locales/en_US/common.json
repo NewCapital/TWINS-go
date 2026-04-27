@@ -88,6 +88,7 @@
     "scanningBlock": "Scanning block {{height}}",
     "upToDate": "Up to date",
     "hdEnabled": "HD Wallet enabled",
+    "hdDisabled": "HD Wallet disabled",
     "torEnabled": "Tor enabled",
     "walletEncrypted": "Wallet encrypted (click to unlock)",
     "walletUnlocked": "Wallet unlocked (click to lock)",

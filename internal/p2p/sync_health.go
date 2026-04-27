@@ -144,10 +144,16 @@ func (pht *PeerHealthTracker) RecordPeerDiscovered(address string, tipHeight uin
 			responseTimeSamples:  make([]time.Duration, 0, 10),
 		}
 	} else {
-		// Update existing peer info
+		// Update existing peer info. TipHeight is monotonically non-decreasing
+		// here: RecordPeerDiscovered is re-called on every RebuildPeerList with
+		// the static version.StartHeight, so blindly overwriting would clobber
+		// the live height learned from ping/inv/headers via UpdateBestKnownHeight
+		// and stall consensus-height calculation at the handshake-time height.
 		stats := pht.peers[address]
 		stats.mu.Lock()
-		stats.TipHeight = tipHeight
+		if tipHeight > stats.TipHeight {
+			stats.TipHeight = tipHeight
+		}
 		stats.IsMasternode = isMasternode
 		stats.Tier = tier
 		// Update direction if it changed (shouldn't happen normally)

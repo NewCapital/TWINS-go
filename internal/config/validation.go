@@ -171,6 +171,44 @@ func validateRPCConfig(config *RPCConfig) error {
 		return fmt.Errorf("timeout must be at least 1 second, got %d", config.Timeout)
 	}
 
+	// Validate TLS config if enabled
+	if config.TLS.Enabled {
+		if err := validateRPCTLSConfig(&config.TLS); err != nil {
+			return err
+		}
+	}
+
+	// Validate mTLS requires TLS
+	if config.TLS.MTLS.Enabled && !config.TLS.Enabled {
+		return fmt.Errorf("mTLS requires TLS to be enabled (rpc.tls.enabled must be true)")
+	}
+
+	return nil
+}
+
+// validateRPCTLSConfig validates RPC TLS configuration when TLS is enabled
+func validateRPCTLSConfig(config *RPCTLSConfig) error {
+	// Certificate and key must both be provided
+	if config.CertFile == "" {
+		return fmt.Errorf("rpc.tls.certFile is required when TLS is enabled")
+	}
+	if config.KeyFile == "" {
+		return fmt.Errorf("rpc.tls.keyFile is required when TLS is enabled")
+	}
+
+	// Expiry warning days must be positive
+	if config.ExpiryWarnDays < 1 {
+		return fmt.Errorf("rpc.tls.expiryWarnDays must be at least 1, got %d", config.ExpiryWarnDays)
+	}
+	if config.ExpiryWarnDays > 365 {
+		return fmt.Errorf("rpc.tls.expiryWarnDays cannot exceed 365, got %d", config.ExpiryWarnDays)
+	}
+
+	// mTLS: client CA file required when mTLS enabled
+	if config.MTLS.Enabled && config.MTLS.ClientCAFile == "" {
+		return fmt.Errorf("rpc.tls.mtls.clientCAFile is required when mTLS is enabled")
+	}
+
 	return nil
 }
 
