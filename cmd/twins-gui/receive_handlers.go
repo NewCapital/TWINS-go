@@ -625,3 +625,133 @@ func walletPaymentRequestToCoreRequest(pr *wallet.PaymentRequest) core.PaymentRe
 		Amount:  pr.Amount,
 	}
 }
+
+// ==========================================
+// Paginated Payment Requests
+// ==========================================
+
+// validPaymentRequestPageSizes is the set of page sizes accepted by the
+// paginated payment-request handler. Mirrors validReceivingAddressPageSizes.
+var validPaymentRequestPageSizes = map[int]bool{25: true, 50: true, 100: true, 250: true}
+
+// sortPaymentRequests sorts rows in place by the requested column and
+// direction. Sort is stable with a deterministic secondary key (Address
+// asc, then ID asc) so two rows with identical primary keys always sort
+// the same way. Default column: date.
+func sortPaymentRequests(rows []core.PaymentRequest, column, direction string) {
+	// Match the convention used by `sortReceivingAddressRows` in the same
+	// file: only the literal "desc" maps to descending; everything else
+	// (including empty/unknown direction from a future scripted RPC caller)
+	// defaults to ascending. The frontend slice always sends explicit
+	// "asc"/"desc" so this fallback never fires in practice today — kept
+	// symmetric with the sibling helper so two near-identical sorts in the
+	// same file cannot drift in their empty-string semantics.
+	asc := direction != "desc"
+	primary := func(i, j int) int {
+		switch column {
+		case "label":
+			a := strings.ToLower(rows[i].Label)
+			b := strings.ToLower(rows[j].Label)
+			if a < b {
+				return -1
+			}
+			if a > b {
+				return 1
+			}
+			return 0
+		case "amount":
+			if rows[i].Amount < rows[j].Amount {
+				return -1
+			}
+			if rows[i].Amount > rows[j].Amount {
+				return 1
+			}
+			return 0
+		case "date":
+			fallthrough
+		default:
+			if rows[i].Date.Before(rows[j].Date) {
+				return -1
+			}
+			if rows[i].Date.After(rows[j].Date) {
+				return 1
+			}
+			return 0
+		}
+	}
+	sort.SliceStable(rows, func(i, j int) bool {
+		cmp := primary(i, j)
+		if cmp == 0 {
+			if rows[i].Address != rows[j].Address {
+				return rows[i].Address < rows[j].Address
+			}
+			return rows[i].ID < rows[j].ID
+		}
+		if asc {
+			return cmp < 0
+		}
+		return cmp > 0
+	})
+}
+
+// GetPaymentRequestsPage returns a paginated, sorted page of payment
+// requests. Mirrors the GetReceivingAddressesPage pattern.
+//
+// PageSize is clamped to one of {25, 50, 100, 250}, defaulting to 25 for
+// unrecognized sizes. Page is clamped to [1, TotalPages] when out of range.
+func (a *App) GetPaymentRequestsPage(filter core.PaymentRequestFilter) (*core.PaymentRequestPage, error) {
+	a.componentsMu.RLock()
+	w := a.wallet
+	a.componentsMu.RUnlock()
+
+	if w == nil {
+		return nil, fmt.Errorf("wallet not available")
+	}
+
+	pageSize := filter.PageSize
+	if !validPaymentRequestPageSizes[pageSize] {
+		pageSize = 25
+	}
+	page := filter.Page
+	if page < 1 {
+		page = 1
+	}
+
+	requests, err := w.GetAllPaymentRequests()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get payment requests: %w", err)
+	}
+
+	rows := make([]core.PaymentRequest, 0, len(requests))
+	for _, pr := range requests {
+		rows = append(rows, walletPaymentRequestToCoreRequest(pr))
+	}
+
+	sortPaymentRequests(rows, filter.SortColumn, filter.SortDirection)
+
+	total := len(rows)
+	totalPages := 0
+	if total > 0 {
+		totalPages = int(math.Ceil(float64(total) / float64(pageSize)))
+	}
+	if totalPages > 0 && page > totalPages {
+		page = totalPages
+	}
+
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if start > total {
+		start = total
+	}
+	if end > total {
+		end = total
+	}
+
+	return &core.PaymentRequestPage{
+		Requests:   rows[start:end],
+		Total:      total,
+		Page:       page,
+		PageSize:   pageSize,
+		TotalPages: totalPages,
+	}, nil
+}

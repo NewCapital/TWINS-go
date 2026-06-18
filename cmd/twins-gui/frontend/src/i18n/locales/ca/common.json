@@ -141,6 +141,7 @@
     "height": "Alçada",
     "hash": "Hash",
     "time": "Hora",
+    "date": "Data",
     "age": "Edat",
     "txCount": "Txns",
     "size": "Mida",

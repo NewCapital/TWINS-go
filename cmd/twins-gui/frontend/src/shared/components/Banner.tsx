@@ -6,6 +6,13 @@ export interface BannerProps {
   variant: BannerVariant;
   message: string;
   role?: 'alert' | 'status';
+  /**
+   * Optional rich content rendered AFTER the message text. Consumers that
+   * only pass `message` are unchanged. Used by the Explorer not-found
+   * banner to surface structured "Supported formats" chips + a Try again
+   * inline action. Per Option A from the m-explorer-search-history task.
+   */
+  children?: React.ReactNode;
 }
 
 const VARIANT_PALETTES: Record<
@@ -17,7 +24,7 @@ const VARIANT_PALETTES: Record<
   info: { backgroundColor: '#2a3a4a', borderColor: '#6699cc', color: '#6699cc' },
 };
 
-export const Banner: React.FC<BannerProps> = ({ variant, message, role }) => {
+export const Banner: React.FC<BannerProps> = ({ variant, message, role, children }) => {
   const palette = VARIANT_PALETTES[variant];
   const effectiveRole = role ?? (variant === 'error' ? 'alert' : 'status');
   return (
@@ -33,7 +40,8 @@ export const Banner: React.FC<BannerProps> = ({ variant, message, role }) => {
         textAlign: 'center',
       }}
     >
-      {message}
+      <div>{message}</div>
+      {children}
     </div>
   );
 };

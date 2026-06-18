@@ -141,6 +141,7 @@
     "height": "Chiều cao",
     "hash": "Hash",
     "time": "Thời gian",
+    "date": "Ngày",
     "age": "Tuổi",
     "txCount": "Txs",
     "size": "Kích thước",

@@ -58,15 +58,12 @@ export interface NetworkMasternode {
 // Network tier type (lowercase as returned by RPC)
 export type NetworkMasternodeTier = 'bronze' | 'silver' | 'gold' | 'platinum' | '';
 
-// Virtual columns derived from NetworkMasternode fields (not direct properties)
-export type NetworkMasternodeVirtualColumn = 'network';
-
 // Filter state for network masternodes
 export interface NetworkMasternodeFilters {
   tier: 'all' | NetworkMasternodeTier;
   status: 'all' | string;
   search: string;
-  sortColumn: keyof NetworkMasternode | NetworkMasternodeVirtualColumn | '';
+  sortColumn: keyof NetworkMasternode | '';
   sortDirection: 'asc' | 'desc';
 }
 

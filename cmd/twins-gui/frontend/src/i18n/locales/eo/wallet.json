@@ -136,7 +136,6 @@
     "error": "Eraro: {{message}}",
     "type": {
       "all": "Ĉiuj",
-      "mostCommon": "Plej oftaj",
       "sent": "Sendita al",
       "received": "Ricevita kun",
       "toYourself": "Al vi mem",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Kaŝi orfajn stakojn"
     },
     "footer": {
-      "selectedAmount": "Elektita kvanto:",
       "transactions": "{{count}} transakcio",
       "transactions_other": "{{count}} transakcioj",
       "export": "Eksporti"

@@ -16,6 +16,7 @@ require (
 require (
 	github.com/btcsuite/btcd v0.20.1-beta
 	github.com/btcsuite/btcd/btcec/v2 v2.3.5
+	github.com/btcsuite/btcutil v1.0.2
 	github.com/energye/systray v1.0.3
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/hashicorp/golang-lru/v2 v2.0.7

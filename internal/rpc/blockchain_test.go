@@ -145,6 +145,14 @@ func (m *mockBlockchain) AddCheckpoint(height uint32, hash types.Hash) error {
 	return nil
 }
 
+func (m *mockBlockchain) GetStakeModifier(blockHash types.Hash) (uint64, error) {
+	return 0, nil
+}
+
+func (m *mockBlockchain) GetBlockPoSMetadata(blockHash types.Hash) (uint32, types.Hash, error) {
+	return 0, types.Hash{}, nil
+}
+
 // Helper to create a test block
 func createTestBlock(height uint32, numTx int) *types.Block {
 	block := &types.Block{

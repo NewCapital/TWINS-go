@@ -386,6 +386,15 @@ func (w *Wallet) isOurScript(scriptPubKey []byte) (string, bool) {
 	return w.isOurScriptLocked(scriptPubKey)
 }
 
+// IsOurScript is the public form of isOurScript. Returns the canonical wallet
+// address string for the script (empty if not ours) and a bool indicating
+// wallet ownership. Used by GUI core to filter change outputs out of the
+// recipient list on send transactions without round-tripping through address
+// string encoding (the wallet does the canonical match on raw script bytes).
+func (w *Wallet) IsOurScript(scriptPubKey []byte) (string, bool) {
+	return w.isOurScript(scriptPubKey)
+}
+
 // isOurScriptLocked is an internal version that assumes caller holds w.mu
 func (w *Wallet) isOurScriptLocked(scriptPubKey []byte) (string, bool) {
 	addr, exists := w.getAddressForScriptLocked(scriptPubKey)

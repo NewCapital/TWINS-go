@@ -6,6 +6,7 @@ import { UTXO } from '@/shared/types/wallet.types';
 import { IsMasternodeCollateral } from '@wailsjs/go/main/App';
 import { SimpleConfirmDialog } from '@/shared/components/SimpleConfirmDialog';
 import { IconButton } from '@/shared/components/IconButton';
+import { useDisplayDateTime } from '@/shared/hooks/useDisplayDateTime';
 
 interface CoinControlDialogProps {
   recipientAmount?: number;
@@ -19,6 +20,7 @@ export const CoinControlDialog: React.FC<CoinControlDialogProps> = ({
   recipientCount = 1,
 }) => {
   const { t } = useTranslation('wallet');
+  const { formatDateValue, formatTooltip, formatDateHeader } = useDisplayDateTime();
   const {
     isDialogOpen,
     utxos,
@@ -180,19 +182,6 @@ export const CoinControlDialog: React.FC<CoinControlDialogProps> = ({
   // Format amount
   const formatAmount = (amount: number): string => {
     return amount.toFixed(8);
-  };
-
-  // Format date
-  const formatDate = (timestamp: number): string => {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
   };
 
   const handleContextMenu = (e: React.MouseEvent, utxo: UTXO) => {
@@ -424,7 +413,7 @@ export const CoinControlDialog: React.FC<CoinControlDialogProps> = ({
                     className="text-center py-2 w-32 cursor-pointer hover:text-[#ddd] select-none"
                     onClick={() => handleSortClick('date')}
                   >
-                    {t('coinControl.date')}{sortIndicator('date')}
+                    {formatDateHeader()}{sortIndicator('date')}
                   </th>
                   <th className="py-2 w-8"></th>
                 </tr>
@@ -471,8 +460,11 @@ export const CoinControlDialog: React.FC<CoinControlDialogProps> = ({
                       <td className="py-2 text-[#ddd]">{utxo.label || ''}</td>
                       <td className="py-2 font-mono text-[#ddd]">{utxo.address}</td>
                       <td className="text-center py-2 text-[#ddd]">{utxo.confirmations}</td>
-                      <td className="text-center py-2 text-[#999]">
-                        {formatDate(utxo.date)}
+                      <td
+                        className="text-center py-2 text-[#999]"
+                        title={formatTooltip(utxo.date)}
+                      >
+                        {formatDateValue(utxo.date)}
                       </td>
                       <td className="py-2 text-center">
                         <button

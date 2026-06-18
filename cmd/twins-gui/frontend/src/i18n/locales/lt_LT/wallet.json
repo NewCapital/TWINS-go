@@ -136,7 +136,6 @@
     "error": "Klaida: {{message}}",
     "type": {
       "all": "Visi",
-      "mostCommon": "Dažniausi",
       "sent": "Išsiųsta",
       "received": "Gauta",
       "toYourself": "Sau",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Slėpti našlaičius stake'us"
     },
     "footer": {
-      "selectedAmount": "Pasirinkta suma:",
       "transactions": "{{count}} sandoris",
       "transactions_other": "{{count}} sandorių",
       "export": "Eksportuoti"

@@ -141,6 +141,7 @@
     "height": "Alto",
     "hash": "Hash",
     "time": "Tempo",
+    "date": "Dato",
     "age": "Aĝo",
     "txCount": "Txs",
     "size": "Grandeco",

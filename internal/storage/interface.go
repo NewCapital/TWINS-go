@@ -16,6 +16,28 @@ type AddressTransaction struct {
 	TxIndex uint32 // Index of transaction within the block
 }
 
+// AddressAggregates carries the per-address summary values needed by the
+// Address Details "Activity" card (Total Received, Total Sent, TxCount,
+// FirstSeen, LastSeen). All values are derived from a single iterator pass
+// over the 0x05 address-history index without loading any transaction data.
+//
+// TotalReceivedSat sums Value across all 0x05 entries with IsInput==false.
+// TotalSentSat sums Value across all 0x05 entries with IsInput==true.
+// TxCount is the number of UNIQUE txhashes referenced by the index entries
+// (one tx with N outputs + M inputs to the address contributes once, not N+M
+// times). MinHeight / MaxHeight bracket the height range of those entries;
+// HasHeights is false when the address has zero history entries (in which
+// case the height fields are zero-valued and callers should treat them as
+// "unknown").
+type AddressAggregates struct {
+	TotalReceivedSat uint64
+	TotalSentSat     uint64
+	TxCount          int
+	MinHeight        uint32
+	MaxHeight        uint32
+	HasHeights       bool
+}
+
 // TransactionData represents transaction data with block location metadata
 type TransactionData struct {
 	BlockHash types.Hash
@@ -41,8 +63,8 @@ type Storage interface {
 	GetBlockByHeight(height uint32) (*types.Block, error)
 	HasBlock(hash types.Hash) (bool, error)
 	DeleteBlock(hash types.Hash) error
-	DeleteBlockData(hash types.Hash) error                                                    // Deletes only block data key (prefix 0x01), no indexes or transactions
-	DeleteBlockIndex(hash types.Hash) error                                                   // Deletes only hash→height and height→hash index entries (for orphaned index cleanup)
+	DeleteBlockData(hash types.Hash) error                                                   // Deletes only block data key (prefix 0x01), no indexes or transactions
+	DeleteBlockIndex(hash types.Hash) error                                                  // Deletes only hash→height and height→hash index entries (for orphaned index cleanup)
 	DeleteCorruptBlock(hash types.Hash, height uint32) (unspent int, deleted int, err error) // Deletes a corrupt block (missing transactions) with UTXO rollback via height-based scan
 	GetBlockParentHash(hash types.Hash) (types.Hash, error)                                  // Gets parent hash from compact block without loading transactions
 
@@ -68,10 +90,20 @@ type Storage interface {
 	// Returns (isSpent, spendingTxHash, error) - checks if UTXO is already spent
 	ValidateUTXOSpend(outpoint types.Outpoint) (isSpent bool, spendingTxHash types.Hash, err error)
 
-	// Address index operations (for wallet rescan and transaction lookups)
-	// addressBinary is the decoded address (netID + hash160 = 21 bytes)
-	IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, txIndex uint32, value int64, isInput bool, blockHash types.Hash) error
+	// Address index operations (for wallet rescan and transaction lookups).
+	// addressBinary is the decoded address (netID + hash160 = 21 bytes).
+	// ioIdx is the input or output index WITHIN the transaction (not the tx
+	// position in the block). Combined with isInput, it encodes the key
+	// index field via EncodeAddressHistoryIndex so every input/output gets
+	// a unique 0x05 key. ioIdx must be <= 0x7fff (defensive bound).
+	IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, ioIdx uint32, value int64, isInput bool, blockHash types.Hash) error
 	GetTransactionsByAddress(addressBinary []byte) ([]AddressTransaction, error)
+	// GetAddressAggregates iterates the 0x05 address-history index once and
+	// returns the per-address summary (received, sent, txCount, min/maxHeight)
+	// computed from the index VALUES (not the transactions themselves). Used
+	// by the GUI Address Details "Activity" card to avoid the prior O(N+N×I)
+	// per-transaction load. addressBinary is netID + hash160 = 21 bytes.
+	GetAddressAggregates(addressBinary []byte) (AddressAggregates, error)
 	DeleteAddressIndex(addressBinary []byte, txHash types.Hash) error
 
 	// Chain state operations
@@ -165,8 +197,8 @@ type Batch interface {
 	StoreBlock(block *types.Block) error
 	StoreBlockWithHeight(block *types.Block, height uint32) error // For batch processing where height is known
 	StoreTransaction(tx *types.Transaction) error
-	DeleteTransaction(txHash types.Hash, height uint32) error          // Delete transaction and its address indexes during block disconnect
-	DeleteBlockDisconnect(hash types.Hash, height uint32) error        // Delete block data + indexes atomically within the batch (for disconnect)
+	DeleteTransaction(txHash types.Hash, height uint32) error   // Delete transaction and its address indexes during block disconnect
+	DeleteBlockDisconnect(hash types.Hash, height uint32) error // Delete block data + indexes atomically within the batch (for disconnect)
 	StoreUTXO(outpoint types.Outpoint, output *types.TxOutput, height uint32, isCoinbase bool) error
 	DeleteUTXOWithData(outpoint types.Outpoint, utxo *types.UTXO) error // Delete UTXO with known data for proper address index cleanup
 	SetChainState(height uint32, hash types.Hash) error
@@ -175,8 +207,10 @@ type Batch interface {
 	DeleteStakeModifier(blockHash types.Hash) error
 	StoreBlockPoSMetadata(blockHash types.Hash, checksum uint32, proofHash types.Hash) error
 	StoreMoneySupply(height uint32, supply int64) error
-	// addressBinary is the decoded address (netID + hash160 = 21 bytes)
-	IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, txIndex uint32, value int64, isInput bool, blockHash types.Hash) error
+	// addressBinary is the decoded address (netID + hash160 = 21 bytes).
+	// ioIdx is the input or output index WITHIN the transaction; see the
+	// Batch.IndexTransactionByAddress doc above for the full encoding contract.
+	IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, ioIdx uint32, value int64, isInput bool, blockHash types.Hash) error
 
 	// UTXO spending operations (mark-as-spent model)
 	// MarkUTXOSpent marks a UTXO as spent without deleting it
@@ -202,17 +236,17 @@ type SpentOutput struct {
 
 // DatabaseStats contains statistics about the database
 type DatabaseStats struct {
-	Size           int64   `json:"size"`
-	Keys           int64   `json:"keys"`
-	Blocks         int64   `json:"blocks"`
-	Transactions   int64   `json:"transactions"`
-	UTXOs          int64   `json:"utxos"`
-	CacheHitRate   float64 `json:"cache_hit_rate"`
-	CacheHits      uint64  `json:"cache_hits"`
-	CacheMisses    uint64  `json:"cache_misses"`
-	CompactionTime int64   `json:"compaction_time_ms"`
-	LastCompaction time.Time `json:"last_compaction"`
-	WriteAmplification float64 `json:"write_amplification"`
+	Size               int64     `json:"size"`
+	Keys               int64     `json:"keys"`
+	Blocks             int64     `json:"blocks"`
+	Transactions       int64     `json:"transactions"`
+	UTXOs              int64     `json:"utxos"`
+	CacheHitRate       float64   `json:"cache_hit_rate"`
+	CacheHits          uint64    `json:"cache_hits"`
+	CacheMisses        uint64    `json:"cache_misses"`
+	CompactionTime     int64     `json:"compaction_time_ms"`
+	LastCompaction     time.Time `json:"last_compaction"`
+	WriteAmplification float64   `json:"write_amplification"`
 }
 
 // StorageConfig contains configuration parameters for storage
@@ -221,7 +255,7 @@ type StorageConfig struct {
 	Path string `yaml:"path" json:"path"`
 
 	// Cache settings (in MB)
-	CacheSize      int64 `yaml:"cache_size" json:"cache_size"`           // In-memory cache size
+	CacheSize      int64 `yaml:"cache_size" json:"cache_size"`             // In-memory cache size
 	BlockCacheSize int64 `yaml:"block_cache_size" json:"block_cache_size"` // Pebble block cache
 
 	// Write buffer settings (in MB)
@@ -249,12 +283,12 @@ type StorageConfig struct {
 	FlushDelayDelete     time.Duration `yaml:"flush_delay_delete" json:"flush_delay_delete"`
 
 	// Advanced options
-	ReadOnly                bool  `yaml:"read_only" json:"read_only"`
-	CreateIfMissing         bool  `yaml:"create_if_missing" json:"create_if_missing"`
-	ErrorIfExists           bool  `yaml:"error_if_exists" json:"error_if_exists"`
-	ParanoidChecks          bool  `yaml:"paranoid_checks" json:"paranoid_checks"`
-	DeleteRangeFlushDelay   int64 `yaml:"delete_range_flush_delay" json:"delete_range_flush_delay"`
-	ForceNoFsync            bool  `yaml:"force_no_fsync" json:"force_no_fsync"`
+	ReadOnly              bool  `yaml:"read_only" json:"read_only"`
+	CreateIfMissing       bool  `yaml:"create_if_missing" json:"create_if_missing"`
+	ErrorIfExists         bool  `yaml:"error_if_exists" json:"error_if_exists"`
+	ParanoidChecks        bool  `yaml:"paranoid_checks" json:"paranoid_checks"`
+	DeleteRangeFlushDelay int64 `yaml:"delete_range_flush_delay" json:"delete_range_flush_delay"`
+	ForceNoFsync          bool  `yaml:"force_no_fsync" json:"force_no_fsync"`
 }
 
 // DefaultStorageConfig returns optimized default configuration for Go 1.25.
@@ -299,13 +333,13 @@ func DefaultStorageConfig() *StorageConfig {
 		CompactionConcurrency:    0, // Auto-detect
 
 		// Performance tuning
-		SyncWrites:           true,                // Ensure durability
-		DisableWAL:           false,               // Keep WAL for crash recovery
-		WALDir:               "",                  // Same as data directory
-		MemTableStopWrites:   64 * 1024 * 1024,   // 64MB
-		MemTableSize:         32 * 1024 * 1024,   // 32MB
-		MaxBackgroundFlushes: 1,                  // Number of background flush threads
-		FlushDelayDelete:     10 * time.Second,   // Delay before deleting flushed files
+		SyncWrites:           true,             // Ensure durability
+		DisableWAL:           false,            // Keep WAL for crash recovery
+		WALDir:               "",               // Same as data directory
+		MemTableStopWrites:   64 * 1024 * 1024, // 64MB
+		MemTableSize:         32 * 1024 * 1024, // 32MB
+		MaxBackgroundFlushes: 1,                // Number of background flush threads
+		FlushDelayDelete:     10 * time.Second, // Delay before deleting flushed files
 
 		// Advanced options
 		ReadOnly:              false,
@@ -327,7 +361,7 @@ func TestStorageConfig() *StorageConfig {
 		panic(fmt.Sprintf("TestStorageConfig: failed to create temp dir: %v", err))
 	}
 	config.Path = dir
-	config.CacheSize = 16     // Smaller cache for tests
+	config.CacheSize = 16 // Smaller cache for tests
 	config.BlockCacheSize = 8
 	config.WriteBufferSize = 4
 	config.WriteBuffer = 2 // Pebble requires MemTableStopWritesThreshold >= 2
@@ -340,7 +374,7 @@ func TestStorageConfig() *StorageConfig {
 func BenchmarkStorageConfig() *StorageConfig {
 	config := DefaultStorageConfig()
 	config.Path = ":memory:"
-	config.CacheSize = 1024    // Larger cache for benchmarks
+	config.CacheSize = 1024 // Larger cache for benchmarks
 	config.BlockCacheSize = 512
 	config.WriteBufferSize = 128
 	config.WriteBuffer = 8

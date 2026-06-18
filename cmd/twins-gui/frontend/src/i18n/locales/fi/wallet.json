@@ -136,7 +136,6 @@
     "error": "Virhe: {{message}}",
     "type": {
       "all": "Kaikki",
-      "mostCommon": "Yleisimmät",
       "sent": "Lähetetty",
       "received": "Vastaanotettu",
       "toYourself": "Itsellesi",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Piilota orvot panokset"
     },
     "footer": {
-      "selectedAmount": "Valittu määrä:",
       "transactions": "{{count}} tapahtuma",
       "transactions_other": "{{count}} tapahtumaa",
       "export": "Vie"

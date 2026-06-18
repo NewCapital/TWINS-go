@@ -73,24 +73,48 @@ export namespace config {
 
 export namespace core {
 	
-	export class AddressUTXO {
-	    txid: string;
-	    vout: number;
-	    amount: number;
-	    confirmations: number;
-	    block_height: number;
+	export class AddressBalance {
+	    balance: number;
 	
 	    static createFrom(source: any = {}) {
-	        return new AddressUTXO(source);
+	        return new AddressBalance(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.txid = source["txid"];
-	        this.vout = source["vout"];
-	        this.amount = source["amount"];
-	        this.confirmations = source["confirmations"];
-	        this.block_height = source["block_height"];
+	        this.balance = source["balance"];
+	    }
+	}
+	export class AddressBasic {
+	    address: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AddressBasic(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.address = source["address"];
+	    }
+	}
+	export class AddressStats {
+	    tx_count: number;
+	    total_received: number;
+	    total_sent: number;
+	    first_seen: number;
+	    last_seen: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AddressStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tx_count = source["tx_count"];
+	        this.total_received = source["total_received"];
+	        this.total_sent = source["total_sent"];
+	        this.first_seen = source["first_seen"];
+	        this.last_seen = source["last_seen"];
 	    }
 	}
 	export class AddressTx {
@@ -132,51 +156,6 @@ export namespace core {
 		    return a;
 		}
 	}
-	export class AddressInfo {
-	    address: string;
-	    balance: number;
-	    total_received: number;
-	    total_sent: number;
-	    tx_count: number;
-	    unconfirmed_balance: number;
-	    transactions: AddressTx[];
-	    utxos?: AddressUTXO[];
-	
-	    static createFrom(source: any = {}) {
-	        return new AddressInfo(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.address = source["address"];
-	        this.balance = source["balance"];
-	        this.total_received = source["total_received"];
-	        this.total_sent = source["total_sent"];
-	        this.tx_count = source["tx_count"];
-	        this.unconfirmed_balance = source["unconfirmed_balance"];
-	        this.transactions = this.convertValues(source["transactions"], AddressTx);
-	        this.utxos = this.convertValues(source["utxos"], AddressUTXO);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	
 	export class AddressTxPage {
 	    transactions: AddressTx[];
 	    total: number;
@@ -211,7 +190,60 @@ export namespace core {
 		    return a;
 		}
 	}
+	export class AddressUTXO {
+	    txid: string;
+	    vout: number;
+	    amount: number;
+	    confirmations: number;
+	    block_height: number;
 	
+	    static createFrom(source: any = {}) {
+	        return new AddressUTXO(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.txid = source["txid"];
+	        this.vout = source["vout"];
+	        this.amount = source["amount"];
+	        this.confirmations = source["confirmations"];
+	        this.block_height = source["block_height"];
+	    }
+	}
+	export class AddressUTXOPage {
+	    utxos: AddressUTXO[];
+	    total: number;
+	    has_more: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new AddressUTXOPage(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.utxos = this.convertValues(source["utxos"], AddressUTXO);
+	        this.total = source["total"];
+	        this.has_more = source["has_more"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class AddressValidation {
 	    isvalid: boolean;
 	    address: string;
@@ -274,6 +306,7 @@ export namespace core {
 	    time: any;
 	    type: string;
 	    address: string;
+	    recipient_addresses: string[];
 	    from_address: string;
 	    label: string;
 	    comment: string;
@@ -303,6 +336,7 @@ export namespace core {
 	        this.time = this.convertValues(source["time"], null);
 	        this.type = source["type"];
 	        this.address = source["address"];
+	        this.recipient_addresses = source["recipient_addresses"];
 	        this.from_address = source["from_address"];
 	        this.label = source["label"];
 	        this.comment = source["comment"];
@@ -360,9 +394,15 @@ export namespace core {
 	    is_pos: boolean;
 	    stake_reward: number;
 	    masternode_reward: number;
+	    dev_reward: number;
 	    staker_address: string;
 	    masternode_address: string;
+	    dev_address: string;
 	    total_reward: number;
+	    stake_amount: number;
+	    stake_age: number;
+	    stake_modifier: string;
+	    proof_hash: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new BlockDetail(source);
@@ -392,9 +432,15 @@ export namespace core {
 	        this.is_pos = source["is_pos"];
 	        this.stake_reward = source["stake_reward"];
 	        this.masternode_reward = source["masternode_reward"];
+	        this.dev_reward = source["dev_reward"];
 	        this.staker_address = source["staker_address"];
 	        this.masternode_address = source["masternode_address"];
+	        this.dev_address = source["dev_address"];
 	        this.total_reward = source["total_reward"];
+	        this.stake_amount = source["stake_amount"];
+	        this.stake_age = source["stake_age"];
+	        this.stake_modifier = source["stake_modifier"];
+	        this.proof_hash = source["proof_hash"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -480,6 +526,9 @@ export namespace core {
 	    current_block_scan: number;
 	    peer_count: number;
 	    is_connecting: boolean;
+	    last_block_time: number;
+	    chain_size_bytes: number;
+	    money_supply: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new BlockchainInfo(source);
@@ -507,6 +556,9 @@ export namespace core {
 	        this.current_block_scan = source["current_block_scan"];
 	        this.peer_count = source["peer_count"];
 	        this.is_connecting = source["is_connecting"];
+	        this.last_block_time = source["last_block_time"];
+	        this.chain_size_bytes = source["chain_size_bytes"];
+	        this.money_supply = source["money_supply"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -530,8 +582,17 @@ export namespace core {
 	export class TxOutput {
 	    index: number;
 	    address: string;
+	    addresses?: string[];
+	    required_sigs?: number;
 	    amount: number;
 	    script_type: string;
+	    label?: string;
+	    role?: string;
+	    is_mine?: boolean;
+	    is_change?: boolean;
+	    is_dust?: boolean;
+	    data_hex?: string;
+	    data_ascii?: string;
 	    is_spent: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -542,8 +603,17 @@ export namespace core {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.index = source["index"];
 	        this.address = source["address"];
+	        this.addresses = source["addresses"];
+	        this.required_sigs = source["required_sigs"];
 	        this.amount = source["amount"];
 	        this.script_type = source["script_type"];
+	        this.label = source["label"];
+	        this.role = source["role"];
+	        this.is_mine = source["is_mine"];
+	        this.is_change = source["is_change"];
+	        this.is_dust = source["is_dust"];
+	        this.data_hex = source["data_hex"];
+	        this.data_ascii = source["data_ascii"];
 	        this.is_spent = source["is_spent"];
 	    }
 	}
@@ -553,6 +623,8 @@ export namespace core {
 	    address: string;
 	    amount: number;
 	    is_coinbase: boolean;
+	    is_mine?: boolean;
+	    is_coinstake_kernel?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new TxInput(source);
@@ -565,6 +637,8 @@ export namespace core {
 	        this.address = source["address"];
 	        this.amount = source["amount"];
 	        this.is_coinbase = source["is_coinbase"];
+	        this.is_mine = source["is_mine"];
+	        this.is_coinstake_kernel = source["is_coinstake_kernel"];
 	    }
 	}
 	export class ExplorerTransaction {
@@ -578,6 +652,9 @@ export namespace core {
 	    fee: number;
 	    is_coinbase: boolean;
 	    is_coinstake: boolean;
+	    stake_reward: number;
+	    masternode_reward: number;
+	    dev_reward: number;
 	    inputs: TxInput[];
 	    outputs: TxOutput[];
 	    total_input: number;
@@ -599,6 +676,9 @@ export namespace core {
 	        this.fee = source["fee"];
 	        this.is_coinbase = source["is_coinbase"];
 	        this.is_coinstake = source["is_coinstake"];
+	        this.stake_reward = source["stake_reward"];
+	        this.masternode_reward = source["masternode_reward"];
+	        this.dev_reward = source["dev_reward"];
 	        this.inputs = this.convertValues(source["inputs"], TxInput);
 	        this.outputs = this.convertValues(source["outputs"], TxOutput);
 	        this.total_input = source["total_input"];
@@ -775,6 +855,8 @@ export namespace core {
 	    localaddresses: LocalAddress[];
 	    warnings: string;
 	    network_height: number;
+	    inbound_peers: number;
+	    outbound_peers: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new NetworkInfo(source);
@@ -795,6 +877,8 @@ export namespace core {
 	        this.localaddresses = this.convertValues(source["localaddresses"], LocalAddress);
 	        this.warnings = source["warnings"];
 	        this.network_height = source["network_height"];
+	        this.inbound_peers = source["inbound_peers"];
+	        this.outbound_peers = source["outbound_peers"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -851,6 +935,62 @@ export namespace core {
 	        this.address = source["address"];
 	        this.message = source["message"];
 	        this.amount = source["amount"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class PaymentRequestFilter {
+	    page: number;
+	    page_size: number;
+	    sort_column: string;
+	    sort_direction: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PaymentRequestFilter(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.page = source["page"];
+	        this.page_size = source["page_size"];
+	        this.sort_column = source["sort_column"];
+	        this.sort_direction = source["sort_direction"];
+	    }
+	}
+	export class PaymentRequestPage {
+	    requests: PaymentRequest[];
+	    total: number;
+	    page: number;
+	    page_size: number;
+	    total_pages: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PaymentRequestPage(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.requests = this.convertValues(source["requests"], PaymentRequest);
+	        this.total = source["total"];
+	        this.page = source["page"];
+	        this.page_size = source["page_size"];
+	        this.total_pages = source["total_pages"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1013,7 +1153,7 @@ export namespace core {
 	    query: string;
 	    block?: BlockDetail;
 	    transaction?: ExplorerTransaction;
-	    address?: AddressInfo;
+	    address?: AddressBasic;
 	    error?: string;
 	
 	    static createFrom(source: any = {}) {
@@ -1026,7 +1166,7 @@ export namespace core {
 	        this.query = source["query"];
 	        this.block = this.convertValues(source["block"], BlockDetail);
 	        this.transaction = this.convertValues(source["transaction"], ExplorerTransaction);
-	        this.address = this.convertValues(source["address"], AddressInfo);
+	        this.address = this.convertValues(source["address"], AddressBasic);
 	        this.error = source["error"];
 	    }
 	
@@ -1075,6 +1215,7 @@ export namespace core {
 	    "search-interval": number;
 	    walletunlocked: boolean;
 	    expectedstaketime: number;
+	    reserve_balance: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new StakingInfo(source);
@@ -1092,6 +1233,7 @@ export namespace core {
 	        this["search-interval"] = source["search-interval"];
 	        this.walletunlocked = source["walletunlocked"];
 	        this.expectedstaketime = source["expectedstaketime"];
+	        this.reserve_balance = source["reserve_balance"];
 	    }
 	}
 	
@@ -1101,9 +1243,10 @@ export namespace core {
 	    date_filter: string;
 	    date_range_from: string;
 	    date_range_to: string;
-	    type_filter: string;
+	    type_filter: string[];
 	    search_text: string;
 	    min_amount: number;
+	    max_amount: number;
 	    watch_only_filter: string;
 	    hide_orphan_stakes: boolean;
 	    sort_column: string;
@@ -1123,6 +1266,7 @@ export namespace core {
 	        this.type_filter = source["type_filter"];
 	        this.search_text = source["search_text"];
 	        this.min_amount = source["min_amount"];
+	        this.max_amount = source["max_amount"];
 	        this.watch_only_filter = source["watch_only_filter"];
 	        this.hide_orphan_stakes = source["hide_orphan_stakes"];
 	        this.sort_column = source["sort_column"];
@@ -2358,6 +2502,7 @@ export namespace preferences {
 	    fMinimizeToTray: boolean;
 	    fMinimizeOnClose: boolean;
 	    nDisplayUnit: number;
+	    nDateDisplayFormat: number;
 	    theme: string;
 	    digits: number;
 	    language: string;
@@ -2398,6 +2543,7 @@ export namespace preferences {
 	        this.fMinimizeToTray = source["fMinimizeToTray"];
 	        this.fMinimizeOnClose = source["fMinimizeOnClose"];
 	        this.nDisplayUnit = source["nDisplayUnit"];
+	        this.nDateDisplayFormat = source["nDateDisplayFormat"];
 	        this.theme = source["theme"];
 	        this.digits = source["digits"];
 	        this.language = source["language"];

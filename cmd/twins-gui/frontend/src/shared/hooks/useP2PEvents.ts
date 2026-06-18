@@ -16,7 +16,7 @@ interface P2PErrorState {
  * - Connectivity state (isConnected, isConnecting, peers) is updated from GetP2PStatus() and P2P events.
  * - Blockchain info (sync status, behind_time, sync_percentage) is fetched from GetBlockchainInfo()
  *   on startup, every 10s, and on each P2P sync event. This is the single authoritative source
- *   shared with SyncStatusWidget via the Zustand store, eliminating inconsistency.
+ *   shared with SyncCard via the Zustand store, eliminating inconsistency.
  *
  * Returns error dialog state and handlers.
  */

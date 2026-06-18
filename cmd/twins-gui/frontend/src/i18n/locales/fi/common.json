@@ -141,6 +141,7 @@
     "height": "Korkeus",
     "hash": "Hash",
     "time": "Aika",
+    "date": "Päivä",
     "age": "Ikä",
     "txCount": "Txs",
     "size": "Koko",

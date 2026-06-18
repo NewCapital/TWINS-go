@@ -234,7 +234,7 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ settings, metadata, them
           </select>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
           <label style={labelStyle}>
             {t('display.decimalDigits')}
             {renderRestartIcon('digits')}
@@ -251,6 +251,23 @@ export const GeneralTab: React.FC<GeneralTabProps> = ({ settings, metadata, them
             {[2, 3, 4, 5, 6, 7, 8].map(n => (
               <option key={n} value={n}>{n}</option>
             ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <label style={labelStyle}>{t('display.dateFormatLabel')}</label>
+          <select
+            value={settings.nDateDisplayFormat ?? 0}
+            onChange={(e) => onChange('nDateDisplayFormat', parseInt(e.target.value))}
+            style={{
+              width: '150px', padding: '4px 8px',
+              backgroundColor: '#3a3a3a', border: '1px solid #555',
+              borderRadius: '3px', color: '#fff', fontSize: '13px',
+            }}
+          >
+            <option value={0}>{t('display.dateFormatLocal')}</option>
+            <option value={1}>{t('display.dateFormatUTC')}</option>
+            <option value={2}>{t('display.dateFormatAge')}</option>
           </select>
         </div>
       </div>

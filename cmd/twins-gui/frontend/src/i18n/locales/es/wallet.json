@@ -136,7 +136,6 @@
     "error": "Error: {{message}}",
     "type": {
       "all": "Todas",
-      "mostCommon": "Más comunes",
       "sent": "Enviado a",
       "received": "Recibido con",
       "toYourself": "A usted mismo",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Ocultar stakes huérfanos"
     },
     "footer": {
-      "selectedAmount": "Cantidad seleccionada:",
       "transactions": "{{count}} transacción",
       "transactions_other": "{{count}} transacciones",
       "export": "Exportar"

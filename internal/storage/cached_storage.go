@@ -162,6 +162,16 @@ func (cs *CachedStorage) GetUTXOsByAddress(address string) ([]*types.UTXO, error
 	return cs.Storage.GetUTXOsByAddress(address)
 }
 
+// GetAddressAggregates is a thin passthrough to the underlying storage.
+// No caching layer here — the GUI Address Details "Activity" card calls
+// this on user navigation, not during sync, so cache pollution risk is
+// the same concern that gates GetUTXOsByAddress above. The underlying
+// implementation reads only the 0x05 index values (no transaction loads),
+// so each call is already a single Pebble prefix scan.
+func (cs *CachedStorage) GetAddressAggregates(addressBinary []byte) (AddressAggregates, error) {
+	return cs.Storage.GetAddressAggregates(addressBinary)
+}
+
 // FlushCache clears the UTXO cache (useful for testing or memory pressure)
 func (cs *CachedStorage) FlushCache() {
 	cs.utxoCache.Purge()

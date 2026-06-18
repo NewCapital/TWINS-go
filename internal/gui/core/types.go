@@ -76,8 +76,15 @@ type Transaction struct {
 	// TxID is the transaction ID (hash)
 	TxID string `json:"txid"`
 
-	// Vout is the output index within the transaction (for received outputs)
-	// Matches Qt's TransactionRecord::idx field
+	// Vout is the wallet's per-tx slot identifier (0 for primary entry, 1 for
+	// the synthetic secondary entry on combined stake+MN coinstakes). It is
+	// NOT a real blockchain output index — `findAddressVoutInTx` was removed
+	// when the Output Index row was dropped from the Transaction Details
+	// dialog. This field is retained purely as a stable composite-key
+	// disambiguator for React reconciliation in the frontend transaction list
+	// (`${tx.txid}:${tx.vout}`) so that multi-entry transactions (coinstake
+	// with stake_return + MN_payment) do not collide on `tx.txid` alone. The
+	// frontend does NOT display this value to the user.
 	Vout int `json:"vout"`
 
 	// Amount is the transaction amount (positive for receive, negative for send)
@@ -101,10 +108,28 @@ type Transaction struct {
 	// Type is the transaction type using the TransactionType enum
 	Type TransactionType `json:"type"`
 
-	// Address is the primary address involved in the transaction
-	// For receive: this is YOUR receiving address
-	// For send: this is the recipient's address
+	// Address is the primary address involved in the transaction.
+	// For receive: this is YOUR receiving address.
+	// For send: this is the wallet address that funded the transaction's
+	// inputs (firstSpendAddress in the wallet layer) — NOT the recipient.
+	// For the actual recipient(s) on a send, use RecipientAddresses.
 	Address string `json:"address"`
+
+	// RecipientAddresses lists the external recipient addresses on a send
+	// transaction (TxCategorySend), extracted from the raw tx outputs with
+	// wallet-owned change filtered out via wallet.IsOurScript. Populated
+	// only for send categories; nil/empty for receive, stake, masternode,
+	// coinbase, send-to-self, and consolidation. Order matches the natural
+	// transaction output order. Empty slice when the raw tx is unavailable
+	// (cache-loaded entries with storage miss), in which case the frontend
+	// falls back to displaying Address under a "Sent from" label.
+	//
+	// Encoding limitation: addresses are extracted via pkg/script helpers
+	// which hardcode mainnet prefixes. On testnet/regtest the displayed
+	// prefix may not match the active network — same limitation as the
+	// rest of pkg/script. Threading network-aware encoding through is a
+	// separate task.
+	RecipientAddresses []string `json:"recipient_addresses"`
 
 	// FromAddress is the sender's address (for receive transactions)
 	// May be empty if sender is unknown (privacy feature)
@@ -291,6 +316,22 @@ type BlockchainInfo struct {
 
 	// IsConnecting indicates insufficient peers for reliable consensus (peer_count < MinSyncPeers)
 	IsConnecting bool `json:"is_connecting"`
+
+	// LastBlockTime is the Unix timestamp (seconds) of the chain tip block.
+	// Sourced from the tip block header timestamp; 0 if unknown.
+	LastBlockTime int64 `json:"last_block_time"`
+
+	// ChainSizeBytes is the total size of the blockchain database directory on disk.
+	// Zero when the data directory is not wired or when the walk fails.
+	// Cached with chainSizeCacheTTL (60s) inside GoCoreClient using a
+	// stale-while-revalidate pattern so the GUI status hot path never blocks
+	// on the directory walk.
+	ChainSizeBytes int64 `json:"chain_size_bytes"`
+
+	// MoneySupply is the total TWINS in circulation at the chain tip.
+	// Populated from BlockChain.GetMoneySupply(tipHeight) divided by 1e8.
+	// 0 when unknown (storage error or BlockchainSupplyInterface not wired).
+	MoneySupply float64 `json:"money_supply"`
 }
 
 // NetworkInfo represents network state information
@@ -335,6 +376,12 @@ type NetworkInfo struct {
 	// NetworkHeight is the best known block height from network peer consensus.
 	// 0 means unknown (not enough peers or no consensus yet).
 	NetworkHeight int64 `json:"network_height"`
+
+	// InboundPeers is the count of incoming peer connections.
+	InboundPeers int `json:"inbound_peers"`
+
+	// OutboundPeers is the count of outgoing peer connections.
+	OutboundPeers int `json:"outbound_peers"`
 }
 
 // NetworkType represents a network type (ipv4, ipv6, onion)
@@ -606,7 +653,7 @@ type MyMasternode struct {
 	CollateralAddress string `json:"collateral_address"`
 
 	// Collateral transaction info (for internal use)
-	TxHash     string `json:"tx_hash"`
+	TxHash      string `json:"tx_hash"`
 	OutputIndex int    `json:"output_index"`
 }
 
@@ -643,6 +690,10 @@ type StakingInfo struct {
 	// ExpectedStakeTime is the estimated seconds until the next stake.
 	// 0 means the value could not be computed (wallet locked, no UTXOs, etc.)
 	ExpectedStakeTime int64 `json:"expectedstaketime"`
+
+	// ReserveBalance is the configured staking reserve threshold in TWINS.
+	// Sourced from wallet.GetReserveBalance(). 0 when wallet is unavailable.
+	ReserveBalance float64 `json:"reserve_balance"`
 }
 
 // UTXO represents an unspent transaction output
@@ -699,10 +750,10 @@ type UTXO struct {
 
 // SendToAddressParams contains parameters for sending a transaction
 type SendToAddressParams struct {
-	Address  string
-	Amount   float64
-	Comment  string
-	CommentTo string
+	Address               string
+	Amount                float64
+	Comment               string
+	CommentTo             string
 	SubtractFeeFromAmount bool
 }
 
@@ -739,6 +790,25 @@ type PaymentRequest struct {
 
 	// Amount is the requested amount in TWINS (0 means any amount)
 	Amount float64 `json:"amount"`
+}
+
+// PaymentRequestFilter holds pagination + sort parameters for the
+// paginated payment-requests handler. Mirrors ReceivingAddressFilter.
+type PaymentRequestFilter struct {
+	Page          int    `json:"page"`
+	PageSize      int    `json:"page_size"`
+	SortColumn    string `json:"sort_column"`    // "date" | "label" | "amount"
+	SortDirection string `json:"sort_direction"` // "asc" | "desc"
+}
+
+// PaymentRequestPage is the paginated response shape returned by
+// App.GetPaymentRequestsPage. Mirrors ReceivingAddressPage.
+type PaymentRequestPage struct {
+	Requests   []PaymentRequest `json:"requests"`
+	Total      int              `json:"total"`
+	Page       int              `json:"page"`
+	PageSize   int              `json:"page_size"`
+	TotalPages int              `json:"total_pages"`
 }
 
 // ==========================================
@@ -788,14 +858,54 @@ type BlockDetail struct {
 	// MasternodeReward is the masternode reward amount
 	MasternodeReward float64 `json:"masternode_reward"`
 
+	// DevReward is the development fund reward amount (10% of block reward, for PoS blocks).
+	// Located at outputs[len-1] in the canonical TWINS coinstake layout
+	// [empty(0), stake_return..., mn_payment, dev_payment]. Zero when no dev output is
+	// present (legacy blocks, testnet without DevAddress, or chainParams not wired).
+	DevReward float64 `json:"dev_reward"`
+
 	// StakerAddress is the address that staked this block (for PoS)
 	StakerAddress string `json:"staker_address"`
 
 	// MasternodeAddress is the masternode payment address
 	MasternodeAddress string `json:"masternode_address"`
 
-	// TotalReward is the sum of stake + masternode rewards
+	// DevAddress is the development fund payment address (from chainParams.DevAddress).
+	// Empty when no dev output is present.
+	DevAddress string `json:"dev_address"`
+
+	// TotalReward is the total newly created coins for this block, computed as
+	// (sum of coinstake outputs) - (sum of coinstake inputs). For well-formed
+	// PoS blocks this equals stake_reward + masternode_reward + dev_reward.
+	// The IO-delta computation is intentional (rather than summing the named
+	// fields) so the value stays correct under future layout changes that add
+	// outputs not yet surfaced as named reward fields.
 	TotalReward float64 `json:"total_reward"`
+
+	// StakeAmount is the value of the staker's funding UTXO (the input being
+	// staked) in TWINS. Zero for PoW blocks or when the funding UTXO cannot be
+	// looked up (storage error, pruned, etc). Derived from coinstake.Inputs[0]
+	// -> storage.GetTransactionData(prevHash).Outputs[prevIndex].Value.
+	StakeAmount float64 `json:"stake_amount"`
+
+	// StakeAge is the age of the staker's funding UTXO in seconds, computed as
+	// block.Header.Timestamp - parentBlock.Header.Timestamp where parentBlock
+	// is the block at the height where the funding UTXO was created. Zero for
+	// PoW blocks or when the parent block lookup fails.
+	StakeAge int64 `json:"stake_age"`
+
+	// StakeModifier is the persisted PoS stake modifier for this block,
+	// formatted as a 0x-prefixed 16-character hex string (e.g. "0xa1b2c3d4e5f6a7b8").
+	// Empty string for PoW blocks or when storage.GetStakeModifier returns an
+	// error / not-found. Sourced from storage.GetStakeModifier(blockHash).
+	StakeModifier string `json:"stake_modifier"`
+
+	// ProofHash is the persisted hashProofOfStake (a.k.a. kernel hash) for this
+	// block, formatted as a 0x-prefixed 64-character hex string. In TWINS / legacy
+	// PIVX hashProofOfStake IS the kernel hash from PoS validation -- same 32-byte
+	// value, two historical names. Empty string for PoW blocks or when
+	// storage.GetBlockPoSMetadata returns an error / not-found / zero-hash.
+	ProofHash string `json:"proof_hash"`
 }
 
 // ExplorerTransaction represents a transaction for explorer view
@@ -828,6 +938,19 @@ type ExplorerTransaction struct {
 	// IsCoinStake indicates if this is a coinstake (PoS) transaction
 	IsCoinStake bool `json:"is_coinstake"`
 
+	// StakeReward is the staking reward (sum of stake_return outputs - sum(inputs)) for PoS
+	// coinstake transactions. Computed by computeCoinstakeBreakdown in go_client.go which
+	// handles both single-output and stake-split layouts. Zero for non-coinstake transactions.
+	StakeReward float64 `json:"stake_reward"`
+
+	// MasternodeReward is the masternode payment amount for PoS coinstake transactions.
+	// Zero when no masternode output is present.
+	MasternodeReward float64 `json:"masternode_reward"`
+
+	// DevReward is the dev fund payment amount (10% of block reward) for PoS coinstake transactions.
+	// Zero when no dev fund output is present.
+	DevReward float64 `json:"dev_reward"`
+
 	// Inputs is the list of transaction inputs
 	Inputs []TxInput `json:"inputs"`
 
@@ -843,6 +966,37 @@ type ExplorerTransaction struct {
 	// RawHex is the raw transaction hex (optional, for advanced view)
 	RawHex string `json:"raw_hex,omitempty"`
 }
+
+// OutputRole values are the semantic-role labels assigned to TxOutput.Role by
+// the explorer DTO serializer (txToExplorerTx). The frontend uses Role to
+// dispatch the unified Inputs/Outputs display matrix designed in research task
+// ?-research-tx-inputs-outputs-display-system. Role is machine-readable and
+// stable; the existing Label field stays populated with the legacy human
+// strings ("Stake Return" / "Masternode Payment" / "Dev Fund" / "Coinstake
+// Marker") for back-compat with the current frontend until the follow-up
+// frontend task m-tx-explorer-output-row-component migrates to Role.
+const (
+	OutputRoleBlockMarker       = "block_marker"
+	OutputRoleStakeReturn       = "stake_return"
+	OutputRoleMasternodePayment = "masternode_payment"
+	OutputRoleDevFund           = "dev_fund"
+	OutputRoleExternalPayment   = "external_payment"
+	OutputRoleChange            = "change"
+	OutputRoleSelfSend          = "self_send"
+	OutputRoleDataCarrier       = "data_carrier"
+	OutputRoleMiningReward      = "mining_reward"
+	OutputRolePremine           = "premine"
+	OutputRoleNonstandard       = "nonstandard"
+	OutputRoleMultisig          = "multisig"
+)
+
+// dustThresholdSatoshis is the legacy protocol dust threshold below which
+// non-data outputs are visually flagged as dust in the GUI explorer. Derived
+// from the legacy formula `3 * minRelayTxFee * (34+148) / 1000` at the default
+// 10,000 utwins/kB fee rate (see legacy/src/primitives/transaction.h:162).
+// 5460 utwins = 0.0000546 TWINS. Used by txToExplorerTx to populate
+// TxOutput.IsDust; nulldata outputs are intentionally never flagged dust.
+const dustThresholdSatoshis int64 = 5460
 
 // TxInput represents a transaction input for explorer
 type TxInput struct {
@@ -860,6 +1014,18 @@ type TxInput struct {
 
 	// IsCoinbase indicates if this is a coinbase input
 	IsCoinbase bool `json:"is_coinbase"`
+
+	// IsMine indicates the prevout scriptPubKey belongs to this wallet, as
+	// determined by wallet.IsOurScript. False when the wallet is not wired
+	// into the GUI core (pure-explorer context) or when the prevout cannot
+	// be resolved from storage.
+	IsMine bool `json:"is_mine,omitempty"`
+
+	// IsCoinstakeKernel marks the first input of a coinstake transaction
+	// (the staking-kernel UTXO). True only when the parent tx satisfies
+	// IsCoinStake() AND this input is at index 0. All subsequent inputs
+	// of a coinstake (merged UTXOs) keep this flag false.
+	IsCoinstakeKernel bool `json:"is_coinstake_kernel,omitempty"`
 }
 
 // TxOutput represents a transaction output for explorer
@@ -867,8 +1033,20 @@ type TxOutput struct {
 	// Index is the output index
 	Index uint32 `json:"index"`
 
-	// Address is the output address
+	// Address is the output address. For multisig outputs Address holds the
+	// first key for back-compat with frontend consumers that still read the
+	// single-string field; the full set of keys + required signatures are
+	// surfaced via Addresses + RequiredSigs below.
 	Address string `json:"address"`
+
+	// Addresses holds all N pubkey-derived addresses of a multisig output.
+	// Nil for non-multisig outputs. Populated by pkg/script.ExtractMultisig
+	// with the active network-aware base58 prefix (W on mainnet, x on testnet).
+	Addresses []string `json:"addresses,omitempty"`
+
+	// RequiredSigs is the M of M-of-N for multisig outputs. Zero for
+	// non-multisig outputs.
+	RequiredSigs int `json:"required_sigs,omitempty"`
 
 	// Amount is the output amount
 	Amount float64 `json:"amount"`
@@ -876,35 +1054,110 @@ type TxOutput struct {
 	// ScriptType is the script type (pubkeyhash, scripthash, etc.)
 	ScriptType string `json:"script_type"`
 
-	// IsSpent indicates if this output has been spent
+	// Label is an optional semantic label for this output. Populated for coinstake
+	// transaction outputs (e.g. "Stake Return", "Masternode Payment", "Dev Fund",
+	// "Coinstake Marker"). Empty for regular transaction outputs. Kept for
+	// back-compat with the current frontend; the new Role field is the
+	// machine-readable replacement that the follow-up frontend task will adopt.
+	Label string `json:"label,omitempty"`
+
+	// Role is the semantic-role enum used by the new Inputs/Outputs display
+	// matrix. One of the OutputRole* constants. Populated for every output
+	// (no empty values once the serializer assigns it).
+	Role string `json:"role,omitempty"`
+
+	// IsMine indicates the output scriptPubKey belongs to this wallet, as
+	// determined by wallet.IsOurScript. False when the wallet is not wired
+	// into the GUI core (pure-explorer context).
+	IsMine bool `json:"is_mine,omitempty"`
+
+	// IsChange is true when this output goes back to the sender's wallet
+	// (IsMine AND output address appears in the input addresses set).
+	// Derivable from Role==OutputRoleChange but surfaced explicitly so the
+	// frontend does not have to re-implement the rule.
+	IsChange bool `json:"is_change,omitempty"`
+
+	// IsDust is true when the output value is below dustThresholdSatoshis
+	// (5460 utwins ≈ 0.0000546 TWINS) AND the script is value-bearing
+	// (not nulldata / not zero). Marker outputs (value==0) are never flagged
+	// as dust.
+	IsDust bool `json:"is_dust,omitempty"`
+
+	// DataHex is the hex-encoded payload of an OP_RETURN (nulldata) output.
+	// Empty for non-nulldata outputs.
+	DataHex string `json:"data_hex,omitempty"`
+
+	// DataASCII is the printable-ASCII rendering of an OP_RETURN payload,
+	// populated only when every byte of the payload is in the printable
+	// ASCII range [0x20, 0x7e]. Empty otherwise (the frontend should fall
+	// back to DataHex).
+	DataASCII string `json:"data_ascii,omitempty"`
+
+	// IsSpent reports whether this output has been consumed by another
+	// transaction. True when the output is in the UTXO set with
+	// SpendingHeight > 0, OR when the output is absent from the UTXO set
+	// AND the script type is spendable (standard scripts absent from the
+	// UTXO set are assumed pruned-after-spend). False when the output is
+	// unspent, OR when the output is a non-UTXO type by protocol
+	// (OP_RETURN nulldata, coinstake/block_marker empty-script). Populated
+	// by computeOutputSpentStatus in go_client.go.
 	IsSpent bool `json:"is_spent"`
 }
 
-// AddressInfo represents address information for explorer
-type AddressInfo struct {
+// AddressBasic represents the minimal, O(1) subset of address information
+// needed to render the Explorer Address Detail hero header (address text
+// + QR code) and to satisfy the address-search code path. No storage
+// access beyond crypto.DecodeAddress validation, so this method returns
+// instantly regardless of the address's historical activity or current
+// UTXO set size. Balance is fetched separately via GetAddressBalance so
+// the hero header is not blocked by the UTXO prefix scan; aggregate
+// stats are fetched via GetAddressStats (the slow path).
+type AddressBasic struct {
 	// Address is the TWINS address
 	Address string `json:"address"`
+}
 
-	// Balance is the current address balance
+// AddressBalance represents the address's current spendable balance,
+// computed from the sum of its UTXO values via a GetUTXOsByAddress prefix
+// scan. Cost is O(U) where U = current UTXO count for the address. For
+// addresses with large UTXO sets this can take seconds; fetched separately
+// from AddressBasic so the hero header (address + QR) renders immediately
+// while a skeleton placeholder displays in the Balance row until this
+// response arrives.
+type AddressBalance struct {
+	// Balance is the current spendable balance (sum of UTXO values)
 	Balance float64 `json:"balance"`
+}
 
-	// TotalReceived is the total amount received by this address
-	TotalReceived float64 `json:"total_received"`
-
-	// TotalSent is the total amount sent from this address
-	TotalSent float64 `json:"total_sent"`
-
-	// TxCount is the total number of transactions
+// AddressStats represents the expensive-to-compute aggregate statistics
+// for an Explorer Address Detail page. Computing these values walks the
+// full address transaction history index and performs a GetTransactionData
+// lookup per tx plus an additional lookup per input. Cost is O(n) storage
+// reads where n = address tx count. Fetched separately from AddressBasic
+// so the hero card does not block on this work; the Activity column on
+// the page renders skeleton placeholders until this response arrives.
+type AddressStats struct {
+	// TxCount is the total number of confirmed transactions involving
+	// this address (length of the address history index).
 	TxCount int `json:"tx_count"`
 
-	// UnconfirmedBalance is the unconfirmed balance
-	UnconfirmedBalance float64 `json:"unconfirmed_balance"`
+	// TotalReceived is the cumulative TWINS received by this address
+	// across its full transaction history.
+	TotalReceived float64 `json:"total_received"`
 
-	// Transactions is a list of recent transactions (limited)
-	Transactions []AddressTx `json:"transactions"`
+	// TotalSent is the cumulative TWINS spent from this address across
+	// its full transaction history. Coinbase-input txs are excluded.
+	TotalSent float64 `json:"total_sent"`
 
-	// UTXOs is the list of unspent outputs (optional)
-	UTXOs []AddressUTXO `json:"utxos,omitempty"`
+	// FirstSeen is the Unix timestamp (seconds) of the earliest tx
+	// involving this address. Zero when the address has no confirmed
+	// transactions or when block-time lookup failed.
+	FirstSeen int64 `json:"first_seen"`
+
+	// LastSeen is the Unix timestamp (seconds) of the latest tx
+	// involving this address. Zero when the address has no confirmed
+	// transactions or when block-time lookup failed.
+	LastSeen int64 `json:"last_seen"`
 }
 
 // AddressTx represents a transaction in address history
@@ -943,6 +1196,21 @@ type AddressUTXO struct {
 	BlockHeight int64 `json:"block_height"`
 }
 
+// AddressUTXOPage represents a paginated page of address UTXOs.
+// Mirrors the shape of AddressTxPage. Sort order: confirmations ASC
+// (newest first), matching the convention already used by AddressView
+// for the legacy preloaded list.
+type AddressUTXOPage struct {
+	// Utxos is the current page of unspent outputs
+	Utxos []AddressUTXO `json:"utxos"`
+
+	// Total is the total count of UTXOs for the address across all pages
+	Total int `json:"total"`
+
+	// HasMore is true when more pages remain after this one
+	HasMore bool `json:"has_more"`
+}
+
 // SearchResultType represents the type of search result
 type SearchResultType string
 
@@ -974,8 +1242,10 @@ type SearchResult struct {
 	// Transaction is populated if Type is SearchResultTransaction
 	Transaction *ExplorerTransaction `json:"transaction,omitempty"`
 
-	// Address is populated if Type is SearchResultAddress
-	Address *AddressInfo `json:"address,omitempty"`
+	// Address is populated if Type is SearchResultAddress.
+	// Carries only the fast subset (address + balance) — clients that
+	// want the full activity stats should call GetAddressStats separately.
+	Address *AddressBasic `json:"address,omitempty"`
 
 	// Error is populated if the search failed
 	Error string `json:"error,omitempty"`
@@ -987,12 +1257,19 @@ type TransactionFilter struct {
 	Page     int `json:"page"`      // 1-based page number
 	PageSize int `json:"page_size"` // 25, 50, 100, or 250
 
-	DateFilter    string  `json:"date_filter"`     // "all","today","week","month","lastMonth","year","range"
-	DateRangeFrom string  `json:"date_range_from"` // ISO date for "range" filter
-	DateRangeTo   string  `json:"date_range_to"`   // ISO date for "range" filter
-	TypeFilter    string  `json:"type_filter"`     // "all","mostCommon","received","sent","toYourself","mined","minted","masternode", etc.
-	SearchText    string  `json:"search_text"`     // address/label substring search
-	MinAmount     float64 `json:"min_amount"`      // minimum absolute amount in TWINS
+	DateFilter    string `json:"date_filter"`     // "all","today","week","month","lastMonth","year","range"
+	DateRangeFrom string `json:"date_range_from"` // ISO date for "range" filter
+	DateRangeTo   string `json:"date_range_to"`   // ISO date for "range" filter
+	// TypeFilter is OR-matched server-side: any tx whose category matches one
+	// of the entries passes. Valid entries: "received","sent","toYourself",
+	// "consolidation","mined","minted","masternode","other". An empty slice
+	// (or one containing "all") means "no type filter" (match everything).
+	// The legacy "mostCommon" pseudo-entry was removed in Phase 3 when the
+	// GUI switched to checkbox multi-select.
+	TypeFilter []string `json:"type_filter"`
+	SearchText string   `json:"search_text"` // address/label substring search
+	MinAmount  float64  `json:"min_amount"`  // minimum absolute amount in TWINS (0 = no lower bound)
+	MaxAmount  float64  `json:"max_amount"`  // maximum absolute amount in TWINS (0 = no upper bound)
 
 	WatchOnlyFilter  string `json:"watch_only_filter"`  // "all","yes","no"
 	HideOrphanStakes bool   `json:"hide_orphan_stakes"` // hide orphan/conflicted stakes
@@ -1045,10 +1322,10 @@ type ReceivingAddressRow struct {
 
 // ReceivingAddressPage is a paginated response for wallet receiving addresses.
 type ReceivingAddressPage struct {
-	Addresses   []ReceivingAddressRow `json:"addresses"`
-	Total       int                   `json:"total"`        // total matching filter
-	TotalAll    int                   `json:"total_all"`    // total in wallet (unfiltered)
-	Page        int                   `json:"page"`         // current page (1-based)
-	PageSize    int                   `json:"page_size"`    // items per page
-	TotalPages  int                   `json:"total_pages"`  // ceil(Total / PageSize)
+	Addresses  []ReceivingAddressRow `json:"addresses"`
+	Total      int                   `json:"total"`       // total matching filter
+	TotalAll   int                   `json:"total_all"`   // total in wallet (unfiltered)
+	Page       int                   `json:"page"`        // current page (1-based)
+	PageSize   int                   `json:"page_size"`   // items per page
+	TotalPages int                   `json:"total_pages"` // ceil(Total / PageSize)
 }

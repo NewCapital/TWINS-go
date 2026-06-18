@@ -5,6 +5,7 @@ import type { SendSlice } from './slices/sendSlice';
 import type { CoinControlSlice } from './slices/coinControlSlice';
 import type { ReceiveSlice } from './slices/receiveSlice';
 import type { ReceivingAddressesSlice } from './slices/receivingAddressesSlice';
+import type { PaymentRequestsSlice } from './slices/paymentRequestsSlice';
 import type { TransactionsSlice } from './slices/transactionsSlice';
 import type { ExplorerSlice } from './slices/explorerSlice';
 import type { OptionsSlice } from './slices/optionsSlice';
@@ -23,6 +24,7 @@ export type StoreState = WalletSlice &
   CoinControlSlice &
   ReceiveSlice &
   ReceivingAddressesSlice &
+  PaymentRequestsSlice &
   TransactionsSlice &
   ExplorerSlice &
   OptionsSlice &

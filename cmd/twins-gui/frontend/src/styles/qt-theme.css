@@ -421,6 +421,47 @@
   animation: conf-ring-pulse 2s ease-in-out infinite;
 }
 
+/* Sync progress shimmer: diagonal highlight sweeps left-to-right across the
+   filled portion of the bar so the user can see that sync is actively
+   progressing even between 10-second polls. Used by SyncProgressRow. */
+@keyframes sync-progress-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.sync-progress-fill {
+  background: linear-gradient(
+    90deg,
+    #27ae60 0%,
+    #27ae60 35%,
+    #4dd07e 50%,
+    #27ae60 65%,
+    #27ae60 100%
+  );
+  background-size: 200% 100%;
+  animation: sync-progress-shimmer 1.5s linear infinite;
+}
+
+.sync-progress-fill-warning {
+  background: linear-gradient(
+    90deg,
+    #ff9966 0%,
+    #ff9966 35%,
+    #ffb88c 50%,
+    #ff9966 65%,
+    #ff9966 100%
+  );
+  background-size: 200% 100%;
+  animation: sync-progress-shimmer 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-progress-fill,
+  .sync-progress-fill-warning {
+    animation: none;
+  }
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

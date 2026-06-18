@@ -136,7 +136,6 @@
     "error": "Hata: {{message}}",
     "type": {
       "all": "Tümü",
-      "mostCommon": "En Yaygın",
       "sent": "Gönderildi",
       "received": "Alındı",
       "toYourself": "Kendine",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Yetim stake'leri gizle"
     },
     "footer": {
-      "selectedAmount": "Seçili tutar:",
       "transactions": "{{count}} işlem",
       "transactions_other": "{{count}} işlem",
       "export": "Dışa Aktar"

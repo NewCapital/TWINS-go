@@ -229,6 +229,8 @@ func (s *SettingsService) GetInt(key string) int {
 	switch key {
 	case "nDisplayUnit":
 		return s.settings.DisplayUnit
+	case "nDateDisplayFormat":
+		return s.settings.DateDisplayFormat
 	case "digits":
 		return s.settings.Digits
 	case "nCoinControlMode":
@@ -365,6 +367,8 @@ func (s *SettingsService) SetInt(key string, value int) error {
 	switch key {
 	case "nDisplayUnit":
 		s.settings.DisplayUnit = value
+	case "nDateDisplayFormat":
+		s.settings.DateDisplayFormat = value
 	case "digits":
 		s.settings.Digits = value
 	case "nCoinControlMode":
@@ -408,6 +412,8 @@ func (s *SettingsService) SetInt64(key string, value int64) error {
 		s.settings.TransactionMinAmount = value
 	case "nDisplayUnit":
 		s.settings.DisplayUnit = int(value)
+	case "nDateDisplayFormat":
+		s.settings.DateDisplayFormat = int(value)
 	case "digits":
 		s.settings.Digits = int(value)
 	default:
@@ -470,7 +476,7 @@ func (s *SettingsService) GetSettingsPath() string {
 func (s *SettingsService) HasKey(key string) bool {
 	// Check all known keys
 	knownKeys := []string{
-		"fMinimizeToTray", "fMinimizeOnClose", "nDisplayUnit", "theme", "digits",
+		"fMinimizeToTray", "fMinimizeOnClose", "nDisplayUnit", "nDateDisplayFormat", "theme", "digits",
 		"language", "fHideTrayIcon", "fShowMasternodesTab", "strThirdPartyTxUrls",
 		"nStakeSplitThreshold",
 		"fCoinControlFeatures", "nCoinControlMode", "nCoinControlSortColumn", "nCoinControlSortOrder",

@@ -136,7 +136,6 @@
     "error": "Грешка: {{message}}",
     "type": {
       "all": "Всички",
-      "mostCommon": "Най-общи",
       "sent": "Изпратени до",
       "received": "Получени с",
       "toYourself": "Към себе си",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Скрий осиротелите стейкове"
     },
     "footer": {
-      "selectedAmount": "Избрана сума:",
       "transactions": "{{count}} транзакция",
       "transactions_other": "{{count}} транзакции",
       "export": "Експортирай"

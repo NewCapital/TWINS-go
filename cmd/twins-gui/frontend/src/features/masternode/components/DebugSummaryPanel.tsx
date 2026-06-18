@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDisplayDateTime } from '@/shared/hooks/useDisplayDateTime';
 
 // Category colors (shared with MasternodeDebugPanel)
 const CATEGORY_COLORS: Record<string, string> = {
@@ -438,16 +439,20 @@ export const DebugOverviewPanel: React.FC<DebugOverviewProps> = ({ summary }) =>
 
 // --- Sub-components ---
 
-const OverviewStatDateTime: React.FC<{ label: string; firstEvent: string; lastEvent: string }> = ({ label, firstEvent, lastEvent }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-    <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</span>
-    <div style={{ fontSize: '14px', color: '#ddd', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <span>{formatDateTime(firstEvent)}</span>
-      <span style={{ color: '#666' }}>→</span>
-      <span>{formatDateTime(lastEvent)}</span>
+const OverviewStatDateTime: React.FC<{ label: string; firstEvent: string; lastEvent: string }> = ({ label, firstEvent, lastEvent }) => {
+  const { formatDateTime: fmt, formatTooltip } = useDisplayDateTime();
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      <span style={{ fontSize: '11px', color: '#888', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</span>
+      <div style={{ fontSize: '14px', color: '#ddd', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span title={formatTooltip(firstEvent)}>{fmt(firstEvent) || '-'}</span>
+        <span style={{ color: '#666' }}>→</span>
+        <span title={formatTooltip(lastEvent)}>{fmt(lastEvent) || '-'}</span>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+void formatDateTime;
 
 const OverviewStat: React.FC<{ label: string; value: string; onClick?: () => void }> = ({ label, value, onClick }) => (
   <div

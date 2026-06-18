@@ -792,6 +792,22 @@ func (a *App) initializeFullDaemon() {
 		if node.PaymentTracker != nil {
 			goCoreClient.SetPaymentTracker(node.PaymentTracker)
 		}
+		// Difficulty is computed inline from the cached tip block's compact
+		// target inside GoCoreClient.GetBlockchainInfo — no wiring needed.
+		goCoreClient.SetDataDir(a.dataDir)
+		// Money supply is read per-status-poll via Blockchain.GetMoneySupply(tipHeight).
+		if node.Blockchain != nil {
+			goCoreClient.SetBlockchain(node.Blockchain)
+		}
+		// Active network name (mainnet/testnet/regtest) for network-aware address
+		// encoding (recipient extraction on sends). Empty string falls back to
+		// mainnet at the encoding helpers.
+		if node.ChainParams != nil {
+			goCoreClient.SetNetwork(node.ChainParams.Name)
+			// Full chain parameter snapshot for layout-aware dev fund parsing in
+			// blockToDetail (matches coinstake outputs against chainParams.DevAddress).
+			goCoreClient.SetChainParams(node.ChainParams)
+		}
 		// Set initial staking enabled state from ConfigManager
 		// Use local cm (already set under componentsMu lock above)
 		goCoreClient.SetStakingEnabled(cm.GetBool("staking.enabled"))

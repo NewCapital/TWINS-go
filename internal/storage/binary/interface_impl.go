@@ -1765,21 +1765,30 @@ func NextPrefix(prefix []byte) []byte {
 	return next
 }
 
-// IndexTransactionByAddress stores address → transaction mapping
-// This is a direct API - batch version is in batch.go
-// addressBinary is the decoded address (netID + hash160 = 21 bytes)
-func (bs *BinaryStorage) IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, txIndex uint32, value int64, isInput bool, blockHash types.Hash) error {
+// IndexTransactionByAddress stores an address → transaction mapping.
+//
+// Standalone (non-batch) variant; see BinaryBatch.IndexTransactionByAddress
+// for the batch-aware version with identical semantics.
+//
+// `ioIdx` is the input or output index within the transaction (NOT the
+// transaction's position within the block). Combined with `isInput`, it
+// encodes to the 2-byte key index field via EncodeAddressHistoryIndex so
+// every input/output gets a unique key. `addressBinary` is the decoded
+// address (netID + hash160 = 21 bytes).
+func (bs *BinaryStorage) IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, ioIdx uint32, value int64, isInput bool, blockHash types.Hash) error {
 	if len(addressBinary) != 21 {
 		return fmt.Errorf("invalid address binary length: %d", len(addressBinary))
+	}
+	if ioIdx > uint32(AddressHistoryIndexIOMask) {
+		return fmt.Errorf("ioIdx %d exceeds AddressHistoryIndexIOMask (0x7fff)", ioIdx)
 	}
 
 	var scriptHash [20]byte
 	copy(scriptHash[:], addressBinary[1:21])
 
-	// Create complete index entry
 	entry := &AddressHistoryEntry{
 		IsInput:   isInput,
-		Value:     uint64(value), // Convert int64 to uint64
+		Value:     uint64(value),
 		BlockHash: blockHash,
 	}
 
@@ -1788,24 +1797,29 @@ func (bs *BinaryStorage) IndexTransactionByAddress(addressBinary []byte, txHash 
 		return fmt.Errorf("failed to encode history entry: %w", err)
 	}
 
-	key := AddressHistoryKey(scriptHash, height, txHash, uint16(txIndex))
+	key := AddressHistoryKey(scriptHash, height, txHash, EncodeAddressHistoryIndex(uint16(ioIdx), isInput))
 	return bs.db.Set(key, data, nil)
 }
 
-// GetTransactionsByAddress retrieves all transactions for a specific address
-// addressBinary is the decoded address (netID + hash160 = 21 bytes)
+// GetTransactionsByAddress retrieves all transactions for a specific address.
+// addressBinary is the decoded address (netID + hash160 = 21 bytes).
+//
+// Returns ONE record per unique txhash. Under the post-2026-06-01 key
+// schema (see EncodeAddressHistoryIndex), a single transaction can produce
+// multiple 0x05 entries for one address (one per input + one per output);
+// this function dedupes by txhash so callers continue to see one record per
+// tx. The `TxIndex` field carries the FIRST encoded index encountered for
+// that txhash during iteration — it is NOT stable across schema versions
+// and must not be used as a sort key or identifier (use TxHash instead).
 func (bs *BinaryStorage) GetTransactionsByAddress(addressBinary []byte) ([]storage.AddressTransaction, error) {
 	if len(addressBinary) != 21 {
 		return nil, fmt.Errorf("invalid address binary length: %d", len(addressBinary))
 	}
 
-	// Extract script hash (skip netID byte)
 	var scriptHash [20]byte
 	copy(scriptHash[:], addressBinary[1:21])
 
-	// Use binary address history prefix
 	prefix := AddressHistoryPrefix(scriptHash)
-
 	iter, err := bs.db.NewIter(&pebble.IterOptions{
 		LowerBound: prefix,
 		UpperBound: NextPrefix(prefix),
@@ -1816,22 +1830,23 @@ func (bs *BinaryStorage) GetTransactionsByAddress(addressBinary []byte) ([]stora
 	defer iter.Close()
 
 	var transactions []storage.AddressTransaction
+	seen := make(map[types.Hash]struct{})
 	for iter.First(); iter.Valid(); iter.Next() {
 		// Key format: [0x05][scripthash:20][height:4][txhash:32][index:2]
 		key := iter.Key()
 		if len(key) != 59 {
-			continue // Invalid key
+			continue
 		}
 
-		// Extract height (bytes 21-25)
 		height := binary.LittleEndian.Uint32(key[21:25])
-
-		// Extract txHash (bytes 25-57)
 		var txHash types.Hash
 		copy(txHash[:], key[25:57])
-
-		// Extract txIndex (bytes 57-59)
 		txIndex := uint32(binary.LittleEndian.Uint16(key[57:59]))
+
+		if _, ok := seen[txHash]; ok {
+			continue
+		}
+		seen[txHash] = struct{}{}
 
 		transactions = append(transactions, storage.AddressTransaction{
 			TxHash:  txHash,
@@ -1841,6 +1856,89 @@ func (bs *BinaryStorage) GetTransactionsByAddress(addressBinary []byte) ([]stora
 	}
 
 	return transactions, nil
+}
+
+// GetAddressAggregates iterates the 0x05 address-history index once and
+// computes the per-address summary (TotalReceivedSat, TotalSentSat, TxCount,
+// MinHeight, MaxHeight, HasHeights) directly from the index entries' VALUE
+// payload (IsInput + Value + BlockHash, 41 bytes — see schema.go
+// AddressHistoryEntry and encoding.go DecodeAddressHistoryEntry). Per-entry
+// values are written at index time by IndexTransactionByAddress (batch.go:704)
+// with the addressBinary already filtered to this address's outputs/inputs,
+// so summing them is sufficient — the caller does not need to fetch any
+// transaction body to compute the totals. addressBinary is netID + hash160 =
+// 21 bytes. Replaces the prior O(N + N×I) per-transaction load path in
+// GoCoreClient.GetAddressStats for large addresses where N is in the millions.
+func (bs *BinaryStorage) GetAddressAggregates(addressBinary []byte) (storage.AddressAggregates, error) {
+	if len(addressBinary) != 21 {
+		return storage.AddressAggregates{}, fmt.Errorf("invalid address binary length: %d", len(addressBinary))
+	}
+
+	// Extract script hash (skip netID byte) — matches GetTransactionsByAddress.
+	var scriptHash [20]byte
+	copy(scriptHash[:], addressBinary[1:21])
+
+	prefix := AddressHistoryPrefix(scriptHash)
+	iter, err := bs.db.NewIter(&pebble.IterOptions{
+		LowerBound: prefix,
+		UpperBound: NextPrefix(prefix),
+	})
+	if err != nil {
+		return storage.AddressAggregates{}, err
+	}
+	defer iter.Close()
+
+	var agg storage.AddressAggregates
+	// TxCount counts UNIQUE txhashes, not raw entry count. A tx with multiple
+	// outputs/inputs to the same address produces multiple 0x05 entries but is
+	// still one transaction. The seen-set is local to this call.
+	seen := make(map[types.Hash]struct{})
+
+	for iter.First(); iter.Valid(); iter.Next() {
+		// Key format: [0x05][scripthash:20][height:4][txhash:32][index:2]
+		key := iter.Key()
+		if len(key) != 59 {
+			continue // Malformed key — skip defensively.
+		}
+		height := binary.LittleEndian.Uint32(key[21:25])
+		var txHash types.Hash
+		copy(txHash[:], key[25:57])
+
+		// Decode the 41-byte value (IsInput + Value + BlockHash).
+		entry, derr := DecodeAddressHistoryEntry(iter.Value())
+		if derr != nil {
+			continue // Malformed value — skip defensively, count nothing.
+		}
+
+		if entry.IsInput {
+			agg.TotalSentSat += entry.Value
+		} else {
+			agg.TotalReceivedSat += entry.Value
+		}
+
+		if _, ok := seen[txHash]; !ok {
+			seen[txHash] = struct{}{}
+			agg.TxCount++
+		}
+
+		// Track min/max height. AddressHistoryKey encodes height as
+		// little-endian, so Pebble lexicographic iteration is NOT in height
+		// order — we must scan every entry to find the true min and max.
+		if !agg.HasHeights {
+			agg.MinHeight = height
+			agg.MaxHeight = height
+			agg.HasHeights = true
+		} else {
+			if height < agg.MinHeight {
+				agg.MinHeight = height
+			}
+			if height > agg.MaxHeight {
+				agg.MaxHeight = height
+			}
+		}
+	}
+
+	return agg, nil
 }
 
 // DeleteAddressIndex removes address index entry (for reorg handling)

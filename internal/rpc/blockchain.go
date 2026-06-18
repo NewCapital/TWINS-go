@@ -556,10 +556,42 @@ func (s *Server) buildBlockInfo(block *types.Block) (*BlockInfo, error) {
 		info.NextBlockHash = nextBlock.Hash().String()
 	}
 
-	// Add PoS-specific fields from consensus layer
-	if s.consensus != nil && len(block.Transactions) > 0 && block.Transactions[0].IsCoinStake() {
-		// Note: StakeModifier would be retrieved from consensus engine if needed
-		// This is available through ValidateBlock results but not needed for basic block info
+	// Populate stake_modifier + hashproofofstake from storage. Both are persisted
+	// during PoS block validation (consensus engine -> storage.StoreStakeModifier
+	// / StoreBlockPoSMetadata). Defensive zero-on-failure: any storage error
+	// leaves the field at "" / unset and the response omits it via omitempty.
+	if len(block.Transactions) > 1 && block.Transactions[1].IsCoinStake() {
+		blockHash := block.Header.Hash()
+		if modifier, merr := s.blockchain.GetStakeModifier(blockHash); merr == nil {
+			info.StakeModifier = fmt.Sprintf("0x%016x", modifier)
+		}
+		if _, proofHash, perr := s.blockchain.GetBlockPoSMetadata(blockHash); perr == nil && !proofHash.IsZero() {
+			info.HashProofOfStake = proofHash.String()
+		}
+	}
+
+	// Populate stake_amount + stake_age from coinstake[0]'s funding UTXO. Any
+	// lookup failure leaves the field at its zero value; never fails the whole
+	// render because PoS metadata is unavailable. Mirrors blockToDetail in
+	// internal/gui/core/go_client.go (GUI and RPC consume the same data).
+	if len(block.Transactions) > 1 && block.Transactions[1].IsCoinStake() {
+		coinstake := block.Transactions[1]
+		if len(coinstake.Inputs) > 0 {
+			fundingTx, terr := s.blockchain.GetTransaction(coinstake.Inputs[0].PreviousOutput.Hash)
+			if terr == nil && fundingTx != nil {
+				prevIdx := int(coinstake.Inputs[0].PreviousOutput.Index)
+				if prevIdx < len(fundingTx.Outputs) && fundingTx.Outputs[prevIdx] != nil {
+					info.StakeAmount = float64(fundingTx.Outputs[prevIdx].Value) / 1e8
+				}
+			}
+			fundingBlock, ferr := s.blockchain.GetTransactionBlock(coinstake.Inputs[0].PreviousOutput.Hash)
+			if ferr == nil && fundingBlock != nil {
+				age := int64(block.Header.Timestamp) - int64(fundingBlock.Header.Timestamp)
+				if age > 0 {
+					info.StakeAge = age
+				}
+			}
+		}
 	}
 
 	return info, nil

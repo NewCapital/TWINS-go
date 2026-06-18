@@ -141,6 +141,7 @@
     "height": "Wysokość",
     "hash": "Hash",
     "time": "Czas",
+    "date": "Data",
     "age": "Wiek",
     "txCount": "Txs",
     "size": "Rozmiar",

@@ -122,27 +122,51 @@ func TestMatchesTypeFilterWithComment(t *testing.T) {
 		name     string
 		category string
 		comment  string
-		filter   string
+		filters  []string
 		want     bool
 	}{
-		{"consolidation filter matches autocombine", "send_to_self", "autocombine", "consolidation", true},
-		{"consolidation filter rejects non-autocombine", "send_to_self", "", "consolidation", false},
-		{"consolidation filter rejects send", "send", "autocombine", "consolidation", false},
-		{"toYourself excludes autocombine", "send_to_self", "autocombine", "toYourself", false},
-		{"toYourself includes regular send_to_self", "send_to_self", "", "toYourself", true},
-		{"toYourself includes send_to_self with other comment", "send_to_self", "manual", "toYourself", true},
-		{"all includes autocombine", "send_to_self", "autocombine", "all", true},
-		{"mostCommon includes autocombine", "send_to_self", "autocombine", "mostCommon", true},
-		{"sent filter works normally", "send", "", "sent", true},
-		{"received filter works normally", "receive", "", "received", true},
+		// Empty/nil/all-equivalent => match all
+		{"nil slice matches all", "send", "", nil, true},
+		{"empty slice matches all", "send_to_self", "autocombine", []string{}, true},
+		{"all entry matches everything", "send_to_self", "autocombine", []string{"all"}, true},
+
+		// consolidation/toYourself caller-side exclusivity preserved
+		{"consolidation matches autocombine", "send_to_self", "autocombine", []string{"consolidation"}, true},
+		{"consolidation rejects non-autocombine", "send_to_self", "", []string{"consolidation"}, false},
+		{"consolidation rejects send", "send", "autocombine", []string{"consolidation"}, false},
+		{"toYourself excludes autocombine", "send_to_self", "autocombine", []string{"toYourself"}, false},
+		{"toYourself includes regular send_to_self", "send_to_self", "", []string{"toYourself"}, true},
+		{"toYourself includes send_to_self with other comment", "send_to_self", "manual", []string{"toYourself"}, true},
+
+		// Single-item parity with prior single-select behavior
+		{"sent filter works normally", "send", "", []string{"sent"}, true},
+		{"received filter works normally", "receive", "", []string{"received"}, true},
+		{"sent does not match receive", "receive", "", []string{"sent"}, false},
+
+		// OR-matching across multiple entries
+		{"sent+received OR-matches send", "send", "", []string{"sent", "received"}, true},
+		{"sent+received OR-matches receive", "receive", "", []string{"sent", "received"}, true},
+		{"sent+received rejects stake", "stake", "", []string{"sent", "received"}, false},
+		{"toYourself+sent matches send", "send", "", []string{"toYourself", "sent"}, true},
+		{"toYourself+sent matches send_to_self non-autocombine", "send_to_self", "", []string{"toYourself", "sent"}, true},
+		{"toYourself+sent rejects autocombine", "send_to_self", "autocombine", []string{"toYourself", "sent"}, false},
+
+		// mostCommon removed: must NOT short-circuit to true anymore
+		{"mostCommon entry is unknown filter -> false", "send_to_self", "autocombine", []string{"mostCommon"}, false},
+
+		// Defensive: empty-string entries inside a narrow slice must NOT
+		// short-circuit the OR-combine to true.
+		{"empty string mid-slice is skipped, narrow filter wins", "receive", "", []string{"sent", ""}, false},
+		{"empty string mid-slice is skipped, narrow filter still matches", "send", "", []string{"sent", ""}, true},
+		{"only empty string entry -> no match (not match-all)", "send", "", []string{""}, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := matchesTypeFilterWithComment(tt.category, tt.comment, tt.filter)
+			got := matchesTypeFilterWithComment(tt.category, tt.comment, tt.filters)
 			if got != tt.want {
-				t.Errorf("matchesTypeFilterWithComment(%q, %q, %q) = %v, want %v",
-					tt.category, tt.comment, tt.filter, got, tt.want)
+				t.Errorf("matchesTypeFilterWithComment(%q, %q, %v) = %v, want %v",
+					tt.category, tt.comment, tt.filters, got, tt.want)
 			}
 		})
 	}

@@ -1,15 +1,20 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"encoding/hex"
 	"fmt"
+	"io/fs"
 	"math"
 	"math/big"
+	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -21,6 +26,7 @@ import (
 	"github.com/twins-dev/twins-core/internal/storage/binary"
 	"github.com/twins-dev/twins-core/internal/wallet"
 	"github.com/twins-dev/twins-core/pkg/crypto"
+	pkgscript "github.com/twins-dev/twins-core/pkg/script"
 	"github.com/twins-dev/twins-core/pkg/types"
 )
 
@@ -45,6 +51,10 @@ type SyncerInterface interface {
 type P2PServerInterface interface {
 	// GetPeerCount returns the current peer count
 	GetPeerCount() int32
+	// GetInboundCount returns the current inbound peer count
+	GetInboundCount() int32
+	// GetOutboundCount returns the current outbound peer count
+	GetOutboundCount() int32
 	// IsStarted returns whether the server is started
 	IsStarted() bool
 }
@@ -54,6 +64,14 @@ type P2PServerInterface interface {
 type ConsensusInterface interface {
 	// IsStaking returns whether the consensus engine is actively staking
 	IsStaking() bool
+}
+
+// BlockchainSupplyInterface exposes per-height chain-intrinsic data not covered
+// by the syncer / P2P / consensus interfaces. *blockchain.BlockChain satisfies
+// this via its existing GetMoneySupply method.
+type BlockchainSupplyInterface interface {
+	// GetMoneySupply returns the total satoshis in circulation at the given height.
+	GetMoneySupply(height uint32) (int64, error)
 }
 
 // GoCoreClient implements CoreClient with direct storage access.
@@ -70,13 +88,49 @@ type GoCoreClient struct {
 	syncer         SyncerInterface            // P2P syncer for sync status (optional)
 	p2pServer      P2PServerInterface         // P2P server for network info (optional)
 	consensus      ConsensusInterface         // Consensus engine for staking info (optional)
+	blockchain     BlockchainSupplyInterface  // Blockchain supply lookup for money_supply (optional)
+	// Difficulty is computed inline from the cached tip block in
+	// GetBlockchainInfo; no separate component reference is needed.
+	dataDir string // Data directory for chain-size walks (optional)
 
 	// Staking configuration
 	stakingEnabled bool // Whether staking is enabled in settings
 
+	// Network name (e.g. "mainnet" / "testnet" / "regtest") used by address
+	// encoding helpers that need network-aware prefixes. Empty string falls back
+	// to mainnet at crypto.GetPubKeyHashNetworkID / crypto.GetScriptHashNetworkID.
+	// Wired from daemon.Node.ChainParams.Name via SetNetwork in
+	// cmd/twins-gui/app.go.
+	network string
+
+	// chainParams is the active chain parameter snapshot. Used by blockToDetail
+	// to locate the dev fund output in PoS coinstakes by matching against
+	// chainParams.DevAddress (the canonical scriptPubKey of the dev fund payout).
+	// Nil falls back to legacy positional parsing (outputs[2] for MN, no dev).
+	// Wired from daemon.Node.ChainParams via SetChainParams in cmd/twins-gui/app.go.
+	chainParams *types.ChainParams
+
 	// State
 	running bool
 	mu      sync.RWMutex
+
+	// Cached chain tip timestamp to avoid full-block reads on every status poll.
+	// Invalidated when tipHash changes; protected by tipTimeMu.
+	tipTimeMu   sync.Mutex
+	tipTimeHash types.Hash
+	tipTimeUnix int64
+
+	// Cached chain-size-on-disk with chainSizeCacheTTL TTL (60s). Uses a
+	// stale-while-revalidate pattern: callers always get the cached value
+	// instantly (returning 0 only on the very first call before any walk
+	// has completed), and an expired cache triggers a background refresh
+	// goroutine — the GUI status RPC hot path never blocks on the walk.
+	// chainSizeWalking is an atomic guard so at most one refresh goroutine
+	// is in flight at a time.
+	chainSizeMu      sync.Mutex
+	chainSizeBytes   int64
+	chainSizeExpiry  time.Time
+	chainSizeWalking atomic.Bool
 
 	// Event system
 	events     chan CoreEvent
@@ -144,6 +198,49 @@ func (c *GoCoreClient) SetConsensus(cons ConsensusInterface) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.consensus = cons
+}
+
+// SetBlockchain wires a per-height supply lookup so GetBlockchainInfo can
+// populate BlockchainInfo.MoneySupply. Mirrors the SetMempool / SetConsensus
+// optional-component pattern.
+func (c *GoCoreClient) SetBlockchain(bc BlockchainSupplyInterface) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.blockchain = bc
+}
+
+// SetDataDir wires the data directory path so the chain-size walker can
+// find blockchain.db. Documented as called once at startup, but defensively
+// invalidates the chain-size cache so a re-call (e.g. tests, reconfiguration)
+// does not return a stale walk result from a previous data directory.
+func (c *GoCoreClient) SetDataDir(dir string) {
+	c.mu.Lock()
+	c.dataDir = dir
+	c.mu.Unlock()
+
+	c.chainSizeMu.Lock()
+	c.chainSizeBytes = 0
+	c.chainSizeExpiry = time.Time{}
+	c.chainSizeMu.Unlock()
+}
+
+// SetNetwork wires the active network name ("mainnet" / "testnet" / "regtest")
+// so address-encoding helpers can pick the correct address prefix. Called once
+// at startup from cmd/twins-gui/app.go from daemon.Node.ChainParams.Name.
+func (c *GoCoreClient) SetNetwork(name string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.network = name
+}
+
+// SetChainParams wires the active chain parameter snapshot so blockToDetail
+// can locate the dev fund output by matching scriptPubKey against
+// chainParams.DevAddress. Called once at startup from cmd/twins-gui/app.go
+// from daemon.Node.ChainParams (alongside SetNetwork).
+func (c *GoCoreClient) SetChainParams(params *types.ChainParams) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.chainParams = params
 }
 
 // SetStakingEnabled sets whether staking is enabled in GUI settings.
@@ -286,61 +383,124 @@ func (c *GoCoreClient) GetExplorerTransaction(txid string) (ExplorerTransaction,
 	return c.txToExplorerTx(txData)
 }
 
-// GetAddressInfo returns basic information about an address (balance, UTXOs).
-// Transactions are loaded separately via GetAddressTransactions for progressive loading.
-func (c *GoCoreClient) GetAddressInfo(address string, _ int) (AddressInfo, error) {
-	// Decode address to binary format (netID + hash160 = 21 bytes)
+// GetAddressBasic returns the minimal, O(1) subset of address information
+// (Address only) after crypto.DecodeAddress validation. No storage access.
+// Returns instantly regardless of the address's historical activity or
+// current UTXO set size, so the Explorer Address Detail hero header
+// (address text + QR code) and the address-search code path are never
+// blocked by per-address work.
+//
+// Balance is fetched separately via GetAddressBalance (UTXO prefix scan,
+// O(U) cost). Aggregate stats are fetched via GetAddressStats (O(N) tx
+// history walk, the slow path).
+func (c *GoCoreClient) GetAddressBasic(address string) (AddressBasic, error) {
+	if _, err := crypto.DecodeAddress(address); err != nil {
+		return AddressBasic{}, fmt.Errorf("invalid address: %w", err)
+	}
+	return AddressBasic{Address: address}, nil
+}
+
+// GetAddressBalance returns the address's current spendable balance via a
+// GetUTXOsByAddress prefix scan and sat-sum across the resulting UTXO set.
+// Cost is O(U) where U = current UTXO count for the address. For addresses
+// with large UTXO sets (e.g. high-traffic payment addresses) this can take
+// seconds; called separately from GetAddressBasic so the hero header is
+// not blocked. Does NOT walk the address tx history index.
+//
+// Known duplication: GetAddressUTXOs also performs the same prefix scan
+// when the UTXOs panel mounts. A shared LRU cache is a candidate follow-up
+// but adds invalidation complexity (UTXO set changes on every new block)
+// and is not required to deliver the perceived-instant page-open win.
+func (c *GoCoreClient) GetAddressBalance(address string) (AddressBalance, error) {
+	if _, err := crypto.DecodeAddress(address); err != nil {
+		return AddressBalance{}, fmt.Errorf("invalid address: %w", err)
+	}
+
+	utxos, err := c.storage.GetUTXOsByAddress(address)
+	if err != nil && !storage.IsNotFoundError(err) {
+		return AddressBalance{}, fmt.Errorf("failed to get UTXOs: %w", err)
+	}
+
+	var balanceSat int64
+	for _, utxo := range utxos {
+		balanceSat += utxo.Output.Value
+	}
+
+	return AddressBalance{
+		Balance: float64(balanceSat) / satoshisPerTWINS,
+	}, nil
+}
+
+// GetAddressStats returns the expensive aggregate statistics for an
+// address: TxCount, TotalReceived, TotalSent, FirstSeen, LastSeen.
+//
+// Implementation: a single Pebble prefix scan via
+// storage.GetAddressAggregates over the 0x05 address-history index. Each
+// 0x05 entry carries (IsInput, Value, BlockHash) in its 41-byte value
+// payload, written at index time by IndexTransactionByAddress. Summing
+// these values is sufficient to compute TotalReceived/TotalSent without
+// loading any transaction body. TxCount is the count of UNIQUE txhashes
+// touched (one tx with N outputs/inputs to the address contributes once,
+// not N times).
+//
+// Replaced the prior O(N + N×I) per-transaction load (N tx-data reads
+// plus I previous-tx reads per input) with this O(N) index walk to fix
+// the 50+ second latency on high-activity addresses (1M+ tx). The prior
+// implementation also had a per-tx-multi-output over-count bug:
+// transactions with multiple outputs to the same address produced
+// multiple index entries, and the inner output loop summed ALL matching
+// outputs on EACH outer iteration, multiplying the contribution. The
+// new index-value walk reads each scalar value exactly once, so this
+// bug is fixed as a side effect.
+//
+// FirstSeen/LastSeen are resolved via AT MOST 2 GetBlockByHeight lookups
+// (one for the min height, one for the max — collapsed to 1 when the
+// address has txs in a single block, 0 when the address has no txs).
+//
+// AddressAggregates' MinHeight/MaxHeight are tracked during the same
+// prefix scan because AddressHistoryKey encodes height as little-endian,
+// so Pebble lexicographic iteration is NOT in height order — the
+// explicit min/max scan is load-bearing.
+//
+// The 0x05 index contains only CONFIRMED transactions (written during
+// block processing); unconfirmed mempool txs do not appear here. An
+// address with only unconfirmed activity returns TxCount=0 and
+// FirstSeen=LastSeen=0; the frontend renders "N/A" which is the correct
+// UX for "no confirmed activity yet".
+func (c *GoCoreClient) GetAddressStats(address string) (AddressStats, error) {
 	addr, err := crypto.DecodeAddress(address)
 	if err != nil {
-		return AddressInfo{}, fmt.Errorf("invalid address: %w", err)
+		return AddressStats{}, fmt.Errorf("invalid address: %w", err)
 	}
-	// Build 21-byte address binary: [netID:1][hash160:20]
 	addressBinary := make([]byte, 21)
 	addressBinary[0] = addr.NetID()
 	copy(addressBinary[1:], addr.Hash160())
 
-	// Get UTXOs for balance calculation
-	utxos, err := c.storage.GetUTXOsByAddress(address)
-	if err != nil && !storage.IsNotFoundError(err) {
-		return AddressInfo{}, fmt.Errorf("failed to get UTXOs: %w", err)
+	agg, err := c.storage.GetAddressAggregates(addressBinary)
+	if err != nil {
+		return AddressStats{}, fmt.Errorf("get address aggregates: %w", err)
 	}
 
-	var balance, totalReceived int64
-	addressUTXOs := make([]AddressUTXO, 0)
-
-	chainHeight, _ := c.storage.GetChainHeight()
-
-	for _, utxo := range utxos {
-		balance += utxo.Output.Value
-		totalReceived += utxo.Output.Value
-
-		confirmations := int(chainHeight) - int(utxo.Height) + 1
-		if confirmations < 0 {
-			confirmations = 0
+	var firstSeen, lastSeen int64
+	if agg.HasHeights {
+		if block, err := c.storage.GetBlockByHeight(agg.MinHeight); err == nil && block != nil {
+			firstSeen = int64(block.Header.Timestamp)
 		}
-
-		addressUTXOs = append(addressUTXOs, AddressUTXO{
-			TxID:          utxo.Outpoint.Hash.String(),
-			Vout:          utxo.Outpoint.Index,
-			Amount:        float64(utxo.Output.Value) / satoshisPerTWINS,
-			Confirmations: confirmations,
-			BlockHeight:   int64(utxo.Height),
-		})
+		if agg.MaxHeight == agg.MinHeight {
+			lastSeen = firstSeen
+		} else {
+			if block, err := c.storage.GetBlockByHeight(agg.MaxHeight); err == nil && block != nil {
+				lastSeen = int64(block.Header.Timestamp)
+			}
+		}
 	}
 
-	// Get transaction count only (for display)
-	addrTxs, _ := c.storage.GetTransactionsByAddress(addressBinary)
-	txCount := len(addrTxs)
-
-	return AddressInfo{
-		Address:            address,
-		Balance:            float64(balance) / satoshisPerTWINS,
-		TotalReceived:      float64(totalReceived) / satoshisPerTWINS,
-		TotalSent:          0, // Calculated when transactions are loaded
-		TxCount:            txCount,
-		UnconfirmedBalance: 0,
-		Transactions:       nil, // Loaded separately
-		UTXOs:              addressUTXOs,
+	return AddressStats{
+		TxCount:       agg.TxCount,
+		TotalReceived: float64(agg.TotalReceivedSat) / satoshisPerTWINS,
+		TotalSent:     float64(agg.TotalSentSat) / satoshisPerTWINS,
+		FirstSeen:     firstSeen,
+		LastSeen:      lastSeen,
 	}, nil
 }
 
@@ -381,20 +541,36 @@ func (c *GoCoreClient) GetAddressTransactions(address string, limit, offset int)
 		return AddressTxPage{}, fmt.Errorf("failed to get address transactions: %w", err)
 	}
 
+	// Pebble's lexicographic iteration over AddressHistoryKey does NOT yield
+	// height-ascending order: the height inside the key is encoded via
+	// binary.LittleEndian, so the least-significant byte sorts first. Without
+	// an explicit sort here, the page would return transactions in arbitrary
+	// order. Sort descending (height DESC, txIndex DESC within a block) so
+	// pagination produces a stable newest-first view across pages. See the
+	// "Critical implementation note" in internal/gui/core/CLAUDE.md under the
+	// Address Detail Hero entry for the original write-up of this constraint.
+	sort.SliceStable(addrTxs, func(i, j int) bool {
+		if addrTxs[i].Height != addrTxs[j].Height {
+			return addrTxs[i].Height > addrTxs[j].Height
+		}
+		return addrTxs[i].TxIndex > addrTxs[j].TxIndex
+	})
+
 	total := len(addrTxs)
 	transactions := make([]AddressTx, 0, limit)
 	chainHeight, _ := c.storage.GetChainHeight()
 
-	// Process transactions from most recent (reverse order)
-	// Start at (total - 1 - offset) and go backwards
-	startIdx := total - 1 - offset
-	endIdx := startIdx - limit
-	if endIdx < -1 {
-		endIdx = -1
+	startIdx := offset
+	if startIdx > total {
+		startIdx = total
+	}
+	endIdx := startIdx + limit
+	if endIdx > total {
+		endIdx = total
 	}
 
 	var failedCount int
-	for i := startIdx; i > endIdx && i >= 0; i-- {
+	for i := startIdx; i < endIdx; i++ {
 		addrTx := addrTxs[i]
 
 		txData, err := c.storage.GetTransactionData(addrTx.TxHash)
@@ -471,6 +647,102 @@ func (c *GoCoreClient) GetAddressTransactions(address string, limit, offset int)
 	}, nil
 }
 
+// GetAddressUTXOs returns a page of unspent outputs for an address.
+// limit: number of UTXOs per page (1-10000)
+// offset: starting position (0-based, from newest first by confirmations)
+//
+// Sort order: confirmations ASC (newest first), matching the convention
+// already used by AddressView for the legacy preloaded list. UTXOs of
+// identical confirmation get a stable secondary sort by txid+vout.
+//
+// The full UTXO set for an address must be loaded from storage to compute
+// the total and slice the page (Pebble's GetUTXOsByAddress has no offset
+// support). The cost is O(n) in the address's UTXO count per call, which
+// is acceptable on the GUI's 10s+ refresh cadence even for high-UTXO
+// addresses (the storage iteration is sub-millisecond per UTXO).
+func (c *GoCoreClient) GetAddressUTXOs(address string, limit, offset int) (AddressUTXOPage, error) {
+	// Input validation to prevent DoS and memory issues
+	if limit <= 0 {
+		limit = 50
+	}
+	if limit > 10000 {
+		return AddressUTXOPage{}, fmt.Errorf("invalid limit: %d (must be 1-10000)", limit)
+	}
+	if offset < 0 {
+		return AddressUTXOPage{}, fmt.Errorf("invalid offset: %d (must be >= 0)", offset)
+	}
+
+	// Validate address (DecodeAddress on the string form; we don't need the
+	// binary form because GetUTXOsByAddress accepts the string address).
+	if _, err := crypto.DecodeAddress(address); err != nil {
+		return AddressUTXOPage{}, fmt.Errorf("invalid address: %w", err)
+	}
+
+	// Get all UTXOs from storage. Mirror GetAddressBasic which uses the
+	// same accessor (and the prior GetAddressInfo before the basic/stats
+	// split).
+	utxos, err := c.storage.GetUTXOsByAddress(address)
+	if err != nil && !storage.IsNotFoundError(err) {
+		return AddressUTXOPage{}, fmt.Errorf("failed to get utxos: %w", err)
+	}
+
+	chainHeight, _ := c.storage.GetChainHeight()
+
+	// Convert storage UTXOs to []AddressUTXO.
+	all := make([]AddressUTXO, 0, len(utxos))
+	for _, u := range utxos {
+		confirmations := int(chainHeight) - int(u.Height) + 1
+		if confirmations < 0 {
+			confirmations = 0
+		}
+		all = append(all, AddressUTXO{
+			TxID:          u.Outpoint.Hash.String(),
+			Vout:          u.Outpoint.Index,
+			Amount:        float64(u.Output.Value) / satoshisPerTWINS,
+			Confirmations: confirmations,
+			BlockHeight:   int64(u.Height),
+		})
+	}
+
+	// Sort by confirmations ASC (newest first). Secondary sort on TxID+Vout
+	// for stable ordering across calls (otherwise two equally-confirmed UTXOs
+	// would shuffle order between page fetches based on the storage
+	// iteration order).
+	sort.SliceStable(all, func(i, j int) bool {
+		if all[i].Confirmations != all[j].Confirmations {
+			return all[i].Confirmations < all[j].Confirmations
+		}
+		if all[i].TxID != all[j].TxID {
+			return all[i].TxID < all[j].TxID
+		}
+		return all[i].Vout < all[j].Vout
+	})
+
+	total := len(all)
+
+	// Slice the page. Out-of-range offset returns an empty slice + HasMore=false.
+	if offset >= total {
+		return AddressUTXOPage{
+			Utxos:   []AddressUTXO{},
+			Total:   total,
+			HasMore: false,
+		}, nil
+	}
+	end := offset + limit
+	if end > total {
+		end = total
+	}
+
+	page := make([]AddressUTXO, end-offset)
+	copy(page, all[offset:end])
+
+	return AddressUTXOPage{
+		Utxos:   page,
+		Total:   total,
+		HasMore: end < total,
+	}, nil
+}
+
 // SearchExplorer searches for a block, transaction, or address.
 func (c *GoCoreClient) SearchExplorer(query string) (SearchResult, error) {
 	result := SearchResult{Query: query}
@@ -506,7 +778,7 @@ func (c *GoCoreClient) SearchExplorer(query string) (SearchResult, error) {
 	// Try address (D prefix for mainnet)
 	if len(query) >= 26 && len(query) <= 35 {
 		if _, err := crypto.DecodeAddress(query); err == nil {
-			addr, err := c.GetAddressInfo(query, 25)
+			addr, err := c.GetAddressBasic(query)
 			if err == nil {
 				result.Type = "address"
 				result.Address = &addr
@@ -527,9 +799,58 @@ func (c *GoCoreClient) SearchExplorer(query string) (SearchResult, error) {
 func (c *GoCoreClient) blockToSummary(block *types.Block, height uint32) BlockSummary {
 	isPoS := len(block.Transactions) > 1 && block.Transactions[1].IsCoinStake()
 
+	// Block reward computation.
+	//
+	// PoW: Transactions[0] is the coinbase carrying the full block subsidy as
+	// outputs (no inputs to subtract). Sum coinbase outputs in satoshis.
+	//
+	// PoS: Transactions[0] is an EMPTY marker (no value), and the subsidy is
+	// distributed inside the coinstake at Transactions[1] as
+	// (sum outputs) - (sum input UTXO values). The coinstake spends the
+	// staker's funding UTXO and creates outputs covering the original stake
+	// PLUS the new reward (stake + masternode + dev).
+	//
+	// Input-value lookup uses storage.GetTransactionData (the funding-tx
+	// lookup) NOT storage.GetUTXO (the unspent-set lookup). At the moment a
+	// confirmed PoS block is summarized, the coinstake's input UTXOs are
+	// ALREADY SPENT (consumed by the coinstake itself), so the unspent-set
+	// lookup is fragile: CachedStorage invalidates spent UTXOs (see
+	// internal/storage/cached_storage.go) so cache-miss + lookup-from-Pebble
+	// can return nil even though the funding-tx record persists. Mirrors
+	// blockToDetail at line 1062 exactly — the canonical pattern for
+	// retrieving spent-input values.
+	//
+	// Per-input lookup failure (storage error, deleted/orphaned funding tx,
+	// out-of-bounds index) leaves inputSat at 0 — defensive zero-fallback so
+	// the row renders rather than failing the entire block summary.
 	var reward float64
-	if len(block.Transactions) > 0 {
+	if isPoS && len(block.Transactions) >= 2 {
+		coinstake := block.Transactions[1]
+		var outputSat, inputSat int64
+		for _, out := range coinstake.Outputs {
+			if out == nil {
+				continue
+			}
+			outputSat += out.Value
+		}
+		for _, in := range coinstake.Inputs {
+			if in == nil {
+				continue
+			}
+			txData, err := c.storage.GetTransactionData(in.PreviousOutput.Hash)
+			if err != nil || txData == nil || int(in.PreviousOutput.Index) >= len(txData.TxData.Outputs) {
+				continue
+			}
+			inputSat += txData.TxData.Outputs[in.PreviousOutput.Index].Value
+		}
+		if outputSat > inputSat {
+			reward = float64(outputSat-inputSat) / satoshisPerTWINS
+		}
+	} else if len(block.Transactions) > 0 {
 		for _, out := range block.Transactions[0].Outputs {
+			if out == nil {
+				continue
+			}
 			reward += float64(out.Value) / satoshisPerTWINS
 		}
 	}
@@ -545,49 +866,289 @@ func (c *GoCoreClient) blockToSummary(block *types.Block, height uint32) BlockSu
 	}
 }
 
+// findCoinstakeRewardIndexes locates the dev fund and masternode payment
+// outputs in a PoS coinstake transaction.
+//
+// Canonical TWINS PoS coinstake layout (see
+// internal/consensus/masternode_payments.go:1022):
+//
+//	With dev:    [empty(0), stake_return..., mn_payment, dev_payment]
+//	Without dev: [empty(0), stake_return..., mn_payment]
+//
+// Dev output is located by matching scriptPubKey against devAddressScript
+// (chainParams.DevAddress). This is more robust than hardcoded positional
+// indexes because (a) stake_return may span multiple outputs shifting mn/dev
+// positions, and (b) future layout changes won't silently misclassify outputs.
+//
+// Returns (devIdx, mnIdx) where -1 means "not present":
+//   - If dev output found: dev at devIdx (typically len-1), MN at devIdx-1
+//   - If no dev output AND >2 outputs: legacy 3-output layout, MN at outputs[2]
+//   - Else: both -1
+//
+// devAddressScript may be nil/empty (testnet without DevAddress, or chainParams
+// not wired) — function gracefully falls back to legacy positional MN parsing.
+func findCoinstakeRewardIndexes(outputs []*types.TxOutput, devAddressScript []byte) (devIdx, mnIdx int) {
+	devIdx = -1
+	mnIdx = -1
+
+	if len(devAddressScript) > 0 {
+		// Search from the end; dev_payment is at outputs[len-1] in the canonical
+		// layout. Lower bound is index 1 to skip the always-empty output[0].
+		for i := len(outputs) - 1; i >= 1; i-- {
+			if outputs[i] != nil && bytes.Equal(outputs[i].ScriptPubKey, devAddressScript) {
+				devIdx = i
+				break
+			}
+		}
+	}
+
+	switch {
+	case devIdx >= 2 && devIdx-1 >= 2:
+		// Dev found and there's room for MN between staker (idx 1) and dev.
+		mnIdx = devIdx - 1
+	case devIdx < 0 && len(outputs) > 2:
+		// Legacy 3-output layout: [empty, stake_return, mn_payment].
+		mnIdx = 2
+	}
+
+	return devIdx, mnIdx
+}
+
+// coinstakeBreakdown holds the computed reward economics for a PoS coinstake
+// transaction. All amounts are in satoshis; convert to TWINS at the call site.
+//
+// Field semantics:
+//   - StakeRewardSat = outputs[1].Value - totalInputSat (the +reward the staker received).
+//     Zero when outputs has fewer than 2 entries or outputs[1] is nil.
+//   - MasternodePaySat = outputs[mnIdx].Value, zero when no MN output is present.
+//   - DevPaySat = outputs[devIdx].Value, zero when no dev fund output is present.
+//   - StakerIdx is always 1 (the canonical stake-return slot) when outputs has >= 2
+//     entries; -1 otherwise. MnIdx and DevIdx mirror findCoinstakeRewardIndexes.
+type coinstakeBreakdown struct {
+	StakeRewardSat   int64
+	MasternodePaySat int64
+	DevPaySat        int64
+	// StakerIdx is the start of the stake-return run (always 1 by canonical layout),
+	// or -1 when there are no stake-return outputs.
+	StakerIdx int
+	// StakerEndIdx is the end-exclusive index of the stake-return run. Stake-return
+	// outputs occupy outputs[StakerIdx..StakerEndIdx). For non-split coinstakes
+	// StakerEndIdx == StakerIdx+1; for stake-split coinstakes StakerEndIdx == StakerIdx+2.
+	// Set to -1 when StakerIdx is -1.
+	StakerEndIdx int
+	MnIdx        int
+	DevIdx       int
+}
+
+// computeCoinstakeBreakdown extracts the reward-economics breakdown for a
+// PoS coinstake transaction. Pure function so unit tests can drive it
+// directly with synthetic outputs.
+//
+// Inputs:
+//   - outputs: the coinstake transaction's output slice (raw types.TxOutput pointers).
+//   - totalInputSat: sum of input UTXO values in satoshis (already resolved by the caller).
+//   - devAddressScript: chainParams.DevAddress scriptPubKey. May be nil/empty
+//     on testnet without DevAddress or when chainParams is not wired.
+//
+// Stake-split coinstake handling: CreateCoinstakeTx (internal/wallet/staking.go:319-358)
+// can produce stake returns split across outputs[1] AND outputs[2] when totalReward/2
+// exceeds the stake split threshold. The canonical TWINS layout with all rewards is:
+//
+//	no split:  [empty, stake_return, mn_payment, dev_payment]                     (4 outputs)
+//	split:     [empty, stake1, stake2, mn_payment, dev_payment]                   (5 outputs)
+//
+// Stake reward is computed as `sum(outputs[1..stakerEndIdx)) - totalInputSat` where
+// stakerEndIdx is the lower of mnIdx and devIdx (when both are present), or whichever
+// non-negative index is set, or len(outputs) when neither MN nor dev is present.
+// Summing all stake-return outputs (rather than reading only outputs[1]) is load-bearing
+// for split coinstakes — without this, the reward would be reported as a large negative
+// number (only half the stake comes back at outputs[1] minus the full input).
+//
+// Returns the per-recipient amounts plus the indexes of stake/MN/dev outputs.
+// StakerIdx is the START of the stake-return run (always 1 by canonical layout);
+// callers that need to label individual outputs must iterate [StakerIdx..StakerEndIdx).
+// Defensive against nil output pointers and short output slices.
+//
+// Known limitation: when devIdx < 0 AND len(outputs) > 2, findCoinstakeRewardIndexes
+// falls back to mnIdx = 2 unconditionally (assumes [empty, stake_return, mn] legacy
+// layout). On a split coinstake without dev fund (e.g. testnet without DevAddress with
+// 4 outputs [empty, stake1, stake2, mn]), the helper returns mnIdx=2 which misidentifies
+// stake2 as the MN payment. This is a pre-existing limitation in findCoinstakeRewardIndexes
+// also affecting blockToDetail; not addressed in this helper. On mainnet (chainParams.DevAddress
+// wired, dev fund always appended) the limitation does not manifest because devIdx is always >= 0.
+func computeCoinstakeBreakdown(outputs []*types.TxOutput, totalInputSat int64, devAddressScript []byte) coinstakeBreakdown {
+	result := coinstakeBreakdown{
+		StakerIdx:    -1,
+		StakerEndIdx: -1,
+		MnIdx:        -1,
+		DevIdx:       -1,
+	}
+
+	devIdx, mnIdx := findCoinstakeRewardIndexes(outputs, devAddressScript)
+	result.MnIdx = mnIdx
+	result.DevIdx = devIdx
+
+	// Compute the end-exclusive index for stake-return outputs. Stake returns occupy
+	// outputs[1..stakerEndIdx) — typically just outputs[1], but outputs[1] AND outputs[2]
+	// on stake-split coinstakes. The end is bounded by whichever of MN / dev comes first
+	// (since they're appended AFTER all stake returns), or len(outputs) when neither
+	// is present.
+	stakerEndIdx := len(outputs)
+	switch {
+	case mnIdx >= 0 && devIdx >= 0:
+		if mnIdx < devIdx {
+			stakerEndIdx = mnIdx
+		} else {
+			stakerEndIdx = devIdx
+		}
+	case mnIdx >= 0:
+		stakerEndIdx = mnIdx
+	case devIdx >= 0:
+		stakerEndIdx = devIdx
+	}
+
+	// Sum all stake-return outputs (handles both single-stake and stake-split layouts).
+	// Defensive nil guard on outputs[1] mirrors the pre-fix behavior: if the canonical
+	// stake-return slot is nil (anomalous), report "no staker info" rather than guessing
+	// downstream non-nil outputs are stake returns.
+	if stakerEndIdx > 1 && outputs[1] != nil {
+		result.StakerIdx = 1
+		result.StakerEndIdx = stakerEndIdx
+		var stakeTotal int64
+		for i := 1; i < stakerEndIdx; i++ {
+			if outputs[i] != nil {
+				stakeTotal += outputs[i].Value
+			}
+		}
+		result.StakeRewardSat = stakeTotal - totalInputSat
+	}
+	if mnIdx >= 0 && mnIdx < len(outputs) && outputs[mnIdx] != nil {
+		result.MasternodePaySat = outputs[mnIdx].Value
+	}
+	if devIdx >= 0 && devIdx < len(outputs) && outputs[devIdx] != nil {
+		result.DevPaySat = outputs[devIdx].Value
+	}
+
+	return result
+}
+
+// blockToDetail converts a stored block into the GUI BlockDetail view model.
+//
+// Locking: acquires c.mu.RLock() to snapshot c.chainParams. Callers must NOT
+// hold c.mu in write mode when invoking this method. The snapshot pattern
+// keeps the actual block-parsing work outside the lock to minimize contention.
 func (c *GoCoreClient) blockToDetail(block *types.Block, height uint32) (BlockDetail, error) {
 	chainHeight, _ := c.storage.GetChainHeight()
 	confirmations := int(chainHeight) - int(height) + 1
 
 	isPoS := len(block.Transactions) > 1 && block.Transactions[1].IsCoinStake()
 
-	var stakeReward, masternodeReward, totalReward float64
-	var stakerAddr, masternodeAddr string
+	var stakeReward, masternodeReward, devReward, totalReward, stakeAmount float64
+	var stakerAddr, masternodeAddr, devAddr, stakeModifierHex, proofHashHex string
+	var stakeAge int64
+
+	// Snapshot chainParams under read lock for layout-aware dev fund parsing.
+	c.mu.RLock()
+	chainParams := c.chainParams
+	c.mu.RUnlock()
 
 	if isPoS && len(block.Transactions) > 1 {
 		coinstake := block.Transactions[1]
 
 		// Calculate total inputs by looking up the original transactions
-		// (UTXOs are already spent, so we need to fetch from the source tx)
+		// (UTXOs are already spent, so we need to fetch from the source tx).
+		// Also derive stake_amount + stake_age from the FIRST input's funding
+		// UTXO (the staked output): stake_amount = funding UTXO value,
+		// stake_age = current block timestamp - funding block timestamp.
+		// Any lookup failure leaves stake_amount / stake_age at 0; never fails
+		// the whole render because PoS metadata is unavailable.
 		var totalInputs int64
-		for _, in := range coinstake.Inputs {
+		for i, in := range coinstake.Inputs {
 			// Get the transaction that contains this output
 			txData, err := c.storage.GetTransactionData(in.PreviousOutput.Hash)
-			if err == nil && txData != nil && int(in.PreviousOutput.Index) < len(txData.TxData.Outputs) {
-				totalInputs += txData.TxData.Outputs[in.PreviousOutput.Index].Value
+			if err != nil || txData == nil || int(in.PreviousOutput.Index) >= len(txData.TxData.Outputs) {
+				continue
+			}
+			prevOutValue := txData.TxData.Outputs[in.PreviousOutput.Index].Value
+			totalInputs += prevOutValue
+			if i == 0 {
+				stakeAmount = float64(prevOutValue) / satoshisPerTWINS
+				// Funding-block timestamp lookup. txData.Height is the height
+				// at which the funding tx was confirmed. Parent block read
+				// failure leaves stake_age at 0.
+				parentBlock, perr := c.storage.GetBlockByHeight(txData.Height)
+				if perr == nil && parentBlock != nil {
+					stakeAge = int64(block.Header.Timestamp) - int64(parentBlock.Header.Timestamp)
+					if stakeAge < 0 {
+						stakeAge = 0
+					}
+				}
 			}
 		}
 
-		// Calculate total outputs
+		// Calculate total outputs. coinstake.Outputs is []*TxOutput; nil entries
+		// are skipped defensively (malformed data should not panic the GUI).
 		var totalOutputs int64
 		for _, out := range coinstake.Outputs {
-			totalOutputs += out.Value
+			if out != nil {
+				totalOutputs += out.Value
+			}
 		}
 
-		// Total reward = outputs - inputs (the newly created coins)
+		// Total reward = newly created coins = totalOutputs - totalInputs.
+		// For well-formed coinstakes this equals stakeReward + masternodeReward
+		// + devReward, since stake_return = stakeInput + stakeReward and all other
+		// outputs are pure additions. We compute via IO delta (rather than
+		// summing the component rewards) so the value remains correct even when
+		// the coinstake layout has additional fee/refund/governance outputs that
+		// are not yet surfaced as named fields.
 		totalReward = float64(totalOutputs-totalInputs) / satoshisPerTWINS
 
-		// Parse outputs: typically output[0] is empty, output[1] is staker, output[2] is masternode
-		if len(coinstake.Outputs) > 1 {
-			// Staker gets stake back + stake reward (output 1)
+		// Locate dev fund and masternode payment outputs using layout-aware
+		// parsing (matches scriptPubKey against chainParams.DevAddress rather
+		// than hardcoded positional indexes). See findCoinstakeRewardIndexes.
+		var devAddressScript []byte
+		if chainParams != nil {
+			devAddressScript = chainParams.DevAddress
+		}
+		devOutputIdx, mnOutputIdx := findCoinstakeRewardIndexes(coinstake.Outputs, devAddressScript)
+
+		// All three slot reads below check the pointer non-nil. The dev slot
+		// is already guaranteed non-nil by findCoinstakeRewardIndexes (it
+		// skips nil entries during the script-match scan), but the staker
+		// (outputs[1]) and the MN slot (devIdx-1 or legacy outputs[2]) are
+		// returned without nil-check. A malformed coinstake with a nil entry
+		// at one of those positions would otherwise panic the GUI core when
+		// opening the block detail view (codex 2026-05-27 review W1).
+		if devOutputIdx >= 0 && coinstake.Outputs[devOutputIdx] != nil {
+			devAddr = c.extractAddressFromScript(coinstake.Outputs[devOutputIdx].ScriptPubKey)
+			devReward = float64(coinstake.Outputs[devOutputIdx].Value) / satoshisPerTWINS
+		}
+
+		// Staker reward: output 1 is stake_return (= original stake + stake reward).
+		// stakeReward = output[1].Value - totalInputs.
+		if len(coinstake.Outputs) > 1 && coinstake.Outputs[1] != nil {
 			stakerAddr = c.extractAddressFromScript(coinstake.Outputs[1].ScriptPubKey)
-			// Stake reward = staker output - original stake input
 			stakeReward = float64(coinstake.Outputs[1].Value-totalInputs) / satoshisPerTWINS
 		}
-		if len(coinstake.Outputs) > 2 {
-			// Masternode reward (output 2)
-			masternodeAddr = c.extractAddressFromScript(coinstake.Outputs[2].ScriptPubKey)
-			masternodeReward = float64(coinstake.Outputs[2].Value) / satoshisPerTWINS
+
+		if mnOutputIdx >= 0 && coinstake.Outputs[mnOutputIdx] != nil {
+			masternodeAddr = c.extractAddressFromScript(coinstake.Outputs[mnOutputIdx].ScriptPubKey)
+			masternodeReward = float64(coinstake.Outputs[mnOutputIdx].Value) / satoshisPerTWINS
+		}
+
+		// PoS internals: stake modifier + hashProofOfStake (a.k.a. kernel hash).
+		// Both are already persisted in storage by the consensus engine during
+		// block connect (see internal/consensus/pos.go:1247-1260 for stake
+		// modifier and the StoreBlockPoSMetadata wiring for proof hash). Defensive
+		// zero-on-failure: any storage error or not-found leaves the local hex
+		// string at "" and falls through; the GUI renders "—" placeholder.
+		blockHash := block.Header.Hash()
+		if modifier, merr := c.storage.GetStakeModifier(blockHash); merr == nil {
+			stakeModifierHex = fmt.Sprintf("0x%016x", modifier)
+		}
+		if _, proofHash, perr := c.storage.GetBlockPoSMetadata(blockHash); perr == nil && !proofHash.IsZero() {
+			proofHashHex = proofHash.String()
 		}
 	}
 
@@ -625,10 +1186,290 @@ func (c *GoCoreClient) blockToDetail(block *types.Block, height uint32) (BlockDe
 		IsPoS:             isPoS,
 		StakeReward:       stakeReward,
 		MasternodeReward:  masternodeReward,
+		DevReward:         devReward,
 		StakerAddress:     stakerAddr,
 		MasternodeAddress: masternodeAddr,
+		DevAddress:        devAddr,
 		TotalReward:       totalReward,
+		StakeAmount:       stakeAmount,
+		StakeAge:          stakeAge,
+		StakeModifier:     stakeModifierHex,
+		ProofHash:         proofHashHex,
 	}, nil
+}
+
+// extractOpReturnData parses an OP_RETURN (nulldata) scriptPubKey and returns
+// the hex-encoded payload and a printable-ASCII rendering of it. The ASCII
+// string is returned ONLY when every byte of the payload falls in the
+// printable ASCII range [0x20, 0x7e]; otherwise it is empty and the frontend
+// should fall back to the hex string.
+//
+// Supports both direct pushes (opcode bytes 0x01..0x4b) and the explicit
+// OP_PUSHDATA1 / OP_PUSHDATA2 push opcodes. OP_PUSHDATA4 is not handled —
+// the legacy protocol caps OP_RETURN payloads at 83 bytes
+// (MAX_OP_RETURN_RELAY) so a 4-byte length field is never required, and
+// rejecting it defensively prevents potential parser footguns.
+//
+// Returns ("", "") on parse failure (script too short, truncated push, length
+// declares more bytes than the script carries). Note: `OP_RETURN OP_0`
+// (`0x6a 0x00`, zero-byte payload) also returns ("", "") — behaviourally
+// identical to "no payload extracted". Callers that need to distinguish
+// "OP_RETURN with zero-byte payload" from "OP_RETURN parse failure" should
+// branch on `scriptType == "nulldata"` first.
+func extractOpReturnData(script []byte) (hexStr, ascii string) {
+	if len(script) < 2 || script[0] != pkgscript.OP_RETURN {
+		return "", ""
+	}
+
+	pos := 1
+	pushOp := script[pos]
+	pos++
+
+	var payloadLen int
+	switch {
+	case pushOp >= 0x01 && pushOp <= 0x4b:
+		// Direct push: opcode value is the byte count.
+		payloadLen = int(pushOp)
+	case pushOp == pkgscript.OP_PUSHDATA1:
+		if pos+1 > len(script) {
+			return "", ""
+		}
+		payloadLen = int(script[pos])
+		pos++
+	case pushOp == pkgscript.OP_PUSHDATA2:
+		if pos+2 > len(script) {
+			return "", ""
+		}
+		payloadLen = int(script[pos]) | int(script[pos+1])<<8
+		pos += 2
+	default:
+		// Includes OP_0 (empty push), OP_PUSHDATA4 (rejected — see doc above),
+		// and anything else that does not push raw data.
+		return "", ""
+	}
+
+	if pos+payloadLen > len(script) {
+		// Declared length exceeds script bytes — truncated push.
+		return "", ""
+	}
+
+	payload := script[pos : pos+payloadLen]
+	hexStr = hex.EncodeToString(payload)
+
+	allPrintable := true
+	for _, b := range payload {
+		if b < 0x20 || b > 0x7e {
+			allPrintable = false
+			break
+		}
+	}
+	if allPrintable {
+		ascii = string(payload)
+	}
+	return hexStr, ascii
+}
+
+// extractMultisigAddresses extracts the N pubkey-derived addresses and the M
+// required-signatures count from a bare multisig scriptPubKey, re-encoding
+// each address with the active network prefix. pkg/script.ExtractMultisig
+// hardcodes the mainnet ID; this helper takes the returned addresses, pulls
+// each one's hash160, and rebuilds via crypto.NewAddressFromHash with the
+// correct netID for the current network.
+//
+// Returns (nil, 0) on any parse failure or when the script is not a valid
+// multisig pattern. Mirrors the network-aware encoding pattern used by
+// extractAddressFromScript.
+func extractMultisigAddresses(script []byte, networkName string) ([]string, int) {
+	addrs, m, err := pkgscript.ExtractMultisig(script)
+	if err != nil {
+		return nil, 0
+	}
+	netID := crypto.GetPubKeyHashNetworkID(networkName)
+	out := make([]string, 0, len(addrs))
+	for _, a := range addrs {
+		if a == nil {
+			continue
+		}
+		rebuilt, rerr := crypto.NewAddressFromHash(a.Hash160(), netID)
+		if rerr != nil {
+			// Should not happen — Hash160() always returns 20 bytes — but
+			// be defensive so a single bad pubkey does not nil out the
+			// whole list.
+			continue
+		}
+		out = append(out, rebuilt.String())
+	}
+	if len(out) == 0 {
+		return nil, 0
+	}
+	return out, m
+}
+
+// outputRoleContext bundles the inputs that assignOutputRole needs into one
+// struct so the priority-ordered switch in the implementation stays readable
+// and the call site does not collapse into a 9-arg function signature.
+type outputRoleContext struct {
+	tx               *types.Transaction
+	outputIndex      int
+	output           *types.TxOutput
+	scriptType       string
+	legacyLabel      string
+	outputAddress    string
+	inputAddresses   map[string]struct{}
+	blockHeight      int64
+	isPoSBlockMarker bool
+	isMine           bool
+}
+
+// assignOutputRole returns the semantic-role enum value for a single output
+// in priority order. The priority is documented inline so a future maintainer
+// can reason about precedence without consulting the research spec:
+//
+//  1. PoS Block Marker (vout[0] of an empty-coinbase paired with a coinstake)
+//  2. Coinstake roles (marker / stake_return / mn_payment / dev_fund) — keyed
+//     off legacyLabel which the caller already populated via
+//     computeCoinstakeBreakdown
+//  3. Coinbase roles (premine for block 1, mining_reward otherwise)
+//  4. Script-type roles for non-payment scripts (nulldata / multisig / nonstandard)
+//  5. Standard payment script + wallet ownership rules
+//     (change if mine AND addr ∈ inputAddresses; self_send if mine AND not in
+//     inputAddresses; external_payment otherwise)
+//
+// Pure function so unit tests can drive it directly with synthetic contexts.
+func assignOutputRole(ctx outputRoleContext) string {
+	if ctx.isPoSBlockMarker {
+		return OutputRoleBlockMarker
+	}
+
+	if ctx.tx != nil && ctx.tx.IsCoinStake() {
+		if ctx.outputIndex == 0 && ctx.output != nil && ctx.output.Value == 0 && len(ctx.output.ScriptPubKey) == 0 {
+			return OutputRoleBlockMarker
+		}
+		switch ctx.legacyLabel {
+		case "Stake Return":
+			return OutputRoleStakeReturn
+		case "Masternode Payment":
+			return OutputRoleMasternodePayment
+		case "Dev Fund":
+			return OutputRoleDevFund
+		}
+		// Defensive fallback for outputs of a coinstake that were not
+		// classified by computeCoinstakeBreakdown (e.g. testnet without
+		// DevAddress configured + a stake-split layout where the helper
+		// misidentifies stake2 as MN). Returning OutputRoleNonstandard
+		// rather than falling through prevents the standard-payment branch
+		// below from labelling an unknown coinstake output as `change` or
+		// `external_payment` based on the staker's input addresses — both
+		// of which are semantically wrong for a coinstake output.
+		return OutputRoleNonstandard
+	}
+
+	if ctx.tx != nil && ctx.tx.IsCoinbase() {
+		if ctx.blockHeight == 1 {
+			return OutputRolePremine
+		}
+		return OutputRoleMiningReward
+	}
+
+	switch ctx.scriptType {
+	case "nulldata":
+		return OutputRoleDataCarrier
+	case "multisig":
+		return OutputRoleMultisig
+	case "nonstandard":
+		return OutputRoleNonstandard
+	}
+
+	// Standard payment script (pubkey / pubkeyhash / scripthash).
+	if ctx.isMine {
+		if ctx.outputAddress != "" {
+			if _, ok := ctx.inputAddresses[ctx.outputAddress]; ok {
+				return OutputRoleChange
+			}
+		}
+		return OutputRoleSelfSend
+	}
+	return OutputRoleExternalPayment
+}
+
+// isPoSEmptyCoinbase returns true when the given transaction is the
+// protocol-mandated empty coinbase that pairs with a coinstake at vtx[1] of
+// every PoS block. Detection requires the containing block's transaction list
+// (the "empty + 1 output" shape alone is ambiguous with a degenerate PoW
+// coinbase), so this helper performs ONE storage.GetBlock lookup using the
+// already-resolved blockHash. The lookup fires only for the rare empty-output
+// pattern; standard tx fetches never trigger it.
+//
+// Returns false on storage error, missing block, or any structural mismatch.
+// Silent degrade: a coinbase that should be marked block_marker but cannot
+// be confirmed (storage error) falls through to OutputRoleNonstandard, which
+// is the pre-fix behavior — the new flag is purely additive.
+func (c *GoCoreClient) isPoSEmptyCoinbase(tx *types.Transaction, blockHash types.Hash) bool {
+	if tx == nil || !tx.IsCoinbase() {
+		return false
+	}
+	if len(tx.Outputs) != 1 {
+		return false
+	}
+	if tx.Outputs[0] == nil || tx.Outputs[0].Value != 0 || len(tx.Outputs[0].ScriptPubKey) != 0 {
+		return false
+	}
+	if blockHash.IsZero() {
+		return false
+	}
+	block, err := c.storage.GetBlock(blockHash)
+	if err != nil || block == nil {
+		return false
+	}
+	return len(block.Transactions) >= 2 && block.Transactions[1].IsCoinStake()
+}
+
+// computeOutputSpentStatus classifies a TxOutput's is_spent flag from the
+// result of a Storage.GetUTXO(outpoint) call. Pure helper — takes no storage
+// handle so it can be tested without mocking the storage layer.
+//
+// Classification logic:
+//
+//  1. utxo != nil && SpendingHeight > 0 → true  (consumed by another tx, not
+//     yet pruned by CachedStorage / chain depth).
+//  2. utxo != nil && SpendingHeight == 0 → false (unspent).
+//  3. lookupErr is a not-found error (generic NOT_FOUND / TX_NOT_FOUND /
+//     HEIGHT_NOT_FOUND recognized by storage.IsNotFoundError, OR the
+//     storage-specific UTXO_NOT_FOUND code emitted by BinaryStorage.GetUTXO
+//     which IsNotFoundError does not yet recognize):
+//     a. scriptType == "nulldata" → false  (OP_RETURN is unspendable by
+//     protocol; never was a UTXO entry).
+//     b. scriptType == "nonstandard" && value == 0 → false  (block_marker /
+//     coinstake marker; never was a UTXO entry).
+//     c. otherwise → true  (standard script absent from UTXO set = consumed
+//     and pruned at depth).
+//  4. lookupErr is a non-NotFound error → false  (defensive; transient
+//     storage errors should not panic the GUI core. Caller logs).
+func computeOutputSpentStatus(scriptType string, value int64, utxo *types.UTXO, lookupErr error) bool {
+	if lookupErr == nil && utxo != nil {
+		return utxo.SpendingHeight > 0
+	}
+	// storage.IsNotFoundError (per its 2026-04 widening at interface.go:444)
+	// covers NOT_FOUND / TX_NOT_FOUND / HEIGHT_NOT_FOUND but NOT the
+	// UTXO_NOT_FOUND code BinaryStorage.GetUTXO emits on a missing UTXO entry
+	// (interface_impl.go:1348). Recognize both shapes so the script-type-aware
+	// branches below fire for both code paths.
+	isNotFound := storage.IsNotFoundError(lookupErr)
+	if !isNotFound {
+		if se, ok := lookupErr.(*storage.StorageError); ok && se.Code == "UTXO_NOT_FOUND" {
+			isNotFound = true
+		}
+	}
+	if !isNotFound {
+		return false
+	}
+	if scriptType == "nulldata" {
+		return false
+	}
+	if scriptType == "nonstandard" && value == 0 {
+		return false
+	}
+	return true
 }
 
 func (c *GoCoreClient) txToExplorerTx(txData *storage.TransactionData) (ExplorerTransaction, error) {
@@ -643,17 +1484,35 @@ func (c *GoCoreClient) txToExplorerTx(txData *storage.TransactionData) (Explorer
 		txTime = time.Unix(int64(block.Header.Timestamp), 0)
 	}
 
+	// Snapshot wallet + network once at the top; mirrors the pattern in
+	// extractRecipientAddressesFromTx / blockToDetail. The wallet snapshot
+	// drives the IsMine flags below; nil snapshot (explorer-only context)
+	// collapses every is_mine / is_change check to false.
+	c.mu.RLock()
+	w := c.wallet
+	networkName := c.network
+	chainParams := c.chainParams
+	c.mu.RUnlock()
+
 	isCoinbase := tx.IsCoinbase()
+	isCoinstake := tx.IsCoinStake()
+
+	// Pass 1 — Inputs. Existing prevout resolution preserved; additionally
+	// compute IsMine via wallet.IsOurScript on the resolved prevout
+	// scriptPubKey, and collect the resolved input addresses into a set the
+	// output pass will use for change detection.
 	inputs := make([]TxInput, len(tx.Inputs))
+	inputAddresses := make(map[string]struct{}, len(tx.Inputs))
 	var totalInput int64
 
 	for i, in := range tx.Inputs {
 		// For coinbase, the first input is special (no previous output)
 		isCoinbaseInput := isCoinbase && i == 0
 		inputs[i] = TxInput{
-			TxID:       in.PreviousOutput.Hash.String(),
-			Vout:       in.PreviousOutput.Index,
-			IsCoinbase: isCoinbaseInput,
+			TxID:              in.PreviousOutput.Hash.String(),
+			Vout:              in.PreviousOutput.Index,
+			IsCoinbase:        isCoinbaseInput,
+			IsCoinstakeKernel: isCoinstake && i == 0,
 		}
 
 		if !isCoinbaseInput {
@@ -663,24 +1522,91 @@ func (c *GoCoreClient) txToExplorerTx(txData *storage.TransactionData) (Explorer
 			if err == nil && prevTxData != nil && int(in.PreviousOutput.Index) < len(prevTxData.TxData.Outputs) {
 				prevOutput := prevTxData.TxData.Outputs[in.PreviousOutput.Index]
 				inputs[i].Amount = float64(prevOutput.Value) / satoshisPerTWINS
-				inputs[i].Address = c.extractAddressFromScript(prevOutput.ScriptPubKey)
+				addr := c.extractAddressFromScript(prevOutput.ScriptPubKey)
+				inputs[i].Address = addr
 				totalInput += prevOutput.Value
+				if addr != "" {
+					inputAddresses[addr] = struct{}{}
+				}
+				if w != nil {
+					if _, mine := w.IsOurScript(prevOutput.ScriptPubKey); mine {
+						inputs[i].IsMine = true
+					}
+				}
 			}
 		}
 	}
 
+	// Detect the PoS Block Marker shape once outside the per-output loop.
+	// The lookup fires only for the rare empty-coinbase pattern; standard
+	// fetches skip the storage round-trip.
+	posBlockMarker := c.isPoSEmptyCoinbase(tx, txData.BlockHash)
+
 	outputs := make([]TxOutput, len(tx.Outputs))
 	var totalOutput int64
 
+	txHash := tx.Hash()
 	for i, out := range tx.Outputs {
+		addr := c.extractAddressFromScript(out.ScriptPubKey)
+		scriptType := c.getScriptType(out.ScriptPubKey)
+		// Resolve spent-flag from the UTXO set. Per-output Pebble point-lookup
+		// (CachedStorage in front) is sub-ms; cost analysis in task
+		// `l-tx-explorer-spent-flag` confirmed hot-path safety for both the
+		// detail view and tx-search call sites. Non-NotFound storage errors are
+		// unexpected here and logged at debug level; the helper returns false
+		// defensively in that case so the row still renders.
+		outpoint := types.Outpoint{Hash: txHash, Index: uint32(i)}
+		utxo, lookupErr := c.storage.GetUTXO(outpoint)
+		if lookupErr != nil && !storage.IsNotFoundError(lookupErr) {
+			if se, ok := lookupErr.(*storage.StorageError); !ok || se.Code != "UTXO_NOT_FOUND" {
+				log.WithError(lookupErr).WithField("outpoint", outpoint.String()).
+					Debug("GetUTXO failed during spent-flag derivation")
+			}
+		}
+		isSpent := computeOutputSpentStatus(scriptType, out.Value, utxo, lookupErr)
 		outputs[i] = TxOutput{
 			Index:      uint32(i),
-			Address:    c.extractAddressFromScript(out.ScriptPubKey),
+			Address:    addr,
 			Amount:     float64(out.Value) / satoshisPerTWINS,
-			ScriptType: c.getScriptType(out.ScriptPubKey),
-			IsSpent:    false, // Would need spent check
+			ScriptType: scriptType,
+			IsSpent:    isSpent,
 		}
 		totalOutput += out.Value
+
+		// Multisig: surface all N keys + M required. Address keeps the first
+		// key for back-compat with the current frontend.
+		if scriptType == "multisig" {
+			addrs, m := extractMultisigAddresses(out.ScriptPubKey, networkName)
+			if len(addrs) > 0 {
+				outputs[i].Addresses = addrs
+				outputs[i].RequiredSigs = m
+				if outputs[i].Address == "" {
+					outputs[i].Address = addrs[0]
+				}
+			}
+		}
+
+		// OP_RETURN: decode payload.
+		if scriptType == "nulldata" {
+			hexStr, ascii := extractOpReturnData(out.ScriptPubKey)
+			outputs[i].DataHex = hexStr
+			outputs[i].DataASCII = ascii
+		}
+
+		// IsMine via wallet ownership.
+		if w != nil {
+			if _, mine := w.IsOurScript(out.ScriptPubKey); mine {
+				outputs[i].IsMine = true
+			}
+		}
+
+		// Dust: value-bearing standard outputs below the threshold. Nulldata
+		// is excluded so OP_RETURN payloads are not visually flagged as dust;
+		// zero-value outputs (the canonical marker shape) are excluded by the
+		// `> 0` guard.
+		if out.Value > 0 && out.Value < dustThresholdSatoshis && scriptType != "nulldata" {
+			outputs[i].IsDust = true
+		}
 	}
 
 	fee := totalInput - totalOutput
@@ -688,32 +1614,112 @@ func (c *GoCoreClient) txToExplorerTx(txData *storage.TransactionData) (Explorer
 		fee = 0 // Coinbase/coinstake
 	}
 
+	// Coinstake reward breakdown: mirrors blockToDetail's logic so the Transaction
+	// Detail view can show the same Stake / Masternode / Dev Fund split that the
+	// Block Detail view already shows. The block-builder layout is canonical:
+	//     [outputs[0]=empty-marker, outputs[1..]=stake_return(s), outputs[len-2]=mn, outputs[len-1]=dev]
+	// findCoinstakeRewardIndexes is the single source of truth for locating
+	// the MN and dev fund slots via scriptPubKey match against chainParams.DevAddress.
+	// The legacy Label strings are kept for back-compat; the new Role field
+	// is the machine-readable replacement assigned per-output below.
+	var stakeReward, masternodeReward, devReward float64
+	if isCoinstake {
+		var devAddressScript []byte
+		if chainParams != nil {
+			devAddressScript = chainParams.DevAddress
+		}
+
+		breakdown := computeCoinstakeBreakdown(tx.Outputs, totalInput, devAddressScript)
+
+		// Label every output in [StakerIdx..StakerEndIdx) so stake-split coinstakes
+		// (two stake-return outputs to the same P2PK script, see
+		// internal/wallet/staking.go:331-358) get the GUI badge on BOTH outputs.
+		if breakdown.StakerIdx >= 0 {
+			stakeReward = float64(breakdown.StakeRewardSat) / satoshisPerTWINS
+			for i := breakdown.StakerIdx; i < breakdown.StakerEndIdx && i < len(outputs); i++ {
+				if tx.Outputs[i] != nil {
+					outputs[i].Label = "Stake Return"
+				}
+			}
+		}
+		if breakdown.MnIdx >= 0 && breakdown.MnIdx < len(outputs) && tx.Outputs[breakdown.MnIdx] != nil {
+			masternodeReward = float64(breakdown.MasternodePaySat) / satoshisPerTWINS
+			outputs[breakdown.MnIdx].Label = "Masternode Payment"
+		}
+		if breakdown.DevIdx >= 0 && breakdown.DevIdx < len(outputs) && tx.Outputs[breakdown.DevIdx] != nil {
+			devReward = float64(breakdown.DevPaySat) / satoshisPerTWINS
+			outputs[breakdown.DevIdx].Label = "Dev Fund"
+		}
+		if len(outputs) > 0 {
+			outputs[0].Label = "Coinstake Marker"
+		}
+	}
+
+	// Pass 2b — assign Role + IsChange per output, now that legacy Labels
+	// are populated. Role is the machine-readable replacement consumed by
+	// the new display matrix; IsChange is surfaced explicitly so the
+	// frontend does not have to re-implement the addr-in-inputs rule.
+	for i, out := range tx.Outputs {
+		// Only outputs[0] participates in the posBlockMarker check; later
+		// outputs of an empty-coinbase tx never exist (shape requires len==1),
+		// but the gate is kept explicit so the role of the single output is
+		// computed correctly without depending on loop position semantics.
+		marker := posBlockMarker && i == 0
+		outputs[i].Role = assignOutputRole(outputRoleContext{
+			tx:               tx,
+			outputIndex:      i,
+			output:           out,
+			scriptType:       outputs[i].ScriptType,
+			legacyLabel:      outputs[i].Label,
+			outputAddress:    outputs[i].Address,
+			inputAddresses:   inputAddresses,
+			blockHeight:      int64(txData.Height),
+			isPoSBlockMarker: marker,
+			isMine:           outputs[i].IsMine,
+		})
+		outputs[i].IsChange = outputs[i].Role == OutputRoleChange
+	}
+
 	return ExplorerTransaction{
-		TxID:          tx.Hash().String(),
-		BlockHash:     txData.BlockHash.String(),
-		BlockHeight:   int64(txData.Height),
-		Confirmations: confirmations,
-		Time:          txTime,
-		Size:          tx.SerializeSize(),
-		Fee:           float64(fee) / satoshisPerTWINS,
-		IsCoinbase:    isCoinbase,
-		IsCoinStake:   tx.IsCoinStake(),
-		Inputs:        inputs,
-		Outputs:       outputs,
-		TotalInput:    float64(totalInput) / satoshisPerTWINS,
-		TotalOutput:   float64(totalOutput) / satoshisPerTWINS,
+		TxID:             tx.Hash().String(),
+		BlockHash:        txData.BlockHash.String(),
+		BlockHeight:      int64(txData.Height),
+		Confirmations:    confirmations,
+		Time:             txTime,
+		Size:             tx.SerializeSize(),
+		Fee:              float64(fee) / satoshisPerTWINS,
+		IsCoinbase:       isCoinbase,
+		IsCoinStake:      tx.IsCoinStake(),
+		StakeReward:      stakeReward,
+		MasternodeReward: masternodeReward,
+		DevReward:        devReward,
+		Inputs:           inputs,
+		Outputs:          outputs,
+		TotalInput:       float64(totalInput) / satoshisPerTWINS,
+		TotalOutput:      float64(totalOutput) / satoshisPerTWINS,
 	}, nil
 }
 
 func (c *GoCoreClient) extractAddressFromScript(scriptBytes []byte) string {
 	scriptType, scriptHash := binary.AnalyzeScript(scriptBytes)
 
+	// Snapshot network name under RLock — same pattern as the existing
+	// `SetNetwork` consumer in `extractRecipientAddressesFromTx`. Empty
+	// string falls back to mainnet via crypto.GetPubKeyHashNetworkID /
+	// GetScriptHashNetworkID semantics, preserving backwards-compatible
+	// behavior when SetNetwork was never wired (gemini code-review round 2:
+	// the prior hardcoded mainnet IDs broke explorer address matching on
+	// testnet / regtest).
+	c.mu.RLock()
+	networkName := c.network
+	c.mu.RUnlock()
+
 	var netID byte
 	switch scriptType {
 	case binary.ScriptTypeP2PKH, binary.ScriptTypeP2PK:
-		netID = crypto.MainNetPubKeyHashAddrID
+		netID = crypto.GetPubKeyHashNetworkID(networkName)
 	case binary.ScriptTypeP2SH:
-		netID = crypto.MainNetScriptHashAddrID
+		netID = crypto.GetScriptHashNetworkID(networkName)
 	default:
 		return ""
 	}
@@ -725,17 +1731,15 @@ func (c *GoCoreClient) extractAddressFromScript(scriptBytes []byte) string {
 	return addr.String()
 }
 
+// getScriptType returns the script type token expected by the frontend
+// (pubkey / pubkeyhash / scripthash / multisig / nulldata / nonstandard).
+//
+// Delegates to pkg/script.GetScriptType which is the canonical implementation
+// and also recognizes P2PK (commonly used by PoS stakers for stake-return outputs)
+// and multisig — both of which the prior inline byte-pattern matcher missed and
+// would have returned as "nonstandard".
 func (c *GoCoreClient) getScriptType(script []byte) string {
-	if len(script) == 25 && script[0] == 0x76 && script[1] == 0xa9 {
-		return "pubkeyhash"
-	}
-	if len(script) == 23 && script[0] == 0xa9 {
-		return "scripthash"
-	}
-	if len(script) > 0 && script[0] == 0x6a {
-		return "nulldata"
-	}
-	return "nonstandard"
+	return pkgscript.GetScriptType(script).String()
 }
 
 func isHex(s string) bool {
@@ -764,7 +1768,6 @@ func (c *GoCoreClient) GetBalance() (Balance, error) {
 	}
 
 	// Convert satoshis to TWINS (1 TWINS = 100,000,000 satoshis)
-
 
 	confirmed := float64(walletBalance.Confirmed) / satoshisPerTWINS
 	unconfirmed := float64(walletBalance.Unconfirmed) / satoshisPerTWINS
@@ -1152,7 +2155,6 @@ func (c *GoCoreClient) ListTransactions(count int, skip int) ([]Transaction, err
 func (c *GoCoreClient) convertWalletTransaction(wtx *wallet.WalletTransaction) Transaction {
 	// Convert satoshis to TWINS (1 TWINS = 100,000,000 satoshis)
 
-
 	// Coinbase maturity constant (must match chainparams)
 	// TWINS mainnet uses 60 blocks for coinbase maturity
 	const coinbaseMaturity = 60
@@ -1199,29 +2201,64 @@ func (c *GoCoreClient) convertWalletTransaction(wtx *wallet.WalletTransaction) T
 		}
 	}
 
+	// For send transactions, extract the external recipient address(es) from
+	// the raw tx outputs (with wallet-owned change filtered out). wtx.Address
+	// is firstSpendAddress (the wallet's funding address, NOT the recipient),
+	// so it cannot be displayed under a "To" label without misleading the
+	// user. For cache-loaded entries with nil wtx.Tx, fetch the raw tx via
+	// storage; on storage miss recipients stays nil and the frontend falls
+	// back to displaying wtx.Address under a "Sent from" label.
+	//
+	// Only TxCategorySend populates this field. TxCategoryToSelf and
+	// consolidation skip extraction because all of their value outputs are
+	// wallet-owned by definition (the filter would drop everything) and the
+	// frontend already labels these rows correctly ("To yourself" /
+	// "Consolidated to") via the existing wtx.Address path.
+	var recipients []string
+	if wtx.Category == wallet.TxCategorySend {
+		matchTx := wtx.Tx
+		if matchTx == nil && c.storage != nil {
+			if td, err := c.storage.GetTransactionData(wtx.Hash); err == nil && td != nil {
+				matchTx = td.TxData
+			}
+		}
+		if matchTx != nil {
+			var isOurScript func([]byte) bool
+			if c.wallet != nil {
+				w := c.wallet
+				isOurScript = func(script []byte) bool {
+					_, isOurs := w.IsOurScript(script)
+					return isOurs
+				}
+			}
+			recipients = extractRecipientAddressesFromTx(matchTx, isOurScript, c.network)
+		}
+	}
+
 	return Transaction{
-		TxID:          wtx.Hash.String(),
-		Vout:          int(wtx.Vout),
-		Amount:        amount,
-		Fee:           fee,
-		Confirmations: int(wtx.Confirmations),
-		BlockHash:     blockHashStr(wtx.BlockHash),
-		BlockHeight:   int64(wtx.BlockHeight),
-		Time:          wtx.Time,
-		Type:          txType,
-		Address:       wtx.Address,
-		FromAddress:   wtx.FromAddress,
-		Label:         label,
-		Comment:       wtx.Comment,
-		Category:      string(wtx.Category),
-		IsWatchOnly:   wtx.WatchOnly,
-		IsLocked:      false, // SwiftTX not implemented
-		IsConflicted:  wtx.IsConflicted,
-		IsCoinbase:    isCoinbase,
-		IsCoinstake:   isCoinstake,
-		MaturesIn:     maturesIn,
-		Debit:         debit,
-		Credit:        credit,
+		TxID:               wtx.Hash.String(),
+		Vout:               int(wtx.Vout),
+		Amount:             amount,
+		Fee:                fee,
+		Confirmations:      int(wtx.Confirmations),
+		BlockHash:          blockHashStr(wtx.BlockHash),
+		BlockHeight:        int64(wtx.BlockHeight),
+		Time:               wtx.Time,
+		Type:               txType,
+		Address:            wtx.Address,
+		RecipientAddresses: recipients,
+		FromAddress:        wtx.FromAddress,
+		Label:              label,
+		Comment:            wtx.Comment,
+		Category:           string(wtx.Category),
+		IsWatchOnly:        wtx.WatchOnly,
+		IsLocked:           false, // SwiftTX not implemented
+		IsConflicted:       wtx.IsConflicted,
+		IsCoinbase:         isCoinbase,
+		IsCoinstake:        isCoinstake,
+		MaturesIn:          maturesIn,
+		Debit:              debit,
+		Credit:             credit,
 	}
 }
 
@@ -1232,6 +2269,68 @@ func blockHashStr(h types.Hash) string {
 		return ""
 	}
 	return h.String()
+}
+
+// extractRecipientAddressesFromTx returns the external (non-wallet) output
+// addresses on a transaction in natural output order. Wallet-owned outputs
+// (i.e. change) are filtered out via isOurScript so the result represents
+// the user-visible recipients of a send.
+//
+// The isOurScript predicate is supplied by the caller (typically wired to
+// wallet.Wallet.IsOurScript) so this helper can be unit-tested without
+// constructing a real wallet. A nil predicate is treated as "no filter" —
+// all decoded output addresses are returned, including any wallet-owned
+// change. Callers in production paths MUST pass a non-nil predicate.
+//
+// `networkName` selects the address prefix ("mainnet" / "testnet" / "regtest").
+// Empty / unknown values fall back to mainnet per
+// `crypto.GetPubKeyHashNetworkID` semantics. Wired from
+// `GoCoreClient.network` (set by `SetNetwork`).
+//
+// Returns nil when:
+//   - tx is nil
+//   - every output is wallet-owned (e.g. send-to-self misclassified as send)
+//   - every output has an unknown / undecodable script
+//
+// Multisig and other non-P2PKH/P2SH/P2PK script types are skipped silently
+// rather than producing a placeholder — the audit task targets the common
+// P2PKH send case, and a future enhancement can add multisig display.
+func extractRecipientAddressesFromTx(tx *types.Transaction, isOurScript func([]byte) bool, networkName string) []string {
+	if tx == nil {
+		return nil
+	}
+	var recipients []string
+	for _, out := range tx.Outputs {
+		if out == nil || len(out.ScriptPubKey) == 0 {
+			continue
+		}
+		// Skip wallet-owned outputs (change). The wallet does the canonical
+		// match on raw script bytes — no address-string round-trip required.
+		if isOurScript != nil && isOurScript(out.ScriptPubKey) {
+			continue
+		}
+		// Classify and extract the recipient address. `binary.AnalyzeScript`
+		// returns the hash160 directly for P2PKH/P2SH and `hash160(pubkey)`
+		// for P2PK, so a single `crypto.NewAddressFromHash` call covers all
+		// three with the network-aware prefix.
+		scriptType, scriptHash := binary.AnalyzeScript(out.ScriptPubKey)
+		var netID byte
+		switch scriptType {
+		case binary.ScriptTypeP2PKH, binary.ScriptTypeP2PK:
+			netID = crypto.GetPubKeyHashNetworkID(networkName)
+		case binary.ScriptTypeP2SH:
+			netID = crypto.GetScriptHashNetworkID(networkName)
+		default:
+			// Unknown / multisig / OP_RETURN — skip.
+			continue
+		}
+		addr, err := crypto.NewAddressFromHash(scriptHash[:], netID)
+		if err != nil || addr == nil {
+			continue
+		}
+		recipients = append(recipients, addr.String())
+	}
+	return recipients
 }
 
 // mapCategoryToType maps wallet.TxCategory to core.TransactionType
@@ -1274,10 +2373,15 @@ func (c *GoCoreClient) ListTransactionsFiltered(filter TransactionFilter) (Trans
 		filter.Page = 1
 	}
 
-	// Convert MinAmount from TWINS to satoshis for wallet layer
+	// Convert MinAmount / MaxAmount from TWINS to satoshis for wallet layer.
+	// Both bounds are 0-means-unbounded, so we only multiply non-zero values.
 	minAmountSat := float64(0)
 	if filter.MinAmount > 0 {
 		minAmountSat = filter.MinAmount * satoshisPerTWINS
+	}
+	maxAmountSat := float64(0)
+	if filter.MaxAmount > 0 {
+		maxAmountSat = filter.MaxAmount * satoshisPerTWINS
 	}
 
 	params := wallet.TransactionFilterParams{
@@ -1289,6 +2393,7 @@ func (c *GoCoreClient) ListTransactionsFiltered(filter TransactionFilter) (Trans
 		TypeFilter:       filter.TypeFilter,
 		SearchText:       filter.SearchText,
 		MinAmount:        minAmountSat,
+		MaxAmount:        maxAmountSat,
 		WatchOnlyFilter:  filter.WatchOnlyFilter,
 		HideOrphanStakes: filter.HideOrphanStakes,
 		SortColumn:       filter.SortColumn,
@@ -1341,10 +2446,15 @@ func (c *GoCoreClient) ExportFilteredTransactionsCSV(filter TransactionFilter) (
 		return "", fmt.Errorf("wallet not initialized")
 	}
 
-	// Convert MinAmount from TWINS to satoshis for wallet layer
+	// Convert MinAmount / MaxAmount from TWINS to satoshis for wallet layer.
+	// Both bounds are 0-means-unbounded.
 	minAmountSat := float64(0)
 	if filter.MinAmount > 0 {
 		minAmountSat = filter.MinAmount * satoshisPerTWINS
+	}
+	maxAmountSat := float64(0)
+	if filter.MaxAmount > 0 {
+		maxAmountSat = filter.MaxAmount * satoshisPerTWINS
 	}
 
 	// PageSize <= 0 returns all matching results (no pagination)
@@ -1357,6 +2467,7 @@ func (c *GoCoreClient) ExportFilteredTransactionsCSV(filter TransactionFilter) (
 		TypeFilter:       filter.TypeFilter,
 		SearchText:       filter.SearchText,
 		MinAmount:        minAmountSat,
+		MaxAmount:        maxAmountSat,
 		WatchOnlyFilter:  filter.WatchOnlyFilter,
 		HideOrphanStakes: filter.HideOrphanStakes,
 		SortColumn:       filter.SortColumn,
@@ -1483,7 +2594,6 @@ func (c *GoCoreClient) GetWalletInfo() (WalletInfo, error) {
 	}
 
 	// Convert satoshis to TWINS (1 TWINS = 100,000,000 satoshis)
-
 
 	balance := w.GetBalance()
 	info := WalletInfo{
@@ -1675,15 +2785,39 @@ func (c *GoCoreClient) GetBlockchainInfo() (BlockchainInfo, error) {
 
 	info := BlockchainInfo{
 		Blocks:        int64(height),
+		Headers:       int64(height),
 		BestBlockHash: tip.String(),
 		Chain:         "main",
 	}
+
+	// Populate last block time from chain tip block header timestamp.
+	// Cache by tip hash so successive 10-second status polls don't repeatedly
+	// load the full tip block (which fetches all transactions). The full read
+	// happens at most once per new chain tip.
+	info.LastBlockTime = c.lastBlockTimeForTip(tip)
 
 	// Populate sync status fields from syncer and p2p server if available
 	c.mu.RLock()
 	syncer := c.syncer
 	p2p := c.p2pServer
+	dataDir := c.dataDir
+	bc := c.blockchain
 	c.mu.RUnlock()
+
+	// Difficulty: derived inline from the cached tip block's compact target.
+	// lastBlockTimeForTip above populates the bits cache for this tip.
+	info.Difficulty = c.difficultyForTip(tip)
+
+	// ChainSizeBytes: total size of <dataDir>/blockchain.db, cached with 10s TTL.
+	info.ChainSizeBytes = c.chainSizeForDataDir(dataDir)
+
+	// MoneySupply: total TWINS in circulation at the chain tip. Optional read;
+	// errors are silently swallowed (field stays at 0 → frontend renders "N/A").
+	if bc != nil {
+		if sat, err := bc.GetMoneySupply(height); err == nil && sat > 0 {
+			info.MoneySupply = float64(sat) / satoshisPerTWINS
+		}
+	}
 
 	// Populate peer count and connecting state for frontend sync status determination
 	if p2p != nil {
@@ -1704,6 +2838,12 @@ func (c *GoCoreClient) GetBlockchainInfo() (BlockchainInfo, error) {
 		}
 
 		info.IsSyncing = isSyncing
+
+		// Note: we do NOT populate info.Headers from networkHeight as a proxy.
+		// The syncer doesn't track headers separately from blocks today, so
+		// Headers stays equal to Blocks. The Sync card shows Network height
+		// directly from NetworkInfo.network_height instead, which is the
+		// authoritative source for "how far ahead the network is".
 
 		// Calculate behind blocks (only if target > current)
 		if target > current {
@@ -1737,6 +2877,146 @@ func (c *GoCoreClient) GetBlockchainInfo() (BlockchainInfo, error) {
 	}
 
 	return info, nil
+}
+
+// lastBlockTimeForTip returns the chain-tip block header timestamp (Unix seconds),
+// caching by tip hash so successive calls within the same chain tip do not re-read
+// the full block (which fetches all transactions). Returns 0 if the tip block can't
+// be loaded — the GUI renders that as "N/A".
+func (c *GoCoreClient) lastBlockTimeForTip(tip types.Hash) int64 {
+	c.tipTimeMu.Lock()
+	defer c.tipTimeMu.Unlock()
+
+	if c.tipTimeUnix > 0 && c.tipTimeHash == tip {
+		return c.tipTimeUnix
+	}
+
+	tipBlock, err := c.storage.GetBlock(tip)
+	if err != nil || tipBlock == nil || tipBlock.Header == nil {
+		return 0
+	}
+	c.tipTimeHash = tip
+	c.tipTimeUnix = int64(tipBlock.Header.Timestamp)
+	return c.tipTimeUnix
+}
+
+// difficultyForTip returns the current PoS difficulty derived from the chain
+// tip block's compact-target field. Reads the tip block directly from storage
+// (no cache) to keep the implementation independent of lastBlockTimeForTip's
+// cache state. Returns 0 if the tip block can't be loaded or the target is
+// degenerate.
+//
+// Uses the Bitcoin-style RPC display formula (matches RPC `getdifficulty`
+// output bit-for-bit). Mirrors `calculateDifficultyFromBits` in
+// internal/rpc/blockchain_adapter.go:76. Note that `BlockChain.GetDifficulty`
+// uses a different formula based on `uint64(1) << multiplier` which overflows
+// to 0 for typical TWINS bits exponents (>= 0x0a) — this 256-step multiply/
+// divide form is the correct one.
+func (c *GoCoreClient) difficultyForTip(tip types.Hash) float64 {
+	tipBlock, err := c.storage.GetBlock(tip)
+	if err != nil || tipBlock == nil || tipBlock.Header == nil {
+		return 0
+	}
+	bits := tipBlock.Header.Bits
+	if bits == 0 {
+		return 0
+	}
+
+	// Extract exponent (nShift) from high byte
+	nShift := int((bits >> 24) & 0xff)
+	// Extract mantissa from lower 3 bytes
+	mantissa := bits & 0x00ffffff
+	if mantissa == 0 {
+		return 0
+	}
+
+	// Base difficulty = 0x0000ffff / mantissa, adjusted for exponent
+	// difference from reference exponent 29 (×256 per step below, ÷256 above).
+	dDiff := float64(0x0000ffff) / float64(mantissa)
+	for nShift < 29 {
+		dDiff *= 256.0
+		nShift++
+	}
+	for nShift > 29 {
+		dDiff /= 256.0
+		nShift--
+	}
+	return dDiff
+}
+
+// chainSizeCacheTTL bounds how often chainSizeForDataDir performs the full
+// recursive WalkDir of the Pebble database directory. Pebble databases are
+// typically hundreds of .sst files; the on-disk total grows slowly compared
+// to the GUI status poll cadence (~10s), so a 60s TTL keeps the displayed
+// "Chain size on disk" value fresh enough without paying the walk cost on
+// every poll.
+const chainSizeCacheTTL = 60 * time.Second
+
+// chainSizeForDataDir returns the cached total size of <dataDir>/blockchain.db
+// in bytes. Uses stale-while-revalidate semantics:
+//   - Returns the current cached value immediately (never blocks the caller).
+//   - When the cache is expired, kicks off a background goroutine to refresh
+//     it. The chainSizeWalking atomic guard ensures at most one refresh is
+//     in flight at a time.
+//   - On the very first call (before any walk has completed) returns 0.
+//
+// This pattern is critical because GetBlockchainInfo() is on the GUI status
+// hot path (10s polling cycle); a synchronous WalkDir of a large Pebble
+// database would freeze the UI for seconds every time the cache expires.
+func (c *GoCoreClient) chainSizeForDataDir(dataDir string) int64 {
+	c.chainSizeMu.Lock()
+	cached := c.chainSizeBytes
+	expired := time.Now().After(c.chainSizeExpiry)
+	c.chainSizeMu.Unlock()
+
+	if !expired || dataDir == "" {
+		return cached
+	}
+
+	// Cache expired: trigger a background refresh if no other walk is in flight.
+	// CompareAndSwap on the atomic guard makes this race-free without holding
+	// chainSizeMu across the goroutine spawn.
+	if c.chainSizeWalking.CompareAndSwap(false, true) {
+		go c.refreshChainSize(dataDir)
+	}
+
+	// Return the stale cached value while the refresh runs.
+	return cached
+}
+
+// refreshChainSize performs the recursive WalkDir of <dataDir>/blockchain.db
+// off the hot path and updates the chain-size cache atomically on success.
+// On total walk failure (e.g. missing directory) leaves the cache untouched
+// but bumps the expiry by chainSizeCacheTTL so we don't hammer a broken path
+// on every poll. Always clears chainSizeWalking before returning.
+func (c *GoCoreClient) refreshChainSize(dataDir string) {
+	defer c.chainSizeWalking.Store(false)
+
+	dbPath := filepath.Join(dataDir, "blockchain.db")
+	var total int64
+	walkErr := filepath.WalkDir(dbPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			// Skip unreadable entries; partial size is acceptable.
+			return nil
+		}
+		if !d.IsDir() {
+			if fi, statErr := d.Info(); statErr == nil {
+				total += fi.Size()
+			}
+		}
+		return nil
+	})
+
+	c.chainSizeMu.Lock()
+	defer c.chainSizeMu.Unlock()
+	if walkErr != nil {
+		// Don't overwrite the cached value on a transient walk error, but
+		// bump expiry so the next caller doesn't immediately retry.
+		c.chainSizeExpiry = time.Now().Add(chainSizeCacheTTL)
+		return
+	}
+	c.chainSizeBytes = total
+	c.chainSizeExpiry = time.Now().Add(chainSizeCacheTTL)
 }
 
 // formatBehindTime converts blocks behind into a human-readable time string.
@@ -1785,10 +3065,14 @@ func (c *GoCoreClient) GetNetworkInfo() (NetworkInfo, error) {
 
 	if p2pServer != nil {
 		info.Connections = int(p2pServer.GetPeerCount())
+		info.InboundPeers = int(p2pServer.GetInboundCount())
+		info.OutboundPeers = int(p2pServer.GetOutboundCount())
 		info.NetworkActive = p2pServer.IsStarted()
 	} else {
 		// P2P not initialized yet
 		info.Connections = 0
+		info.InboundPeers = 0
+		info.OutboundPeers = 0
 		info.NetworkActive = false
 	}
 
@@ -1979,9 +3263,16 @@ func (c *GoCoreClient) GetStakingInfo() (StakingInfo, error) {
 		info.Staking = consensus.IsStaking()
 	}
 
-	// Get wallet lock status
+	// Get wallet lock status and reserve balance.
+	// GetReserveBalance returns (enabled, amount, err). The GUI displays the
+	// CONFIGURED threshold so the user can always see what they set in Options
+	// — regardless of whether reserve staking is currently active. The
+	// `enabled` flag governs runtime staking behaviour, not display.
 	if w != nil {
 		info.WalletUnlocked = !w.IsLocked()
+		if _, sat, err := w.GetReserveBalance(); err == nil {
+			info.ReserveBalance = float64(sat) / satoshisPerTWINS
+		}
 	}
 
 	// Compute expected time to next stake from chain data and wallet UTXOs.

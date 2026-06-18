@@ -1,30 +1,28 @@
 ## Changelog
 
+### v4.0.43
+
 **Features & Improvements**
 
-- **RPC TLS Listener (mTLS + Fail-Safe)** — Production-grade TLS listener for the JSON-RPC server with optional mutual TLS and fail-safe behavior on cert errors.
-- **SIGHUP Cert Reload + Expiry Ticker + getnetworkinfo** — Live cert reload via SIGHUP, periodic expiry monitoring, and TLS state surfaced through getnetworkinfo.
-- **reloadrpccerts RPC Handler (Argon2id)** — New RPC for hot cert rotation, gated by an Argon2id-hashed reload passphrase.
-- **TCP Rate Limiting + IPv6 /64 Bucketing** — Per-IP RPC connection limiting with correct IPv6 /64 prefix grouping to prevent address-rotation bypass.
-- **twins-cli HTTPS Transport + SPKI Pin** — CLI now talks HTTPS to the daemon with SPKI pinning and helper flags for cert/pin management.
-- **GUI Settings Schema for RPC TLS** — Settings schema and bridge wiring so the GUI can read/configure RPC TLS options.
-- **Hide Masternode Debug Tab When Disabled (Hot-Reload)** — masternode.debug config flag now hides/shows the tab live without restart.
-- **Masternode Debug Tab: Payload Caps + Perf Cleanup + Outbound DSEG Coverage** — Bounded event payloads, reduced overhead, and outbound DSEG events are now captured.
-- **MultiSend Status in Staking Tooltip** — Staking tooltip now shows MultiSend active state and configuration at a glance.
-- **Cap Send Recipients at 100** — Hard cap on the number of recipients per Send transaction to keep tx size predictable.
-- **Shared UI Primitives Extracted** — IconButton, PillButton, and Banner consolidated into reusable primitives; Receive page polished against the new tokens.
-- **Receive Design Language Propagated to Send & Dialogs** — Send page shell, RecipientField + SendRecipients, Send Coin Control + Fee/Send card, ConfirmationDialog, CustomFeeDialog, and CoinControlDialog all restyled and token-audited to match Receive.
-- **Recipient Field: Single-Row Inline Layout** — Recipient input collapsed to a single inline row for higher density.
-- **Coin Control Features Card: Restructured & Single-Row Body** — Denser, more discoverable Coin Control card layout with single-row body.
-- **Masternodes Debug Dashboard Restyle** — Top section, stats bar, dashboard cards, and overview reworked into a 2×3 card grid.
-- **Tighten Send Page Fee+Send Card Layout** — Fee and Send action card spacing tightened for better vertical rhythm.
+- **GUI Receive Design Language — App-Wide Rollout** — The unified "Receive" design language (shared tokens + primitives) propagated across Overview, Transactions, Explorer, and Masternodes — a coordinated multi-PR restyle of nearly every page shell, table, card, and dialog for visual consistency.
+- **Overview Page Redesign** — Rebuilt into a 2×2 card grid (Balance / Sync / Network / Staking) with a horizontal-strip balance hero, a consolidated status card, and a full-width sync-progress row. Adds Money Supply, Chain Difficulty, Mempool Transactions, and Chain-Size-on-Disk to the Sync card.
+- **Transactions Page Overhaul** — Chip-based filter bar with smart search, saved views, transaction-type multi-select, min/max amount range, redesigned pagination + export dialog, active-sort column highlighting, and anti-flicker on filter/sort/page changes.
+- **Block Explorer Redesign** — Hero-card + 2-column layouts for Block, Transaction, and Address detail views; row-card Block List; real-time search with type detection, history dropdown, and polished not-found UX; auto-refresh with prominent prev/next navigation; and PoS internals (stake modifier + proof hash) surfaced on block detail.
+- **Explorer Backend Enrichment** — `TxOutput.IsSpent` now populated from storage, DTO enrichment, P2PK script-type detection, coinstake reward breakdown, an OP_RETURN full-payload modal, and a split fast-basic / slow-stats address fetch with backend UTXO pagination.
+- **Masternodes UI Restyle** — Page shell, action buttons, My/Network masternode tables, statistics panel, payment-stats tab, filters, setup wizard, and config/edit dialogs all restyled to the Receive design language. Includes a row-card table conversion, per-row Start actions, and status-gated controls.
+- **Receive Page Polish** — Compact hero, custom unit select, server-side pagination for Recent Requests, a QR-card icon column (save image / new address), and style parity with the Transactions table.
+- **Global Date/Age Display Format Setting** — Configurable date/age formatting across the GUI, with the timezone suffix moved into column headers and cross-view consistency fixes.
+- **Shared UI Primitives Extracted** — Reusable PaginationFooter and RowsPerPageSelect components plus shared design tokens, consumed across Explorer, Transactions, and Masternodes.
 
-Bug Fixes
+**Bug Fixes**
 
-- **CLI Flags After Positional Arguments** — twinsd/twins-cli flags now work regardless of position relative to positional args.
-- **MultiSend Active Logic + GUI Binary Cleanup** — Corrected MultiSend active-state evaluation and removed a stale GUI binary from the tree.
-- **Masternode Debug Tab Emission Coverage (H-0 Root Cause)** — Fixed missed emissions at H-0 that caused undercounted debug events.
-- **Masternode Debug Rate Denominators** — Corrected denominators in rate calculations so per-second/per-minute figures match observed traffic.
-- **Masternode Debug Tab Aggregation Populations** — Aggregation buckets now populate correctly across all event types.
-- **MN Debug Events Tab Scope & Feedback** — Scoped events tab to the active selection and addressed review feedback on filters/UX.
-- **Coin Control Features Label Colors** — Restored intended label colors after the design-language restyle.
+- **maxPeers Not Capping Outbound Connections** — Outbound peer connections now respect the configured `maxPeers` limit.
+- **Transactions Date Range Filter** — Uses local timezone with correct week-start and last-month end-bound; stale range inputs no longer stick.
+- **Transactions Row Re-render Storm** — Opening a modal no longer triggers a full-list re-render.
+- **Transactions Search** — Label-substring and recipient-address matching now work for sent transactions; fixed the inverted amount range.
+- **Address Stats Slow on Large Addresses** — Optimized stats computation for high-activity addresses; fixed input/output value overflow and a row key collision.
+- **Explorer Navigation Errors** — Fixed Block/Tx detail prev/next navigation and parent-stack handling; removed the BlockList page-switch loading flicker.
+- **TransactionDetailsDialog Rules-of-Hooks Violation** — Fixed conditional hook ordering that could crash the dialog.
+- **Tx Detail Correctness** — Corrected P2PK script-type detection and coinstake reward breakdown; fixed the misleading "To" address shown on send transactions.
+- **Pagination Page-Input Width** — Widened the page-number input to fit large page counts.
+- **Balance Card Label Casing** — Fixed inconsistent label casing on the balance card.

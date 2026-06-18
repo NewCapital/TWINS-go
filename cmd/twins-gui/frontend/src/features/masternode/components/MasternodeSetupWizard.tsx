@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { X, ChevronLeft, ChevronRight, Check, Server, Clock, Wallet, RefreshCw, Key, Globe, Tag, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Check, Server, Clock, Wallet, RefreshCw, Key, Globe, Tag, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { sanitizeErrorMessage } from '@/shared/utils/sanitize';
+import { Banner } from '@/shared/components/Banner';
+import { IconButton } from '@/shared/components/IconButton';
+import { PillButton } from '@/shared/components/PillButton';
 import {
   GetMasternodeConfig,
   AddMasternodeConfig,
@@ -439,7 +442,11 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
               <p className="text-sm text-[#aaa]">{t('wizard.step2.description')}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div
+              className="grid grid-cols-2 gap-3"
+              role="radiogroup"
+              aria-label={t('wizard.step2.subtitle')}
+            >
               {TIERS.map(tier => {
                 const available = isTierAvailable(tier.id);
                 const pending = isTierPending(tier.id);
@@ -448,6 +455,8 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                 return (
                   <button
                     key={tier.id}
+                    role="radio"
+                    aria-checked={selected}
                     onClick={() => {
                       if (available) {
                         setState(prev => ({ ...prev, tier: tier.id, collateral: null }));
@@ -457,17 +466,17 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                     disabled={!available}
                     className={`p-4 rounded-lg border-2 text-left transition-all ${
                       selected
-                        ? 'border-[#0066cc] bg-[#0066cc20]'
+                        ? 'border-[#27ae60] bg-[#27ae6020]'
                         : available
                         ? 'border-[#555] hover:border-[#777] bg-[#333]'
                         : 'border-[#444] bg-[#2a2a2a] opacity-50 cursor-not-allowed'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <span className={`font-semibold ${selected ? 'text-[#0099ff]' : 'text-[#ddd]'}`}>
+                      <span className={`font-semibold ${selected ? 'text-[#27ae60]' : 'text-[#ddd]'}`}>
                         {tier.name}
                       </span>
-                      {selected && <Check size={18} className="text-[#0099ff]" />}
+                      {selected && <Check size={18} className="text-[#27ae60]" />}
                     </div>
                     <div className="text-xs text-[#999]">
                       <div>{t('wizard.step2.tierCard.collateral')}: {tier.collateral.toLocaleString()} TWINS</div>
@@ -500,14 +509,19 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
             </div>
 
             {readyOutputs.length === 0 && pendingOutputs.length === 0 ? (
-              <div className="bg-[#3a2a2a] p-4 rounded-lg text-sm text-[#ff6666]">
-                {t('wizard.step3.noUtxos', {
+              <Banner
+                variant="error"
+                message={t('wizard.step3.noUtxos', {
                   tier: state.tier ?? 'unknown',
                   amount: state.tier ? getTierCollateral(state.tier).toLocaleString() : '0',
                 })}
-              </div>
+              />
             ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <div
+                className="space-y-2 max-h-[300px] overflow-y-auto"
+                role="radiogroup"
+                aria-label={t('wizard.step3.subtitle')}
+              >
                 {readyOutputs.map(output => {
                   const selected = state.collateral?.txHash === output.txHash &&
                     state.collateral?.outputIndex === output.outputIndex;
@@ -515,13 +529,15 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                   return (
                     <button
                       key={`${output.txHash}:${output.outputIndex}`}
+                      role="radio"
+                      aria-checked={selected}
                       onClick={() => {
                         setState(prev => ({ ...prev, collateral: output }));
                         setValidationErrors(prev => ({ ...prev, collateral: '' }));
                       }}
                       className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
                         selected
-                          ? 'border-[#0066cc] bg-[#0066cc20]'
+                          ? 'border-[#27ae60] bg-[#27ae6020]'
                           : 'border-[#555] hover:border-[#777] bg-[#333]'
                       }`}
                     >
@@ -529,7 +545,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                         <div className="font-mono text-xs text-[#aaa]">
                           {output.txHash.substring(0, 16)}...:{output.outputIndex}
                         </div>
-                        {selected && <Check size={16} className="text-[#0099ff]" />}
+                        {selected && <Check size={16} className="text-[#27ae60]" />}
                       </div>
                       <div className="flex justify-between items-center mt-1">
                         <span className="text-sm text-[#ddd]">
@@ -542,9 +558,10 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                 })}
 
                 {readyOutputs.length === 0 && pendingOutputs.length > 0 && (
-                  <div className="bg-[#3a3020] p-3 rounded-lg text-sm text-[#ffaa00]">
-                    {t('wizard.step3.waitingForConfirmations', { count: pendingOutputs[0].confirmations })}
-                  </div>
+                  <Banner
+                    variant="warning"
+                    message={t('wizard.step3.waitingForConfirmations', { count: pendingOutputs[0].confirmations })}
+                  />
                 )}
 
                 {pendingOutputs.map(output => (
@@ -592,7 +609,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                 onClick={() => setKeyMode('generate')}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm transition-all ${
                   keyMode === 'generate'
-                    ? 'bg-[#0066cc] text-white'
+                    ? 'bg-[#4a7c59] border border-[#5a8c69] text-white'
                     : 'bg-[#444] text-[#ddd] hover:bg-[#555]'
                 }`}
               >
@@ -602,7 +619,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                 onClick={() => setKeyMode('existing')}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm transition-all ${
                   keyMode === 'existing'
-                    ? 'bg-[#0066cc] text-white'
+                    ? 'bg-[#4a7c59] border border-[#5a8c69] text-white'
                     : 'bg-[#444] text-[#ddd] hover:bg-[#555]'
                 }`}
               >
@@ -615,7 +632,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                 <button
                   onClick={handleGenerateKey}
                   disabled={isGeneratingKey}
-                  className="w-full py-3 px-4 bg-[#0066cc] text-white rounded-lg hover:bg-[#0055aa] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 bg-[#4a7c59] border border-[#5a8c69] text-white rounded-md hover:bg-[#5a8c69] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Key size={18} className={isGeneratingKey ? 'animate-pulse' : ''} />
                   {isGeneratingKey ? t('wizard.step4.generating') : t('wizard.step4.generateNew')}
@@ -638,7 +655,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                     setValidationErrors(prev => ({ ...prev, privateKey: '' }));
                   }}
                   placeholder={t('wizard.step4.keyPlaceholder')}
-                  className="w-full px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border border-[#555] rounded focus:outline-none focus:border-[#0066cc] font-mono"
+                  className="w-full px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border border-[#555] rounded focus:outline-none focus:border-[#27ae60] font-mono"
                 />
               </div>
             )}
@@ -674,7 +691,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                       setValidationErrors(prev => ({ ...prev, ip: '' }));
                     }}
                     placeholder={t('wizard.step5.ipPlaceholder')}
-                    className={`flex-1 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#0066cc] ${
+                    className={`flex-1 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#27ae60] ${
                       validationErrors.ip ? 'border-[#ff6666]' : 'border-[#555]'
                     }`}
                   />
@@ -697,7 +714,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                   }}
                   min={1}
                   max={65535}
-                  className={`w-32 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#0066cc] ${
+                  className={`w-32 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#27ae60] ${
                     validationErrors.port ? 'border-[#ff6666]' : 'border-[#555]'
                   }`}
                 />
@@ -733,7 +750,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                   }}
                   placeholder={t('wizard.step6.aliasPlaceholder')}
                   maxLength={50}
-                  className={`flex-1 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#0066cc] ${
+                  className={`flex-1 px-3 py-2 text-sm bg-[#2b2b2b] text-[#ddd] border rounded focus:outline-none focus:border-[#27ae60] ${
                     validationErrors.alias ? 'border-[#ff6666]' : 'border-[#555]'
                   }`}
                 />
@@ -791,12 +808,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
                   </div>
                 </div>
 
-                {error && (
-                  <div className="bg-[#4a2a2a] border border-[#ff6666] p-3 rounded-lg flex items-center gap-2">
-                    <AlertCircle size={16} className="text-[#ff6666]" />
-                    <span className="text-sm text-[#ff6666]">{error}</span>
-                  </div>
-                )}
+                {error && <Banner variant="error" message={error} />}
               </>
             )}
           </div>
@@ -834,14 +846,13 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
               {t('wizard.progress', { current: state.step, total: TOTAL_STEPS })}
             </p>
           </div>
-          <button
+          <IconButton
+            icon={<X size={14} />}
             onClick={handleClose}
             disabled={isCreating}
-            className="text-[#999] hover:text-[#ddd] transition-colors disabled:opacity-50"
-            aria-label="Close dialog"
-          >
-            <X size={20} />
-          </button>
+            title={t('common:buttons.close', { defaultValue: 'Close' })}
+            ariaLabel={t('common:buttons.close', { defaultValue: 'Close' })}
+          />
         </div>
 
         {/* Progress bar */}
@@ -851,7 +862,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
               <div
                 key={i}
                 className={`flex-1 h-1 rounded-full transition-colors ${
-                  i < state.step ? 'bg-[#0066cc]' : 'bg-[#444]'
+                  i < state.step ? 'bg-[#27ae60]' : 'bg-[#444]'
                 }`}
               />
             ))}
@@ -860,7 +871,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
 
         {/* Step title */}
         <div className="px-6 py-2">
-          <h3 className="text-sm font-medium text-[#0099ff]">
+          <h3 className="text-sm font-medium text-[#ccc]">
             {t(`wizard.step${state.step}.title`)}
           </h3>
         </div>
@@ -876,31 +887,32 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
 
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-[#555]">
-          <button
+          <PillButton
+            icon={null}
+            label={t('wizard.buttons.cancel')}
             onClick={handleClose}
             disabled={isCreating}
-            className="px-4 py-2 text-sm bg-[#444] text-[#ddd] rounded hover:bg-[#555] transition-colors disabled:opacity-50"
-          >
-            {t('wizard.buttons.cancel')}
-          </button>
+            title={t('wizard.buttons.cancel')}
+            ariaLabel={t('wizard.buttons.cancel')}
+          />
 
           <div className="flex gap-2">
             {state.step > 1 && !createSuccess && (
-              <button
+              <PillButton
+                icon={<ChevronLeft size={12} />}
+                label={t('wizard.buttons.back')}
                 onClick={handleBack}
                 disabled={isCreating}
-                className="px-4 py-2 text-sm bg-[#444] text-[#ddd] rounded hover:bg-[#555] transition-colors disabled:opacity-50 flex items-center gap-1"
-              >
-                <ChevronLeft size={16} />
-                {t('wizard.buttons.back')}
-              </button>
+                title={t('wizard.buttons.back')}
+                ariaLabel={t('wizard.buttons.back')}
+              />
             )}
 
             {state.step < TOTAL_STEPS && (
               <button
                 onClick={handleNext}
                 disabled={isLoading}
-                className="px-4 py-2 text-sm bg-[#0066cc] text-white rounded hover:bg-[#0055aa] transition-colors disabled:opacity-50 flex items-center gap-1"
+                className="px-4 py-2 text-sm bg-[#4a7c59] border border-[#5a8c69] text-white font-medium rounded-md hover:bg-[#5a8c69] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 {t('wizard.buttons.next')}
                 <ChevronRight size={16} />
@@ -911,7 +923,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
               <button
                 onClick={handleCreate}
                 disabled={isCreating}
-                className="px-4 py-2 text-sm bg-[#0066cc] text-white rounded hover:bg-[#0055aa] transition-colors disabled:opacity-50 flex items-center gap-1"
+                className="px-4 py-2 text-sm bg-[#4a7c59] border border-[#5a8c69] text-white font-medium rounded-md hover:bg-[#5a8c69] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 {isCreating ? (
                   <>
@@ -930,7 +942,7 @@ export const MasternodeSetupWizard: React.FC<MasternodeSetupWizardProps> = ({
             {createSuccess && (
               <button
                 onClick={handleStartAndClose}
-                className="px-4 py-2 text-sm bg-[#00aa66] text-white rounded hover:bg-[#009955] transition-colors flex items-center gap-1"
+                className="px-4 py-2 text-sm bg-[#4a7c59] border border-[#5a8c69] text-white font-medium rounded-md hover:bg-[#5a8c69] transition-colors flex items-center gap-1"
               >
                 {t('wizard.buttons.startNow')}
               </button>

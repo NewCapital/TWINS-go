@@ -47,6 +47,14 @@ export const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!isInteractive) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   const tooltip = mode === 'interactive'
     ? t('refreshCountdown.clickToRefresh')
     : t('refreshCountdown.tooltip', { seconds: countdown });
@@ -63,11 +71,14 @@ export const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
         flexShrink: 0,
       }}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       title={tooltip}
       role={mode === 'interactive' ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
       aria-label={tooltip}
+      aria-disabled={mode === 'interactive' && isLoading ? true : undefined}
     >
       <svg width={size} height={size} style={{ position: 'absolute', top: 0, left: 0 }}>
         {/* Background ring */}
@@ -95,7 +106,8 @@ export const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
         />
       </svg>
 
-      {/* Center text: seconds remaining */}
+      {/* Center text: seconds remaining only. Unit suffix dropped — the
+          countdown ring context makes the seconds unit self-evident. */}
       {!isLoading && (
         <div
           style={{
@@ -107,11 +119,11 @@ export const RefreshCountdown: React.FC<RefreshCountdownProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            lineHeight: 1,
+            userSelect: 'none',
             fontSize,
             fontWeight: 500,
             color: '#ddd',
-            lineHeight: 1,
-            userSelect: 'none',
           }}
         >
           {countdown}

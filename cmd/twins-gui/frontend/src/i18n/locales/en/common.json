@@ -115,7 +115,8 @@
     "multisendNotActive": "Not Active",
     "connections": "{{count}} network connection",
     "connections_other": "{{count}} network connections",
-    "unitTooltip": "Unit to show amounts in. Click to select another unit."
+    "unitTooltip": "Unit to show amounts in. Click to select another unit.",
+    "dateFormatTooltip": "How dates render across the app. Click to select another format."
   },
   "p2pError": {
     "title": "Network Connection Error",
@@ -151,32 +152,30 @@
     "refreshing": "Refreshing..."
   },
   "explorer": {
-    "title": "Explorer",
-    "blocks": "Blocks",
     "transactions": "Transactions",
-    "addresses": "Addresses",
-    "search": "Search",
-    "searchPlaceholder": "Search by block height, hash, txid, or address...",
     "height": "Height",
     "hash": "Hash",
     "time": "Time",
+    "date": "Date",
     "age": "Age",
+    "type": "Type",
+    "rewardWithUnit": "Reward ({{unit}})",
     "txCount": "Txns",
     "size": "Size",
     "confirmations": "Confirmations",
     "difficulty": "Difficulty",
     "noBlocks": "No blocks found",
+    "viewBlockDetails": "View block details",
     "noTransactions": "No transactions found",
-    "blockDetails": "Block Details",
     "transactionDetails": "Transaction Details",
+    "transaction": "Transaction",
     "addressDetails": "Address Details",
     "inputs": "Inputs",
     "outputs": "Outputs",
-    "value": "Value",
-    "from": "From",
-    "to": "To",
-    "viewAll": "View All",
-    "loadingBlocks": "Loading blocks...",
+    "outpoint": "Outpoint",
+    "jumpToPage": "Jump to page",
+    "nextPage": "Next page",
+    "previousPage": "Previous page",
     "loadingBlock": "Loading block...",
     "loadingTransaction": "Loading transaction...",
     "loadingAddress": "Loading address...",
@@ -187,16 +186,18 @@
     "noOutputs": "No outputs",
     "previousBlock": "Previous Block",
     "nextBlock": "Next Block",
+    "previousTx": "Previous Tx",
+    "nextTx": "Next Tx",
     "blockInfo": "Block Information",
     "txInfo": "Transaction Information",
     "balanceInfo": "Balance Information",
     "stakingRewards": "Staking Rewards",
+    "rewardBreakdown": "Reward Breakdown",
     "totalReward": "Total Reward",
     "stakeReward": "Stake Reward",
     "masternodeReward": "Masternode Reward",
-    "stakerAddress": "Staker Address",
-    "masternodeAddress": "Masternode Address",
     "merkleRoot": "Merkle Root",
+    "copyMerkleRoot": "Copy Merkle Root",
     "bits": "Bits",
     "nonce": "Nonce",
     "txid": "TXID",
@@ -214,9 +215,187 @@
     "amount": "Amount",
     "loadingMore": "Loading more transactions...",
     "page": "Page {{current}} of {{total}}",
-    "showing": "Showing {{start}} - {{end}} of {{total}} blocks",
     "prev": "Prev",
-    "next": "Next"
+    "next": "Next",
+    "copyHash": "Copy hash",
+    "copyTxId": "Copy transaction ID",
+    "viewTxDetails": "View transaction details",
+    "conf": "conf",
+    "stake": "Stake",
+    "masternode": "Masternode",
+    "devFund": "Dev Fund",
+    "coinbaseReward": "Coinbase Reward",
+    "minerAddress": "Miner Address",
+    "copyAddress": "Copy address",
+    "copyBalance": "Copy balance",
+    "viewAddressDetails": "View address details",
+    "loadingTransactions": "Loading transactions...",
+    "loadingUtxos": "Loading unspent outputs...",
+    "noUtxos": "No unspent outputs",
+    "inputsOutputs": "INPUTS → OUTPUTS",
+    "activity": "Activity",
+    "first": "First",
+    "last": "Last",
+    "identity": "Identity",
+    "metadata": "Metadata",
+    "consensus": "Consensus",
+    "proofOfStake": "Proof of Stake",
+    "prevBlock": "Prev Block",
+    "tipNoNext": "tip — no next yet",
+    "version": "Version",
+    "timestamp": "Timestamp",
+    "confirmationsLabel": "Confirmations",
+    "chainwork": "Chainwork",
+    "staker": "Staker",
+    "stakeAmount": "Stake Amount",
+    "stakeAge": "Stake Age",
+    "proofHash": "Proof Hash",
+    "stakeModifier": "Stake Modifier",
+    "comingSoon": "Coming soon",
+    "txTypeCoinbase": "coinbase",
+    "txTypeCoinstake": "coinstake",
+    "txTypeRegular": "regular",
+    "search": {
+      "placeholder": "Search by block height, block hash, transaction ID, or address",
+      "clearLabel": "Clear search",
+      "clearTitle": "Clear search input",
+      "typeDetectedTitle": "Detected type for current input",
+      "typeDetected": {
+        "block_height": "Block height",
+        "block_or_tx_hash": "Hash (block or tx)",
+        "address": "Address",
+        "invalid": "Invalid"
+      },
+      "notFound": {
+        "title": "Nothing found",
+        "lookedForBlockHeight": "No block found at height {{value}}.",
+        "lookedForBlockOrTxHash": "No block or transaction found with hash {{value}}.",
+        "lookedForAddress": "No information found for address {{value}}.",
+        "unknownFormat": "Couldn't determine input type.",
+        "supportedFormats": "Supported formats:",
+        "formatLabels": {
+          "blockHeight": "Block height",
+          "blockHash": "Block hash (64 hex)",
+          "txid": "Transaction ID (64 hex)",
+          "address": "Address (W/m/n/a prefix, 34 chars)"
+        },
+        "tryAgain": "Try again"
+      },
+      "error": {
+        "searchFailed": "Search failed. Try again."
+      },
+      "history": {
+        "recentSearches": "Recent searches",
+        "clearHistory": "Clear history",
+        "emptyHistory": "No recent searches"
+      }
+    },
+    "tx": {
+      "pill": {
+        "coinbase": "Coinbase",
+        "coinstake": "Coinstake",
+        "regular": "Regular"
+      },
+      "input": {
+        "coinbaseLabel": "Newly minted coins",
+        "coinbaseTooltip": "No source — block reward",
+        "mineChip": "MINE",
+        "mineTooltip": "Your wallet address",
+        "kernelChip": "KERNEL",
+        "kernelTooltip": "Stake kernel UTXO used for this block",
+        "fromLabel": "from"
+      },
+      "role": {
+        "blockMarker": {
+          "label": "Block Marker",
+          "chip": "BLOCK MARKER",
+          "tooltip": "Protocol-required marker output"
+        },
+        "stakeReturn": {
+          "label": "Stake Return",
+          "chip": "STAKE RETURN",
+          "tooltip": "Stake amount returned to staker (plus new coins)",
+          "part1": "PART 1 OF 2",
+          "part2": "PART 2 OF 2",
+          "splitGroup": "Stake Return (split into 2 parts)"
+        },
+        "masternodePayment": {
+          "label": "Masternode Payment",
+          "chip": "MN PAYMENT",
+          "tooltip": "Reward paid to the selected masternode"
+        },
+        "devFund": {
+          "label": "Dev Fund",
+          "chip": "DEV FUND",
+          "tooltip": "Block-reward share paid to the developer fund"
+        },
+        "externalPayment": {
+          "label": "External Payment",
+          "chip": "",
+          "tooltip": "Payment to an address outside your wallet"
+        },
+        "change": {
+          "label": "Change",
+          "chip": "CHANGE",
+          "tooltip": "Leftover funds returned to your wallet"
+        },
+        "selfSend": {
+          "label": "Self-send",
+          "chip": "SELF",
+          "tooltip": "Output going back to your wallet (not change)"
+        },
+        "dataCarrier": {
+          "label": "Data",
+          "chip": "",
+          "tooltip": "OP_RETURN data carrier (no value transferred)"
+        },
+        "miningReward": {
+          "label": "Mining Reward",
+          "chip": "MINING REWARD",
+          "tooltip": "Block reward paid to the PoW miner"
+        },
+        "premine": {
+          "label": "Premine",
+          "chip": "PREMINE",
+          "tooltip": "Genesis-block premine output"
+        },
+        "nonstandard": {
+          "label": "Unknown script",
+          "chip": "",
+          "tooltip": "Non-standard script type — raw hex available"
+        },
+        "multisig": {
+          "label": "Multisig",
+          "chip": "M-OF-N",
+          "tooltip": "Multi-signature output (M of N required)"
+        }
+      },
+      "dust": {
+        "chip": "DUST",
+        "tooltip": "Below dust threshold (0.0000546 TWINS)"
+      },
+      "empty": {
+        "noInputs": "No inputs",
+        "noOutputs": "No outputs"
+      },
+      "dataModal": {
+        "title": "OP_RETURN Data",
+        "hexLabel": "Hex",
+        "asciiLabel": "ASCII",
+        "binaryPlaceholder": "Binary (no printable ASCII)",
+        "copyHex": "Copy hex",
+        "copyAscii": "Copy ASCII",
+        "close": "Close",
+        "viewFullTooltip": "View full data",
+        "viewFullAriaLabel": "Open OP_RETURN data modal"
+      },
+      "spent": {
+        "label": "spent",
+        "tooltip": "Output has been spent in another transaction"
+      },
+      "noAddressTooltip": "This output has no address",
+      "unknownScript": "Unknown script"
+    }
   },
   "staking": {
     "title": "Staking",

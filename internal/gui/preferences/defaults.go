@@ -8,6 +8,7 @@ func NewDefaultSettings() *GUISettings {
 		MinimizeToTray:     false,
 		MinimizeOnClose:    false,
 		DisplayUnit:        DisplayUnitTWINS, // Full TWINS
+		DateDisplayFormat:  DateFormatLocal,  // Show dates in user's local timezone
 		Theme:              "dark",           // Dark theme (default)
 		Digits:             8,                // Full precision
 		Language:           "",               // System default

@@ -1,10 +1,16 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeCanvas } from 'qrcode.react';
-import { useReceive } from '@/store/useStore';
-import { Copy, RefreshCw, ChevronDown, Eye, Trash2, List, Download } from 'lucide-react';
+import { useReceive, usePaymentRequests } from '@/store/useStore';
+import { Copy, RefreshCw, ChevronDown, ChevronUp, Eye, Trash2, List, Download } from 'lucide-react';
+import { PaginationFooter } from '@/shared/components/PaginationFooter';
+import {
+  PAYMENT_REQUESTS_PAGE_SIZES,
+  type PaymentRequestsSortColumn,
+} from '@/store/slices/paymentRequestsSlice';
 import { sanitizeText } from '@/shared/utils/sanitize';
 import { useDisplayUnits } from '@/shared/hooks/useDisplayUnits';
+import { useDisplayDateTime } from '@/shared/hooks/useDisplayDateTime';
 import { buildTwinsURI, MAX_QR_DATA_LENGTH } from '@/shared/utils/twinsUri';
 import { writeToClipboard } from '@/shared/utils/clipboard';
 import { truncateAddress } from '@/shared/utils/format';
@@ -13,14 +19,13 @@ import { createCircularLogoDataURL } from '@/shared/utils/qrLogo';
 import { buildQRFilename } from '@/shared/utils/qrFilename';
 import { SimpleConfirmDialog } from '@/shared/components/SimpleConfirmDialog';
 import { IconButton } from '@/shared/components/IconButton';
-import { PillButton } from '@/shared/components/PillButton';
+import { RowsPerPageSelect } from '@/shared/components/RowsPerPageSelect';
 import { Banner } from '@/shared/components/Banner';
 import { ReceivingAddressesDialog, RequestPaymentDialog } from '@/components/dialogs';
 
 // Card padding tokens — see frontend/CLAUDE.md "Design Tokens".
 const CARD_PADDING_DENSE = '12px 16px';
 const CARD_PADDING_STANDARD = '20px';
-const CARD_PADDING_HERO = '24px 20px';
 
 // Amount unit options
 const UNIT_OPTIONS = ['TWINS', 'mTWINS', 'uTWINS'] as const;
@@ -30,12 +35,67 @@ type AmountUnit = typeof UNIT_OPTIONS[number];
 const getRequestKey = (request: { address: string; id: number }): string =>
   `${request.address}_${request.id}`;
 
+// Sortable column header for the Recent Requests table. Renders the label +
+// (when active) a TWINS-green chevron pointing up/down depending on direction.
+// Inactive columns render in muted #888; active column flips to #27ae60.
+// Clicking the header dispatches `onSort(column)` which the slice
+// translates into either "same column → toggle direction" or "new column →
+// pick a sensible default direction" (date/amount desc, label asc).
+interface SortableHeaderCellProps {
+  label: string;
+  column: PaymentRequestsSortColumn;
+  width?: string;
+  flex?: number;
+  align?: 'left' | 'right';
+  sortColumn: PaymentRequestsSortColumn;
+  sortDirection: 'asc' | 'desc';
+  onSort: (column: PaymentRequestsSortColumn) => void;
+}
+const SortableHeaderCell: React.FC<SortableHeaderCellProps> = ({
+  label,
+  column,
+  width,
+  flex,
+  align = 'left',
+  sortColumn,
+  sortDirection,
+  onSort,
+}) => {
+  const isActive = sortColumn === column;
+  const color = isActive ? '#27ae60' : '#888';
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(column)}
+      title={`Sort by ${label}`}
+      style={{
+        width,
+        flex,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: align === 'right' ? 'flex-end' : 'flex-start',
+        gap: '4px',
+        cursor: 'pointer',
+        background: 'none',
+        border: 'none',
+        fontSize: '11px',
+        fontWeight: 500,
+        color,
+        padding: 0,
+      }}
+    >
+      <span>{label}</span>
+      {isActive && (sortDirection === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />)}
+    </button>
+  );
+};
+
 export const Receive: React.FC = () => {
   const { t } = useTranslation('wallet');
-  const { formatAmount } = useDisplayUnits();
+  const { formatAmount, unitLabel } = useDisplayUnits();
+  const { formatDateValue, formatTooltip, formatDateHeader } = useDisplayDateTime();
   const {
     currentAddress,
-    paymentRequests,
     reuseAddress,
     formState,
     isLoading,
@@ -46,7 +106,6 @@ export const Receive: React.FC = () => {
     updateFormField,
     clearForm,
     fetchCurrentAddress,
-    fetchPaymentRequests,
     createPaymentRequest,
     deletePaymentRequest,
     generateNewAddress,
@@ -59,12 +118,29 @@ export const Receive: React.FC = () => {
     clearAddressJustSelected,
   } = useReceive();
 
+  // Recent Requests table state lives in the paymentRequestsSlice (server-side
+  // pagination + sort, mirrors receivingAddressesSlice). The mount effect
+  // below calls `fetchRequestsPage(1)` instead of the legacy
+  // `fetchPaymentRequests`; create/delete flows also call it to refresh.
+  const {
+    requests,
+    total: requestsTotal,
+    totalPages: requestsTotalPages,
+    currentPage: requestsCurrentPage,
+    pageSize: requestsPageSize,
+    sortColumn,
+    sortDirection,
+    isLoading: isLoadingRequests,
+    fetchPage: fetchRequestsPage,
+    setPage: setRequestsPage,
+    setPageSize: setRequestsPageSize,
+    setSortColumn: setRequestsSortColumn,
+  } = usePaymentRequests();
+
   // Local state
   const [selectedUnit, setSelectedUnit] = useState<AmountUnit>('TWINS');
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [confirmRemoveKey, setConfirmRemoveKey] = useState<string | null>(null);
-  const [sortColumn, setSortColumn] = useState<'date' | 'label' | 'amount'>('date');
-  const [sortAscending, setSortAscending] = useState(false);
 
   // Brief highlight on the address row after picker selection
   const [addressHighlight, setAddressHighlight] = useState(false);
@@ -118,7 +194,7 @@ export const Receive: React.FC = () => {
   // Fetch data on mount only
   useEffect(() => {
     fetchCurrentAddress();
-    fetchPaymentRequests();
+    fetchRequestsPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -187,10 +263,13 @@ export const Receive: React.FC = () => {
     await generateNewAddress('');
   }, [generateNewAddress]);
 
-  // Handle form submission
+  // Handle form submission. After the request is created server-side, refresh
+  // the current page so the new row is visible immediately. Without the
+  // refresh the slice cache would stay stale until the next page navigation.
   const handleCreateRequest = useCallback(async () => {
     await createPaymentRequest(selectedUnit);
-  }, [createPaymentRequest, selectedUnit]);
+    await fetchRequestsPage(requestsCurrentPage);
+  }, [createPaymentRequest, selectedUnit, fetchRequestsPage, requestsCurrentPage]);
 
   // Handle clear button
   const handleClear = useCallback(() => {
@@ -199,62 +278,17 @@ export const Receive: React.FC = () => {
     setSelectedUnit('TWINS');
   }, [clearForm, clearError]);
 
-  // Sort payment requests
-  const sortedRequests = useMemo(() => {
-    return [...paymentRequests].sort((a, b) => {
-      let comparison = 0;
-      switch (sortColumn) {
-        case 'date':
-          comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-          break;
-        case 'label':
-          comparison = (a.label || '').localeCompare(b.label || '');
-          break;
-        case 'amount':
-          comparison = (a.amount || 0) - (b.amount || 0);
-          break;
-      }
-      return sortAscending ? comparison : -comparison;
-    });
-  }, [paymentRequests, sortColumn, sortAscending]);
-
-  // Handle column header click for sorting
-  const handleSort = useCallback((column: typeof sortColumn) => {
-    if (sortColumn === column) {
-      setSortAscending(!sortAscending);
-    } else {
-      setSortColumn(column);
-      setSortAscending(column === 'date' ? false : true);
-    }
-  }, [sortColumn, sortAscending]);
-
-  // Format date for display
-  const formatDate = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  // Render sort indicator
-  const renderSortIndicator = (column: typeof sortColumn) => {
-    if (sortColumn !== column) return null;
-    return (
-      <ChevronDown
-        size={10}
-        style={{
-          display: 'inline-block',
-          marginLeft: '3px',
-          transform: sortAscending ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s',
-        }}
-      />
-    );
-  };
+  // Date rendering for Recent Requests rows is delegated to the shared
+  // `useDisplayDateTime` hook (`formatDateTime` + `formatTooltip`) so the
+  // global Date/Age Display Format setting (Local / UTC / Age) controls
+  // every Receive page row. Per m-fix-date-display-inconsistencies
+  // (2026-06-04).
 
   // Handle View button on history row
   const handleViewRequest = useCallback((key: string) => {
-    const request = paymentRequests.find(r => getRequestKey(r) === key);
+    const request = requests.find(r => getRequestKey(r) === key);
     if (request) openRequestDialog(request);
-  }, [paymentRequests, openRequestDialog]);
+  }, [requests, openRequestDialog]);
 
   // Handle Remove button - show confirmation first
   const handleRemoveClick = useCallback((key: string) => {
@@ -263,13 +297,14 @@ export const Receive: React.FC = () => {
 
   const handleConfirmRemove = useCallback(async () => {
     if (confirmRemoveKey !== null) {
-      const request = paymentRequests.find(r => getRequestKey(r) === confirmRemoveKey);
+      const request = requests.find(r => getRequestKey(r) === confirmRemoveKey);
       if (request) {
         await deletePaymentRequest(request.address, request.id);
+        await fetchRequestsPage(requestsCurrentPage);
       }
     }
     setConfirmRemoveKey(null);
-  }, [confirmRemoveKey, paymentRequests, deletePaymentRequest]);
+  }, [confirmRemoveKey, requests, deletePaymentRequest, fetchRequestsPage, requestsCurrentPage]);
 
   // Save QR code as image via native save dialog
   const handleSaveQR = useCallback(async () => {
@@ -313,11 +348,38 @@ export const Receive: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: CARD_PADDING_HERO,
+            padding: CARD_PADDING_STANDARD,
             backgroundColor: '#2f2f2f',
             borderRadius: '8px',
             border: '1px solid #3a3a3a',
+            position: 'relative',
           }}>
+            {/* Save image icon — absolute-positioned in the top-right corner
+                of the QR card. The companion "New address" IconButton
+                previously stacked here (task l-receive-action-buttons-icon-column,
+                2026-06-02) moved into the address row alongside Copy in
+                task l-receive-form-select-new-address-and-header-padding
+                (2026-06-03) so the two address-related affordances (copy,
+                regenerate) sit together. Container kept absolute-positioned
+                for the single Save image icon. */}
+            <div style={{
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              zIndex: 1,
+            }}>
+              <IconButton
+                onClick={handleSaveQR}
+                disabled={!currentAddress || isGeneratingAddress}
+                title={t('receive.saveImage')}
+                ariaLabel={t('receive.saveImage')}
+                icon={<Download size={12} />}
+              />
+            </div>
+
             {/* QR Code */}
             <div
               ref={qrRef}
@@ -353,27 +415,6 @@ export const Receive: React.FC = () => {
               )}
             </div>
 
-            {/* Action pills (Save image + New address) — discoverable affordances under the QR */}
-            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-              <PillButton
-                onClick={handleSaveQR}
-                disabled={!currentAddress || isGeneratingAddress}
-                title={t('receive.saveImage')}
-                ariaLabel={t('receive.saveImage')}
-                icon={<Download size={12} />}
-                label={t('receive.saveImage')}
-              />
-              <PillButton
-                onClick={handleNewAddress}
-                disabled={isGeneratingAddress || isLoading}
-                title={t('receive.newAddress')}
-                ariaLabel={t('receive.newAddress')}
-                icon={<RefreshCw size={12} style={isGeneratingAddress ? { animation: 'spin 1s linear infinite' } : undefined} />}
-                label={t('receive.newAddress')}
-                cursor={isGeneratingAddress ? 'wait' : undefined}
-              />
-            </div>
-
             {/* URI too long warning */}
             {isURITooLong && (
               <div style={{ marginTop: '12px', width: '100%' }}>
@@ -383,7 +424,7 @@ export const Receive: React.FC = () => {
 
             {/* Address row with inline copy icon */}
             <div style={{
-              marginTop: '16px',
+              marginTop: '12px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
@@ -411,6 +452,13 @@ export const Receive: React.FC = () => {
               >
                 {currentAddress ? truncateAddress(currentAddress, 12, 10) : '...'}
               </span>
+              <IconButton
+                onClick={handleNewAddress}
+                disabled={isGeneratingAddress || isLoading}
+                title={t('receive.newAddress')}
+                ariaLabel={t('receive.newAddress')}
+                icon={<RefreshCw size={12} style={isGeneratingAddress ? { animation: 'spin 1s linear infinite' } : undefined} />}
+              />
               <IconButton
                 onClick={handleCopyAddress}
                 disabled={!currentAddress}
@@ -468,11 +516,8 @@ export const Receive: React.FC = () => {
             borderRadius: '8px',
             border: '1px solid #3a3a3a',
           }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: '#ccc', marginBottom: '4px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#ccc', marginBottom: '12px' }}>
               {t('receive.requestPaymentTitle')}
-            </div>
-            <div style={{ fontSize: '11px', color: '#777', marginBottom: '16px' }}>
-              {t('receive.requestPaymentSubtitle')}
             </div>
 
             <form
@@ -501,7 +546,7 @@ export const Receive: React.FC = () => {
                   submittingRef.current = false;
                 });
               }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}
             >
               {/* Label */}
               <div>
@@ -527,6 +572,7 @@ export const Receive: React.FC = () => {
                     borderRadius: '4px',
                     color: '#ddd',
                     outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                 />
               </div>
@@ -559,26 +605,17 @@ export const Receive: React.FC = () => {
                       outline: 'none',
                     }}
                   />
-                  <select
-                    id="receive-unit"
+                  <RowsPerPageSelect<AmountUnit>
                     value={selectedUnit}
-                    onChange={(e) => setSelectedUnit(e.target.value as AmountUnit)}
-                    style={{
+                    options={UNIT_OPTIONS}
+                    onChange={setSelectedUnit}
+                    ariaLabel={`Amount unit: ${selectedUnit}`}
+                    align="left"
+                    triggerStyle={{
                       minWidth: '85px',
-                      padding: '7px 24px 7px 10px',
-                      fontSize: '12px',
-                      backgroundColor: '#252525',
-                      border: '1px solid #3a3a3a',
-                      borderRadius: '4px',
-                      color: '#ddd',
-                      cursor: 'pointer',
-                      outline: 'none',
+                      padding: '7px 10px',
                     }}
-                  >
-                    {UNIT_OPTIONS.map(unit => (
-                      <option key={unit} value={unit}>{unit}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
               </div>
 
@@ -610,25 +647,53 @@ export const Receive: React.FC = () => {
                 />
               </div>
 
-              {/* New address per request checkbox */}
-              <label style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                fontSize: '11px',
-                color: '#888',
-                marginTop: '2px',
-              }}>
-                <input
-                  type="checkbox"
-                  checked={!reuseAddress}
-                  onChange={(e) => setReuseAddress(!e.target.checked)}
-                  className="qt-checkbox"
-                  style={{ width: '13px', height: '13px' }}
-                />
-                {t('receive.newAddressPerRequest')}
-              </label>
+              {/* Checkbox + Receiving Addresses link row
+                  (m-receive-form-compact-height, 2026-06-02 round 2 after
+                  live testing): the prior layout had the Receiving Addresses
+                  link inlined into the action row via marginLeft:auto, which
+                  left a large dead band between the checkbox and the buttons
+                  when the form was shorter than the QR column. New layout:
+                  checkbox left + Receiving Addresses link right via
+                  justify-content:space-between. Logically these two affordances
+                  both manage address selection, so they pair semantically. */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <label style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  color: '#888',
+                }}>
+                  <input
+                    type="checkbox"
+                    checked={!reuseAddress}
+                    onChange={(e) => setReuseAddress(!e.target.checked)}
+                    className="qt-checkbox"
+                    style={{ width: '13px', height: '13px' }}
+                  />
+                  {t('receive.newAddressPerRequest')}
+                </label>
+                <button
+                  type="button"
+                  onClick={openAddressesDialog}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#6699cc',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    padding: '0 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    flexShrink: 0,
+                  }}
+                >
+                  <List size={11} />
+                  {t('receive.receivingAddresses')}
+                </button>
+              </div>
 
               {/* Error display */}
               {error && (
@@ -644,10 +709,13 @@ export const Receive: React.FC = () => {
                 </div>
               )}
 
-              {/* Spacer */}
+              {/* Spacer — pins action row to bottom of form when QR
+                  column is slightly taller (form has flex:1). */}
               <div style={{ flex: 1 }} />
 
-              {/* Action buttons */}
+              {/* Action buttons: Create Request takes available width,
+                  Clear sits at the right edge. Receiving Addresses link
+                  moved up to the checkbox row (see above). */}
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <button
                   type="submit"
@@ -685,32 +753,18 @@ export const Receive: React.FC = () => {
                   {t('receive.clear')}
                 </button>
               </div>
-
-              {/* Receiving addresses link */}
-              <button
-                type="button"
-                onClick={openAddressesDialog}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#6699cc',
-                  fontSize: '11px',
-                  cursor: 'pointer',
-                  padding: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                <List size={11} />
-                {t('receive.receivingAddresses')}
-              </button>
             </form>
           </div>
         </div>
 
-        {/* BOTTOM — Recent Requests History */}
+        {/* BOTTOM — Recent Requests History
+            Stretches to fill remaining viewport height below the hero zone
+            (mirrors the 2026-06-01 Overview Recent transactions flex-stretch
+            pattern). The sticky column header sits above the scrollable row
+            list inside this card; the pagination footer is pinned outside
+            the scroll container so it stays visible regardless of how many
+            rows the user is paging through.
+         */}
         <div style={{
           flex: 1,
           display: 'flex',
@@ -721,51 +775,86 @@ export const Receive: React.FC = () => {
           border: '1px solid #3a3a3a',
           padding: CARD_PADDING_DENSE,
         }}>
-          {/* Header with sort options */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexShrink: 0 }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#aaa' }}>
-              {t('receive.recentRequests')} ({paymentRequests.length})
+          {/* Section title row removed in m-receive-table-headers-message-
+              column-pagination (2026-06-02) along with the trailing TWINS
+              unit label. The unit indicator is hoisted into the Amount
+              column header below (Amount (TWINS)) so it stays semantically
+              attached to its values while reclaiming vertical space.
+              The pagination footer's row-count line carries the total. */}
+
+          {/* Sticky column header — Date | Label | Message | Amount (UNIT) | actions.
+              Geometry mirrors the row cells below 1:1 so headers sit exactly
+              above values. Active column renders in TWINS green with a
+              chevron indicator. Message column is display-only (not in the
+              paymentRequestsSlice SortableColumn union: 'date'|'label'|'amount').
+              Padding `4px 12px 8px` (top-right-bottom-left form) bumps the bottom
+              edge by 4px over the horizontal 12px so the header is visually
+              separated from the first row beneath it; the prior uniform `4px 12px`
+              made headers look pressed against row content (task
+              l-receive-form-select-new-address-and-header-padding, 2026-06-03).
+              Horizontal `12px` is preserved so column alignment with row cells
+              (which use `padding: 4px 10px`) stays intact. */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              position: 'sticky',
+              top: 0,
+              zIndex: 10,
+              backgroundColor: '#2f2f2f',
+              borderBottom: '1px solid #3a3a3a',
+              padding: '4px 12px 8px',
+              flexShrink: 0,
+            }}
+          >
+            <SortableHeaderCell
+              label={formatDateHeader()}
+              column="date"
+              width="220px"
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              onSort={setRequestsSortColumn}
+            />
+            <SortableHeaderCell
+              label={t('receive.table.label')}
+              column="label"
+              flex={1}
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              onSort={setRequestsSortColumn}
+            />
+            {/* Message column header — display-only (no sort) because
+                paymentRequestsSlice does not expose 'message' on its
+                SortableColumn union. Plain span styled to match the
+                muted form-label tokens used by SortableHeaderCell's
+                non-active state (11px 500 #888). */}
+            <span style={{ flex: 1, minWidth: 0, fontSize: '11px', fontWeight: 500, color: '#888' }}>
+              {t('receive.table.message')}
             </span>
-            <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: '#666' }}>
-              <button
-                onClick={() => handleSort('date')}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: sortColumn === 'date' ? '#aaa' : '#666', fontSize: '11px', padding: 0,
-                }}
-              >
-                {t('receive.table.date')}{renderSortIndicator('date')}
-              </button>
-              <button
-                onClick={() => handleSort('label')}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: sortColumn === 'label' ? '#aaa' : '#666', fontSize: '11px', padding: 0,
-                }}
-              >
-                {t('receive.table.label')}{renderSortIndicator('label')}
-              </button>
-              <button
-                onClick={() => handleSort('amount')}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: sortColumn === 'amount' ? '#aaa' : '#666', fontSize: '11px', padding: 0,
-                }}
-              >
-                {t('receive.table.amount')}{renderSortIndicator('amount')}
-              </button>
-            </div>
+            <SortableHeaderCell
+              label={`${t('receive.table.amount')} (${unitLabel})`}
+              column="amount"
+              width="160px"
+              align="right"
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              onSort={setRequestsSortColumn}
+            />
+            {/* Spacer aligned with the two trailing 26px action icons + their
+                4px inter-button gap (= 56px) plus the 12px row gap headroom. */}
+            <div style={{ width: '60px', flexShrink: 0 }} />
           </div>
 
-          {/* Scrollable card list */}
-          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
-            {sortedRequests.length === 0 ? (
+          {/* Scrollable card list (stretches; pagination pinned below) */}
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
+            {requests.length === 0 ? (
               <div style={{ textAlign: 'center', color: '#555', padding: '24px', fontSize: '12px' }}>
-                {isLoading ? t('common:status.loading') : t('receive.noRequests')}
+                {isLoadingRequests || isLoading ? t('common:status.loading') : t('receive.noRequests')}
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {sortedRequests.map((request) => {
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', padding: '2px 0' }}>
+                {requests.map((request) => {
                   const rowKey = getRequestKey(request);
                   return (
                     <div
@@ -774,7 +863,7 @@ export const Receive: React.FC = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '12px',
-                        padding: '8px 12px',
+                        padding: '6px 10px',
                         backgroundColor: '#2a2a2a',
                         borderRadius: '6px',
                         border: '1px solid transparent',
@@ -784,37 +873,67 @@ export const Receive: React.FC = () => {
                       onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = '#444'; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = 'transparent'; }}
                     >
-                      {/* Date */}
-                      <span style={{ fontSize: '11px', color: '#666', minWidth: '50px', flexShrink: 0 }}>
-                        {formatDate(request.date)}
+                      {/* Date — formatDateValue strips the TZ suffix
+                          (Local/UTC mode → YYYY-MM-DD HH:MM:SS; Age mode →
+                          "Nm ago"); the column header carries the TZ via
+                          formatDateHeader() above. Tooltip via formatTooltip
+                          shows the OPPOSITE representation WITH the TZ suffix
+                          intact so users can hover-disambiguate. Width pinned
+                          at 220px to match Transactions COL.date. See
+                          l-date-display-suffix-cleanup (2026-06-04). */}
+                      <span
+                        style={{ fontSize: '14px', color: '#ddd', width: '220px', flexShrink: 0, whiteSpace: 'nowrap' }}
+                        title={formatTooltip(request.date)}
+                      >
+                        {formatDateValue(request.date)}
                       </span>
 
-                      {/* Label + message */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '12px', color: '#ddd', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {sanitizeText(request.label || t('receive.noLabel'))}
-                        </div>
-                        {request.message && (
-                          <div style={{ fontSize: '10px', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '1px' }}>
-                            {sanitizeText(request.message)}
-                          </div>
-                        )}
+                      {/* Label (single-line; message moved to its own column).
+                          Empty label renders as muted em-dash (mirrors the
+                          Message + Amount empty placeholders). */}
+                      <div
+                        style={{ flex: 1, minWidth: 0, fontSize: '14px', color: '#ddd', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        title={request.label || ''}
+                      >
+                        {request.label ? sanitizeText(request.label) : <span style={{ color: '#666' }}>—</span>}
                       </div>
 
-                      {/* Amount */}
-                      <span style={{ fontSize: '12px', color: '#4a7c59', fontWeight: 500, flexShrink: 0, minWidth: '80px', textAlign: 'right' }}>
-                        {request.amount ? formatAmount(request.amount, true) : '-'}
+                      {/* Message column — single-line, ellipsis-truncated,
+                          full text exposed via title tooltip. Empty message
+                          renders as muted em-dash for symmetry with the
+                          Amount cell's '-' empty placeholder. */}
+                      <div
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          fontSize: '14px',
+                          color: request.message ? '#aaa' : '#666',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                        title={request.message || ''}
+                      >
+                        {request.message ? sanitizeText(request.message) : '—'}
+                      </div>
+
+                      {/* Amount (160px, right-aligned monospace 14px 600
+                          #27ae60) — matches Transactions row Amount tokens. */}
+                      <span style={{ fontSize: '14px', color: '#27ae60', fontWeight: 600, fontFamily: 'monospace', width: '160px', flexShrink: 0, textAlign: 'right' }}>
+                        {request.amount ? formatAmount(request.amount, false) : '-'}
                       </span>
 
-                      {/* Action buttons */}
-                      <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                      {/* Action buttons (2x 26px + 4px gap = 56px; container
+                          width matches the 60px header spacer with a 4px
+                          right-edge headroom). */}
+                      <div style={{ display: 'flex', gap: '4px', flexShrink: 0, width: '60px', justifyContent: 'flex-end' }}>
                         <button
                           type="button"
                           onClick={() => handleViewRequest(rowKey)}
                           title={t('receive.show')}
                           style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            width: '26px', height: '26px',
+                            width: '24px', height: '24px',
                             background: 'none', border: '1px solid #3a3a3a', borderRadius: '4px',
                             color: '#888', cursor: 'pointer', transition: 'color 0.15s, border-color 0.15s',
                           }}
@@ -829,7 +948,7 @@ export const Receive: React.FC = () => {
                           title={t('receive.remove')}
                           style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            width: '26px', height: '26px',
+                            width: '24px', height: '24px',
                             background: 'none', border: '1px solid #3a3a3a', borderRadius: '4px',
                             color: '#888', cursor: 'pointer', transition: 'color 0.15s, border-color 0.15s',
                           }}
@@ -845,6 +964,29 @@ export const Receive: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Pagination footer — outside the scroll container so it stays
+              visible at the bottom of the card regardless of row count.
+              No rightSlot (no Export on Receive). */}
+          {requestsTotal > 0 && (
+            <div style={{ flexShrink: 0, marginTop: '4px' }}>
+              <PaginationFooter
+                rangeStart={
+                  requestsTotal === 0 ? 0 : (requestsCurrentPage - 1) * requestsPageSize + 1
+                }
+                rangeEnd={Math.min(requestsCurrentPage * requestsPageSize, requestsTotal)}
+                total={requestsTotal}
+                currentPage={requestsCurrentPage}
+                totalPages={requestsTotalPages}
+                onPageChange={setRequestsPage}
+                pageSize={requestsPageSize}
+                pageSizeOptions={PAYMENT_REQUESTS_PAGE_SIZES}
+                onPageSizeChange={setRequestsPageSize}
+                isLoading={isLoadingRequests}
+                dense
+              />
+            </div>
+          )}
         </div>
       </div>
 

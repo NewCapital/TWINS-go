@@ -136,7 +136,6 @@
     "error": "Помилка: {{message}}",
     "type": {
       "all": "Усі",
-      "mostCommon": "Найчастіші",
       "sent": "Надіслано на",
       "received": "Отримано з",
       "toYourself": "Собі",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Приховати осиротілі стейки"
     },
     "footer": {
-      "selectedAmount": "Вибрана сума:",
       "transactions": "{{count}} транзакція",
       "transactions_other": "{{count}} транзакцій",
       "export": "Експорт"

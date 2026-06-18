@@ -136,7 +136,6 @@
     "error": "त्रुटि: {{message}}",
     "type": {
       "all": "सभी",
-      "mostCommon": "सबसे सामान्य",
       "sent": "भेजा गया",
       "received": "प्राप्त हुआ",
       "toYourself": "स्वयं को",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "अनाथ स्टेक्स छिपाएँ"
     },
     "footer": {
-      "selectedAmount": "चयनित राशि:",
       "transactions": "{{count}} लेनदेन",
       "transactions_other": "{{count}} लेनदेन",
       "export": "निर्यात करें"

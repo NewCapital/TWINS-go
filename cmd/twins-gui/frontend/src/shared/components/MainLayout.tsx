@@ -37,14 +37,16 @@ export const MainLayout: React.FC = () => {
   const connectionStatus = useStore((state) => state.connectionStatus);
   const blockchainInfo = useStore((state) => state.blockchainInfo);
   const openToolsDialog = useStore((state) => state.openToolsDialog);
-  const loadDisplayUnits = useStore((state) => state.loadDisplayUnits);
+  const loadDisplaySettings = useStore((state) => state.loadDisplaySettings);
   const displayUnit = useStore((state) => state.displayUnit);
   const setDisplayUnit = useStore((state) => state.setDisplayUnit);
+  const dateFormat = useStore((state) => state.dateFormat);
+  const setDateFormat = useStore((state) => state.setDateFormat);
 
-  // Load display unit settings from backend on mount
+  // Load display settings (unit / digits / date format) from backend on mount
   useEffect(() => {
-    loadDisplayUnits();
-  }, [loadDisplayUnits]);
+    loadDisplaySettings();
+  }, [loadDisplaySettings]);
 
   // Status bar indicators state
   const [statusIndicators, setStatusIndicators] = useState<StatusIndicators>({
@@ -258,6 +260,18 @@ export const MainLayout: React.FC = () => {
     }
   }, [setDisplayUnit, displayUnit]);
 
+  // Handle date display format change - persist to settings and update store
+  const handleDateFormatChange = useCallback(async (format: number) => {
+    const prevFormat = dateFormat;
+    setDateFormat(format);
+    try {
+      await UpdateSetting('nDateDisplayFormat', format);
+    } catch (error) {
+      console.error('Failed to persist date display format:', error);
+      setDateFormat(prevFormat);
+    }
+  }, [setDateFormat, dateFormat]);
+
   // Refresh status indicators after dialog success
   const handleDialogSuccess = useCallback(() => {
     // Status will be updated via event listeners
@@ -304,10 +318,12 @@ export const MainLayout: React.FC = () => {
         isTor={statusIndicators.isTor}
         isMultisendActive={statusIndicators.isMultisendActive}
         displayUnit={displayUnit}
+        dateFormat={dateFormat}
         onLockClick={handleLockClick}
         onEncryptClick={handleEncryptClick}
         onPeersClick={handlePeersClick}
         onUnitChange={handleUnitChange}
+        onDateFormatChange={handleDateFormatChange}
       />
       <NotificationContainer />
       <P2PErrorDialog

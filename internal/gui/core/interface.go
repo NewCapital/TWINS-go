@@ -238,10 +238,28 @@ type CoreClient interface {
 	// txid: the transaction hash
 	GetExplorerTransaction(txid string) (ExplorerTransaction, error)
 
-	// GetAddressInfo returns information about an address including balance and history.
-	// address: the TWINS address to look up
-	// limit: maximum number of transactions to include in history (default 25)
-	GetAddressInfo(address string, limit int) (AddressInfo, error)
+	// GetAddressBasic returns the minimal, O(1) subset of address
+	// information (Address only). Just performs crypto.DecodeAddress
+	// validation — no storage access. Designed to render the Explorer
+	// Address Detail hero header (address text + QR) immediately while
+	// GetAddressBalance and GetAddressStats are still in flight.
+	GetAddressBasic(address string) (AddressBasic, error)
+
+	// GetAddressBalance returns the address's current spendable balance
+	// (sum of UTXO values) via a GetUTXOsByAddress prefix scan. Cost is
+	// O(U) where U = current UTXO count. For addresses with large UTXO
+	// sets this can take seconds; called separately from GetAddressBasic
+	// so the hero header is not blocked. The Balance row in the hero
+	// card renders a skeleton placeholder until this response arrives.
+	GetAddressBalance(address string) (AddressBalance, error)
+
+	// GetAddressStats returns the expensive aggregate statistics for an
+	// address (TxCount, TotalReceived, TotalSent, FirstSeen, LastSeen).
+	// Cost is O(n) storage reads where n = address tx count; for
+	// high-traffic addresses this is the dominant cost of the page.
+	// Called separately from GetAddressBasic so the hero card does not
+	// block on this work.
+	GetAddressStats(address string) (AddressStats, error)
 
 	// SearchExplorer searches for a block, transaction, or address.
 	// query: can be block hash, block height, transaction hash, or address
@@ -252,6 +270,12 @@ type CoreClient interface {
 	// limit: number of transactions per batch
 	// offset: starting position (0-based, from most recent)
 	GetAddressTransactions(address string, limit, offset int) (AddressTxPage, error)
+
+	// GetAddressUTXOs returns a page of unspent outputs for an address.
+	// address: the TWINS address
+	// limit: number of UTXOs per batch
+	// offset: starting position (0-based, from newest first by confirmations)
+	GetAddressUTXOs(address string, limit, offset int) (AddressUTXOPage, error)
 
 	// ==========================================
 	// Utility Operations

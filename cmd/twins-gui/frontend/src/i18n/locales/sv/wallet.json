@@ -136,7 +136,6 @@
     "error": "Fel: {{message}}",
     "type": {
       "all": "Alla",
-      "mostCommon": "Vanligast",
       "sent": "Skickade till",
       "received": "Mottagna från",
       "toYourself": "Till dig själv",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Dölj föräldralösa stakes"
     },
     "footer": {
-      "selectedAmount": "Valt belopp:",
       "transactions": "{{count}} transaktion",
       "transactions_other": "{{count}} transaktioner",
       "export": "Exportera"

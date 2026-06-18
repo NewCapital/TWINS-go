@@ -379,6 +379,9 @@ func (ms *MockStorage) IndexTransactionByAddress(addressBinary []byte, txHash ty
 func (ms *MockStorage) GetTransactionsByAddress(addressBinary []byte) ([]storage.AddressTransaction, error) {
 	return nil, nil
 }
+func (ms *MockStorage) GetAddressAggregates(addressBinary []byte) (storage.AddressAggregates, error) {
+	return storage.AddressAggregates{}, nil
+}
 func (ms *MockStorage) DeleteAddressIndex(addressBinary []byte, txHash types.Hash) error {
 	return nil
 }

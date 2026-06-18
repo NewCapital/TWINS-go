@@ -713,6 +713,16 @@ func (bc *BlockChain) GetStakeModifier(blockHash types.Hash) (uint64, error) {
 	return bc.storage.GetStakeModifier(blockHash)
 }
 
+// GetBlockPoSMetadata retrieves the persisted hashProofOfStake (a.k.a. kernel
+// hash) and stake modifier checksum for a block. Delegates to the storage
+// layer. Used by the RPC explorer `getblock` handler to surface PoS internals
+// on the block detail view. Returns the storage error verbatim when the
+// metadata is not present -- callers should treat as zero-value rather than
+// as a hard failure (PoW blocks have no PoS metadata).
+func (bc *BlockChain) GetBlockPoSMetadata(blockHash types.Hash) (uint32, types.Hash, error) {
+	return bc.storage.GetBlockPoSMetadata(blockHash)
+}
+
 // HasBlock checks if a block exists.
 // Checks the in-memory knownBlocks cache first (O(1)) before falling back
 // to Pebble storage.  This eliminates DB lookups in the P2P inv handler.

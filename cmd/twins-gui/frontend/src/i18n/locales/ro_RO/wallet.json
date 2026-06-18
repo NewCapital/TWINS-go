@@ -136,7 +136,6 @@
     "error": "Eroare: {{message}}",
     "type": {
       "all": "Toate",
-      "mostCommon": "Cele mai comune",
       "sent": "Trimis către",
       "received": "Primit de la",
       "toYourself": "Către tine",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Ascunde stake-urile orfane"
     },
     "footer": {
-      "selectedAmount": "Sumă selectată:",
       "transactions": "{{count}} tranzacție",
       "transactions_other": "{{count}} tranzacții",
       "export": "Exportă"

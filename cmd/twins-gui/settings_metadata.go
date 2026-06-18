@@ -83,6 +83,14 @@ var settingsMetadataMap = map[string]SettingMetadata{
 		MinValue:        0,
 		MaxValue:        2,
 	},
+	"nDateDisplayFormat": {
+		Key:             "nDateDisplayFormat",
+		Tab:             "display",
+		RequiresRestart: false,
+		DefaultValue:    0, // 0=local, 1=UTC, 2=age
+		MinValue:        0,
+		MaxValue:        2,
+	},
 	"digits": {
 		Key:             "digits",
 		Tab:             "display",

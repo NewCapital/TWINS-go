@@ -136,7 +136,6 @@
     "error": "Fout: {{message}}",
     "type": {
       "all": "Alle",
-      "mostCommon": "Meest voorkomend",
       "sent": "Verzonden naar",
       "received": "Ontvangen van",
       "toYourself": "Naar jezelf",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Orphan stakes verbergen"
     },
     "footer": {
-      "selectedAmount": "Geselecteerd bedrag:",
       "transactions": "{{count}} transactie",
       "transactions_other": "{{count}} transacties",
       "export": "Exporteren"

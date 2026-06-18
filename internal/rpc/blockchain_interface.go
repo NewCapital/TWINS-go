@@ -46,6 +46,14 @@ type BlockchainInterface interface {
 	InvalidateBlock(hash types.Hash) error
 	ReconsiderBlock(hash types.Hash) error
 	AddCheckpoint(height uint32, hash types.Hash) error
+
+	// PoS metadata accessors. Both delegate to the storage layer
+	// (storage.GetStakeModifier / GetBlockPoSMetadata). Used by the explorer
+	// RPC `getblock` handler to surface stake modifier + hashProofOfStake
+	// (a.k.a. kernel hash) on PoS blocks. Errors mean "not stored for this
+	// block" -- callers should treat as zero-value, not as a hard failure.
+	GetStakeModifier(blockHash types.Hash) (uint64, error)
+	GetBlockPoSMetadata(blockHash types.Hash) (checksum uint32, proofHash types.Hash, err error)
 }
 
 // ChainTip represents information about a chain tip

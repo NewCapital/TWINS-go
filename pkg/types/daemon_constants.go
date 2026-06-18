@@ -11,6 +11,22 @@ const (
 	// Legacy: COIN = 100000000 (defined in amount.h)
 	SatoshisPerCoin int64 = 100_000_000
 
+	// MaxMoneySupply is the sanity cap on the total TWINS supply in satoshis.
+	// Used by offline auditing tools (e.g. tools/cosmos-snapshot/) for per-UTXO
+	// fail-fast guards and post-aggregation supply assertions.
+	//
+	// Value: 21_000_000_000 * 100_000_000 = 2.1e18 satoshis.
+	// Diverges from legacy/src/chainparams.cpp:231 (nMaxMoneyOut = 10_000_000_000 * COIN)
+	// by design: the higher cap accommodates PoS inflation observed on-chain
+	// without forcing real-world tooling to assert against a stale historical
+	// upper bound. Authoritative decision recorded in
+	// docs/brainstorm-results/cosmos-migration.md.
+	//
+	// Type is uint64 (not derived from int64 SatoshisPerCoin) because the value
+	// 2.1e18 exceeds int64 if expressed without care; uint64 keeps the constant
+	// in the same domain as the on-disk UTXOData.Value field it is compared against.
+	MaxMoneySupply uint64 = 21_000_000_000 * 100_000_000
+
 	// MaxReserveBalanceTWINS is the maximum reserve balance in TWINS (100M)
 	// This is a sanity limit for the --reservebalance CLI flag
 	MaxReserveBalanceTWINS int64 = 100_000_000

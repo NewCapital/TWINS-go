@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { GetPeerList, GetBannedPeers, BanPeer, UnbanPeer, DisconnectPeer, AddPeer, AddPeers, SetPeerAlias, RemovePeerAlias, CopyToClipboard, SaveCSVFile, GetToolsInfo } from '@wailsjs/go/main/App';
 import type { PeerDetail, BannedPeerInfo } from '@/shared/types/tools.types';
 import { formatBytes } from '@/shared/utils/format';
+import { useDisplayDateTime } from '@/shared/hooks/useDisplayDateTime';
 import { SimpleConfirmDialog } from '@/shared/components/SimpleConfirmDialog';
 
 type PeerView = 'connected' | 'banned';
@@ -82,6 +83,10 @@ const banDurationLabels: Record<BanDuration, string> = {
 };
 
 export const PeersTab: React.FC = () => {
+  const { formatDateTimeShort, formatTooltip, formatTzSuffix } = useDisplayDateTime();
+  void formatTime;
+  void formatTooltip;
+  const formatPeerTime = (unix: number): string => (unix > 0 ? formatDateTimeShort(unix) : 'N/A');
   const [peers, setPeers] = useState<PeerDetail[]>([]);
   const [bannedPeers, setBannedPeers] = useState<BannedPeerInfo[]>([]);
   const [ourHeight, setOurHeight] = useState<number>(0);
@@ -454,9 +459,9 @@ export const PeersTab: React.FC = () => {
       p.syncedBlocks,
       p.syncedHeight > 0 ? p.syncedHeight : '',
       p.banScore,
-      formatTime(p.connTime),
-      formatTime(p.lastSend),
-      formatTime(p.lastRecv),
+      formatPeerTime(p.connTime),
+      formatPeerTime(p.lastSend),
+      formatPeerTime(p.lastRecv),
       p.bytesSent,
       p.bytesReceived,
       p.pingTime > 0 ? p.pingTime.toFixed(0) : '',
@@ -770,7 +775,7 @@ export const PeersTab: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
               <thead>
                 <tr style={{ backgroundColor: '#333', position: 'sticky', top: 0, zIndex: 1 }}>
-                  {['Address', 'Banned Until', 'Reason'].map((col) => (
+                  {['Address', `Banned Until${formatTzSuffix()}`, 'Reason'].map((col) => (
                     <th key={col} style={{ padding: '6px 8px', textAlign: 'left', color: '#aaa', fontWeight: 500, borderBottom: '1px solid #444', backgroundColor: '#333' }}>
                       {col}
                     </th>
@@ -791,7 +796,7 @@ export const PeersTab: React.FC = () => {
                         bp.address
                       )}
                     </td>
-                    <td style={{ padding: '4px 8px', color: '#aaa' }}>{formatTime(bp.bannedUntil)}</td>
+                    <td style={{ padding: '4px 8px', color: '#aaa' }}>{formatPeerTime(bp.bannedUntil)}</td>
                     <td style={{ padding: '4px 8px', color: '#aaa' }}>{bp.reason}</td>
                   </tr>
                 ))}
@@ -823,8 +828,8 @@ export const PeersTab: React.FC = () => {
                     ['Synced Height', selectedPeer.syncedHeight > 0 ? selectedPeer.syncedHeight.toLocaleString() : '-'],
                     ['Ban Score', String(selectedPeer.banScore)],
                     ['Connection Time', formatDuration(selectedPeer.connTime)],
-                    ['Last Send', formatTime(selectedPeer.lastSend)],
-                    ['Last Recv', formatTime(selectedPeer.lastRecv)],
+                    [`Last Send${formatTzSuffix()}`, formatPeerTime(selectedPeer.lastSend)],
+                    [`Last Recv${formatTzSuffix()}`, formatPeerTime(selectedPeer.lastRecv)],
                     ['Bytes Sent', formatBytes(selectedPeer.bytesSent)],
                     ['Bytes Recv', formatBytes(selectedPeer.bytesReceived)],
                     ['Ping Time', formatPing(selectedPeer.pingTime)],

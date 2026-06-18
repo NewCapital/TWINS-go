@@ -10,6 +10,12 @@ const UNIT_OPTIONS = [
   { value: DISPLAY_UNIT_UTWINS, label: 'µTWINS' },
 ];
 
+const DATE_FORMAT_OPTIONS = [
+  { value: 0, label: 'Local' },
+  { value: 1, label: 'UTC' },
+  { value: 2, label: 'Age' },
+];
+
 interface StatusBarProps {
   isConnected?: boolean;
   connections?: number;
@@ -25,6 +31,7 @@ interface StatusBarProps {
   isTor?: boolean;
   isMultisendActive?: boolean;
   displayUnit?: number;
+  dateFormat?: number;
   /** Called when the lock icon is clicked (encrypted wallets only) */
   onLockClick?: (e: React.MouseEvent) => void;
   /** Called when the "not encrypted" area is clicked (unencrypted wallets only) */
@@ -33,6 +40,8 @@ interface StatusBarProps {
   onPeersClick?: () => void;
   /** Called when the user selects a different display unit */
   onUnitChange?: (unit: number) => void;
+  /** Called when the user selects a different date display format */
+  onDateFormatChange?: (format: number) => void;
 }
 
 export const StatusBar: React.FC<StatusBarProps> = ({
@@ -50,14 +59,18 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   isTor = false,
   isMultisendActive = false,
   displayUnit = 0,
+  dateFormat = 0,
   onLockClick,
   onEncryptClick,
   onPeersClick,
   onUnitChange,
+  onDateFormatChange,
 }) => {
   const { t } = useTranslation('common');
   const [unitDropdownOpen, setUnitDropdownOpen] = useState(false);
   const unitDropdownRef = useRef<HTMLDivElement>(null);
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const dateDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close unit dropdown on click outside
   useEffect(() => {
@@ -71,6 +84,22 @@ export const StatusBar: React.FC<StatusBarProps> = ({
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [unitDropdownOpen]);
+
+  // Close date-format dropdown on click outside
+  useEffect(() => {
+    if (dateDropdownOpen) {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (dateDropdownRef.current && !dateDropdownRef.current.contains(e.target as Node)) {
+          setDateDropdownOpen(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [dateDropdownOpen]);
+
+  const dateFormatLabel =
+    DATE_FORMAT_OPTIONS.find((o) => o.value === dateFormat)?.label ?? 'Local';
 
   // Determine which connection icon to use based on connection count
   const getConnectionIcon = () => {
@@ -206,6 +235,75 @@ export const StatusBar: React.FC<StatusBarProps> = ({
                 >
                   <span style={{ width: '18px', flexShrink: 0 }}>
                     {displayUnit === opt.value ? '✓' : ''}
+                  </span>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Date format selector */}
+        <div style={{ position: 'relative' }} ref={dateDropdownRef}>
+          <button
+            onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
+            title={t('statusBar.dateFormatTooltip', 'How dates render across the app. Click to select another format.')}
+            aria-label={t('statusBar.dateFormatTooltip', 'How dates render across the app. Click to select another format.')}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '2px 6px',
+              cursor: 'pointer',
+              borderRadius: '2px',
+              color: 'var(--qt-text-secondary)',
+              fontSize: '11px',
+              fontWeight: 500,
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            {dateFormatLabel}
+          </button>
+          {dateDropdownOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '100%',
+                left: 0,
+                marginBottom: '4px',
+                backgroundColor: '#2b2b2b',
+                border: '1px solid #555',
+                borderRadius: '4px',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6)',
+                zIndex: 60,
+                minWidth: '100px',
+                padding: '4px 0',
+              }}
+            >
+              {DATE_FORMAT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    onDateFormatChange?.(opt.value);
+                    setDateDropdownOpen(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: '6px 12px',
+                    background: 'none',
+                    border: 'none',
+                    color: dateFormat === opt.value ? '#4a8af4' : '#ddd',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <span style={{ width: '18px', flexShrink: 0 }}>
+                    {dateFormat === opt.value ? '✓' : ''}
                   </span>
                   {opt.label}
                 </button>

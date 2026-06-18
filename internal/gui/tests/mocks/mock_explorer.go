@@ -127,8 +127,8 @@ func (m *MockCoreClient) GetExplorerBlock(query string) (core.BlockDetail, error
 
 	// Determine PoS info
 	isPoS := strings.Contains(block.Flags, "proof-of-stake")
-	stakeReward := 80.0  // 80% to staker
-	mnReward := 20.0     // 20% to masternode
+	stakeReward := 80.0 // 80% to staker
+	mnReward := 20.0    // 20% to masternode
 	if height < 100000 {
 		// Early blocks had different reward structure
 		stakeReward = 90.0
@@ -136,8 +136,8 @@ func (m *MockCoreClient) GetExplorerBlock(query string) (core.BlockDetail, error
 	}
 
 	// Generate addresses (deterministic based on height)
-	stakerAddr := fmt.Sprintf("D%s", m.generateHashFromSeed(height*2)[:33])
-	mnAddr := fmt.Sprintf("D%s", m.generateHashFromSeed(height*3)[:33])
+	stakerAddr := fmt.Sprintf("D%s", m.generateHashFromSeed(height * 2)[:33])
+	mnAddr := fmt.Sprintf("D%s", m.generateHashFromSeed(height * 3)[:33])
 
 	detail := core.BlockDetail{
 		Block:             *block,
@@ -178,83 +178,75 @@ func (m *MockCoreClient) GetExplorerTransaction(txid string) (core.ExplorerTrans
 	return mockTx, nil
 }
 
-// GetAddressInfo returns information about an address
-func (m *MockCoreClient) GetAddressInfo(address string, limit int) (core.AddressInfo, error) {
+// GetAddressBasic returns the minimal O(1) subset of address information.
+func (m *MockCoreClient) GetAddressBasic(address string) (core.AddressBasic, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
 	if !m.running {
-		return core.AddressInfo{}, fmt.Errorf("core client not running")
+		return core.AddressBasic{}, fmt.Errorf("core client not running")
 	}
 
-	// Validate address format (basic check)
 	if !isValidTWINSAddress(address) {
-		return core.AddressInfo{}, fmt.Errorf("invalid address format")
+		return core.AddressBasic{}, fmt.Errorf("invalid address format")
 	}
 
-	if limit <= 0 {
-		limit = 25
-	}
-	if limit > 100 {
-		limit = 100
+	return core.AddressBasic{
+		Address: address,
+	}, nil
+}
+
+// GetAddressBalance returns the address's current spendable balance.
+func (m *MockCoreClient) GetAddressBalance(address string) (core.AddressBalance, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	if !m.running {
+		return core.AddressBalance{}, fmt.Errorf("core client not running")
 	}
 
-	// Generate deterministic mock data based on address
+	if !isValidTWINSAddress(address) {
+		return core.AddressBalance{}, fmt.Errorf("invalid address format")
+	}
+
 	seed := hashString(address)
+	balance := float64(seed%100000) / 100.0
 
-	// Generate balance (deterministic from address)
+	return core.AddressBalance{
+		Balance: balance,
+	}, nil
+}
+
+// GetAddressStats returns the slow aggregate stats for an address.
+func (m *MockCoreClient) GetAddressStats(address string) (core.AddressStats, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	if !m.running {
+		return core.AddressStats{}, fmt.Errorf("core client not running")
+	}
+
+	if !isValidTWINSAddress(address) {
+		return core.AddressStats{}, fmt.Errorf("invalid address format")
+	}
+
+	seed := hashString(address)
 	balance := float64(seed%100000) / 100.0
 	totalReceived := balance * 1.5
 	totalSent := totalReceived - balance
 	txCount := int(seed%50) + 5
 
-	// Generate transaction history
-	transactions := make([]core.AddressTx, 0, limit)
-	for i := 0; i < limit && i < txCount; i++ {
-		txSeed := seed + int64(i)
-		isReceive := txSeed%2 == 0
-		amount := float64(txSeed%10000) / 100.0
-		if !isReceive {
-			amount = -amount
-		}
+	now := time.Now().Unix()
+	firstSeen := now - int64(txCount*600)
+	lastSeen := now - 60
 
-		tx := core.AddressTx{
-			TxID:          m.generateHashFromSeed(txSeed),
-			BlockHeight:   m.currentHeight - int64(i*10),
-			Time:          time.Now().Add(-time.Duration(i*10) * time.Minute),
-			Amount:        amount,
-			Confirmations: i*10 + 1,
-		}
-		transactions = append(transactions, tx)
-	}
-
-	// Generate UTXOs
-	utxos := make([]core.AddressUTXO, 0)
-	numUtxos := int(seed%5) + 1
-	for i := 0; i < numUtxos; i++ {
-		utxoSeed := seed + int64(100+i)
-		utxo := core.AddressUTXO{
-			TxID:          m.generateHashFromSeed(utxoSeed),
-			Vout:          uint32(i),
-			Amount:        float64(utxoSeed%5000) / 100.0,
-			Confirmations: int(utxoSeed%1000) + 1,
-			BlockHeight:   m.currentHeight - int64(utxoSeed%1000),
-		}
-		utxos = append(utxos, utxo)
-	}
-
-	info := core.AddressInfo{
-		Address:            address,
-		Balance:            balance,
-		TotalReceived:      totalReceived,
-		TotalSent:          totalSent,
-		TxCount:            txCount,
-		UnconfirmedBalance: 0,
-		Transactions:       transactions,
-		UTXOs:              utxos,
-	}
-
-	return info, nil
+	return core.AddressStats{
+		TxCount:       txCount,
+		TotalReceived: totalReceived,
+		TotalSent:     totalSent,
+		FirstSeen:     firstSeen,
+		LastSeen:      lastSeen,
+	}, nil
 }
 
 // SearchExplorer searches for a block, transaction, or address
@@ -325,7 +317,7 @@ func (m *MockCoreClient) SearchExplorer(query string) (core.SearchResult, error)
 	// Check if it's a valid TWINS address
 	if isValidTWINSAddress(query) {
 		m.mu.RUnlock()
-		addr, err := m.GetAddressInfo(query, 25)
+		addr, err := m.GetAddressBasic(query)
 		m.mu.RLock()
 		if err == nil {
 			return core.SearchResult{
@@ -404,7 +396,7 @@ func (m *MockCoreClient) generateMockExplorerTx(txid string) core.ExplorerTransa
 		inputs[i] = core.TxInput{
 			TxID:       m.generateHashFromSeed(seed + int64(i*100)),
 			Vout:       uint32(i),
-			Address:    fmt.Sprintf("D%s", m.generateHashFromSeed(seed+int64(i*200))[:33]),
+			Address:    fmt.Sprintf("D%s", m.generateHashFromSeed(seed + int64(i*200))[:33]),
 			Amount:     totalInput / float64(numInputs),
 			IsCoinbase: false,
 		}
@@ -415,7 +407,7 @@ func (m *MockCoreClient) generateMockExplorerTx(txid string) core.ExplorerTransa
 	for i := 0; i < numOutputs; i++ {
 		outputs[i] = core.TxOutput{
 			Index:      uint32(i),
-			Address:    fmt.Sprintf("D%s", m.generateHashFromSeed(seed+int64(i*300))[:33]),
+			Address:    fmt.Sprintf("D%s", m.generateHashFromSeed(seed + int64(i*300))[:33]),
 			Amount:     outputAmount,
 			ScriptType: "pubkeyhash",
 			IsSpent:    seed%2 == 0,
@@ -498,6 +490,60 @@ func hashString(s string) int64 {
 		hash = -hash
 	}
 	return hash
+}
+
+// GetAddressUTXOs returns a page of unspent outputs for an address.
+// Generates deterministic mock UTXOs seeded from the address hash so repeated
+// calls return stable pagination across reloads.
+func (m *MockCoreClient) GetAddressUTXOs(address string, limit, offset int) (core.AddressUTXOPage, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	if !m.running {
+		return core.AddressUTXOPage{}, fmt.Errorf("core client not running")
+	}
+
+	if !isValidTWINSAddress(address) {
+		return core.AddressUTXOPage{}, fmt.Errorf("invalid address format")
+	}
+
+	if limit <= 0 {
+		limit = 50
+	}
+	if limit > 10000 {
+		return core.AddressUTXOPage{}, fmt.Errorf("invalid limit: %d (must be 1-10000)", limit)
+	}
+	if offset < 0 {
+		return core.AddressUTXOPage{}, fmt.Errorf("invalid offset: %d (must be >= 0)", offset)
+	}
+
+	// Generate deterministic mock data
+	seed := hashString(address)
+	total := int(seed%50) + 5
+
+	utxos := make([]core.AddressUTXO, 0, limit)
+	for i := offset; i < offset+limit && i < total; i++ {
+		utxoSeed := seed + int64(i*7)
+		amount := float64(utxoSeed%50000) / 100.0
+		if amount < 0.01 {
+			amount = 0.01
+		}
+
+		utxo := core.AddressUTXO{
+			TxID:          m.generateHashFromSeed(utxoSeed),
+			Vout:          uint32(i % 4),
+			Amount:        amount,
+			Confirmations: i*10 + 1,
+			BlockHeight:   m.currentHeight - int64(i*10),
+		}
+		utxos = append(utxos, utxo)
+	}
+
+	return core.AddressUTXOPage{
+		Utxos:   utxos,
+		Total:   total,
+		HasMore: offset+len(utxos) < total,
+	}, nil
 }
 
 // GetAddressTransactions returns a page of transactions for an address

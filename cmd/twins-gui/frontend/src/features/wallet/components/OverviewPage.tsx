@@ -3,25 +3,44 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '@/store/useStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useWalletActions } from '@/shared/hooks/useWalletActions';
-import { CombinedBalanceCard } from './CombinedBalanceCard';
-import { TWINSBalanceCard } from './TWINSBalanceCard';
-import { SyncStatusWidget } from './SyncStatusWidget';
-import { NetworkStatusWidget } from './NetworkStatusWidget';
-import { StakingStatusWidget } from './StakingStatusWidget';
+import { BalancesStrip } from './BalancesStrip';
+import { SyncCard } from './SyncCard';
+import { SyncProgressRow } from './SyncProgressRow';
+import { NetworkCard } from './NetworkCard';
+import { StakingCard } from './StakingCard';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { TransactionList } from './TransactionItem';
 import { TransactionDetailsDialog } from './TransactionDetailsDialog';
+import { DashboardCard } from '@/shared/components/DashboardCard';
+import { useDisplayUnits } from '@/shared/hooks/useDisplayUnits';
 import { EventsOn } from '@wailsjs/runtime/runtime';
-import { GetBalance, GetRecentTransactions, GetNetworkInfo, GetStakingInfo, GetSettingBool } from '@wailsjs/go/main/App';
+import { GetBalance, GetRecentTransactions, GetNetworkInfo, GetStakingInfo } from '@wailsjs/go/main/App';
 import { core } from '@/shared/types/wallet.types';
 import { logger } from '@/shared/utils/logger';
-import '@/styles/qt-theme.css';
 
 // Auto-refresh interval in milliseconds (10 seconds)
 const STATUS_REFRESH_INTERVAL = 10000;
 
+// Receive design-language tokens (mirrors Send.tsx shell pattern)
+const pageOuter: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+  overflow: 'hidden',
+};
+
+const pageScroll: React.CSSProperties = {
+  flex: 1,
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  padding: '12px 16px',
+};
+
 const OverviewPage: React.FC = () => {
   const { t } = useTranslation('wallet');
+  const { unitLabel } = useDisplayUnits();
   const { balance, isLoading } = useStore(useShallow((s) => ({
     balance: s.balance,
     isLoading: s.isLoading,
@@ -38,9 +57,6 @@ const OverviewPage: React.FC = () => {
   const [networkInfo, setNetworkInfo] = useState<core.NetworkInfo | null>(null);
   const [stakingInfo, setStakingInfo] = useState<core.StakingInfo | null>(null);
   const [statusLoading, setStatusLoading] = useState(false);
-
-  // GUI settings state
-  const [hideZeroBalances, setHideZeroBalances] = useState(false); // Synced from GUISettings on mount
 
   // Ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef(true);
@@ -92,9 +108,9 @@ const OverviewPage: React.FC = () => {
       setStatusLoading(true);
       logger.debug('OverviewPage: Fetching status info...');
 
-      // Fetch network, staking info, and GUI settings in parallel
+      // Fetch network and staking info in parallel
       // Note: blockchainInfo is fetched by useP2PEvents (MainLayout) and read from store
-      const [network, staking, hideZero] = await Promise.all([
+      const [network, staking] = await Promise.all([
         GetNetworkInfo().catch(err => {
           logger.error('Failed to get network info:', err);
           return null;
@@ -103,7 +119,6 @@ const OverviewPage: React.FC = () => {
           logger.error('Failed to get staking info:', err);
           return null;
         }),
-        GetSettingBool('fHideZeroBalances').catch(() => null),
       ]);
 
       // Only update state if component is still mounted
@@ -113,9 +128,6 @@ const OverviewPage: React.FC = () => {
         }
         if (staking) {
           setStakingInfo(new core.StakingInfo(staking));
-        }
-        if (hideZero !== null) {
-          setHideZeroBalances(hideZero);
         }
         logger.debug('OverviewPage: Status info updated');
       }
@@ -132,17 +144,15 @@ const OverviewPage: React.FC = () => {
   // to prevent UI flicker every 10 seconds.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const silentRefresh = useCallback(() => {
-    // Refresh network, staking info, and GUI settings without loading indicator
+    // Refresh network and staking info without loading indicator
     // Note: blockchainInfo is refreshed by useP2PEvents (MainLayout) on P2P events and every 10s
     Promise.all([
       GetNetworkInfo().catch(err => { logger.debug('Silent refresh: network info failed', err); return null; }),
       GetStakingInfo().catch(err => { logger.debug('Silent refresh: staking info failed', err); return null; }),
-      GetSettingBool('fHideZeroBalances').catch(() => null),
-    ]).then(([network, staking, hideZero]) => {
+    ]).then(([network, staking]) => {
       if (!isMountedRef.current) return;
       if (network) setNetworkInfo(new core.NetworkInfo(network));
       if (staking) setStakingInfo(new core.StakingInfo(staking));
-      if (hideZero !== null) setHideZeroBalances(hideZero);
     });
 
     // Refresh balance without store loading indicator
@@ -250,81 +260,93 @@ const OverviewPage: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSilentRefresh, refreshTransactions]);
 
-  // Determine sync status from real blockchain info (unknown = don't show badge until first poll)
-  const isOutOfSync = blockchainInfo ? blockchainInfo.is_out_of_sync : false;
-
   return (
-    <div className="qt-frame" style={{ width: '100%', height: '100%', margin: 0, padding: 0 }}>
-      <div className="qt-vbox" style={{ margin: 0, padding: 0 }}>
-        {/* Header */}
-        <div style={{ paddingTop: '20px', paddingBottom: '10px', paddingLeft: '15px' }}>
-          <div className="qt-header-label" style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
-            {t('overview.title')}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="qt-hbox" style={{ padding: '15px', gap: '30px', flex: 1 }}>
-          {/* Left Column - Balances */}
-          <div className="qt-vbox" style={{ flex: 1 }}>
-            <CombinedBalanceCard
+    <>
+      <div style={pageOuter}>
+        <div style={pageScroll}>
+          {/*
+            The page-level out-of-sync Banner was removed in 2026-05-06 because
+            the SyncCard now surfaces the same state via its StatusPill +
+            behind-time Banner. Three indicators of the same fact in one
+            viewport (page banner + Sync pill + Sync behind-time banner) was
+            redundant; the Sync card is the single source of truth for sync
+            state on the Overview page. The status bar at the bottom of the
+            window remains as the always-visible secondary signal.
+          */}
+          <SyncProgressRow blockchainInfo={blockchainInfo} />
+          <div style={{
+            display: 'grid',
+            // Fixed 2x2 grid at every viewport width: Balance + Sync (row 1),
+            // Network + Staking (row 2). `minmax(0, 1fr)` lets columns shrink
+            // below intrinsic content width without forcing horizontal scroll.
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gridAutoRows: 'min-content',
+            gap: '12px',
+          }}>
+            <BalancesStrip
               balance={balance}
-              isOutOfSync={isOutOfSync}
               isLoading={isLoading}
             />
-
-            <TWINSBalanceCard
-              balance={balance}
-              showWatchOnly={false}
-              hideZeroBalances={hideZeroBalances}
-              isLoading={isLoading}
-            />
-
-            {/* Status Widgets */}
-            <SyncStatusWidget
-              blockchainInfo={blockchainInfo}
-              isLoading={statusLoading}
-            />
-
-            <NetworkStatusWidget
-              networkInfo={networkInfo}
-              isLoading={statusLoading}
-            />
-
-            <StakingStatusWidget
-              stakingInfo={stakingInfo}
-              isLoading={statusLoading}
-            />
-
+            <SyncCard blockchainInfo={blockchainInfo} networkInfo={networkInfo} isLoading={statusLoading} />
+            <StakingCard stakingInfo={stakingInfo} isLoading={statusLoading} />
+            <NetworkCard networkInfo={networkInfo} isLoading={statusLoading} />
           </div>
 
-          {/* Right Column - Recent Transactions */}
-          <div className="qt-vbox" style={{ flex: 1 }}>
-            <div className="qt-frame-secondary" style={{ padding: '0', height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <div className="qt-hbox" style={{ alignItems: 'baseline', marginBottom: '8px' }}>
-                <div className="qt-label" style={{ fontSize: '13px', fontWeight: 'normal' }}>{t('overview.recentTransactions')}</div>
-                {isOutOfSync && <span className="qt-out-of-sync" style={{ marginLeft: '10px', fontSize: '12px', color: '#ff0000' }}>{t('common:status.outOfSync')}</span>}
-              </div>
-
-              {/* Horizontal line separator */}
-              <div style={{ height: '1px', backgroundColor: '#555555', marginBottom: '10px' }} />
-
-              {/* Transaction List */}
-              <div style={{ flex: 1, minHeight: '400px', overflow: 'auto', position: 'relative' }}>
-                {txLoading ? (
-                  <LoadingSpinner message={t('common:loading.transactions')} overlay={true} />
-                ) : (
-                  <div className="qt-fade-in">
-                    <TransactionList
-                      transactions={recentTransactions}
-                      limit={9}
-                      onTransactionClick={(tx) => setSelectedTransaction(tx)}
-                    />
-                  </div>
-                )}
-              </div>
+          {/*
+            Recent Transactions card stretches to fill the remaining viewport
+            space below the 2x2 grid (and the SyncProgressRow when active).
+            `flex: 1, minHeight: 0` on the card chrome lets it grow inside the
+            `pageScroll` flex column; the inner scroll container inherits the
+            same flex sizing so the list / empty state / spinner all center
+            inside the card. The empty state (rendered by TransactionList when
+            transactions.length === 0) is centered vertically; long lists scroll
+            inside the card without forcing the outer page to scroll.
+          */}
+          <DashboardCard
+            title={t('overview.recentTransactions')}
+            headerRight={unitLabel}
+            style={{ flex: 1, minHeight: 0 }}
+          >
+            <div
+              style={{
+                position: 'relative',
+                flex: 1,
+                minHeight: 0,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {txLoading ? (
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '24px 0',
+                  }}
+                >
+                  <LoadingSpinner message={t('common:loading.transactions')} />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    flex: 1,
+                    minHeight: 0,
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <TransactionList
+                    transactions={recentTransactions}
+                    limit={9}
+                    onTransactionClick={(tx) => setSelectedTransaction(tx)}
+                  />
+                </div>
+              )}
             </div>
-          </div>
+          </DashboardCard>
         </div>
       </div>
 
@@ -333,7 +355,7 @@ const OverviewPage: React.FC = () => {
         transaction={selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
       />
-    </div>
+    </>
   );
 };
 

@@ -19,7 +19,6 @@
     "tier": "Tier",
     "payRank": "Pay Rank",
     "rank": "Rank",
-    "network": "Network",
     "walletAddress": "Wallet Address"
   },
   "status": {
@@ -50,22 +49,22 @@
   },
   "actions": {
     "start": "Start",
-    "startAlias": "Start alias",
-    "startAll": "Start all",
-    "startMissing": "Start MISSING",
+    "startAlias": "Start",
     "stop": "Stop",
-    "update": "Update status",
-    "configure": "Configure",
     "edit": "Edit",
+    "editMasternode": "Edit",
+    "deleteMasternode": "Delete",
     "remove": "Remove",
     "copyProTx": "Copy ProTx Hash"
   },
   "dialogs": {
     "startConfirm": {
       "title": "Start Masternode",
-      "message": "Are you sure you want to start masternode \"{{alias}}\"?",
-      "messageAll": "Are you sure you want to start all masternodes?",
-      "messageMissing": "Are you sure you want to start all MISSING masternodes?"
+      "message": "Are you sure you want to start masternode \"{{alias}}\"?"
+    },
+    "deleteConfirm": {
+      "title": "Delete Masternode",
+      "message": "Are you sure you want to delete masternode \"{{alias}}\"? This will remove the entry from masternode.conf."
     },
     "removeConfirm": {
       "title": "Remove Masternode",
@@ -74,14 +73,10 @@
   },
   "messages": {
     "startSuccess": "Successfully started masternode \"{{alias}}\"",
-    "startAllSuccess": "Successfully started all masternodes",
-    "startMissingSuccess": "Successfully started {{count}} missing masternode(s)",
-    "noMissingToStart": "No missing masternodes to start",
     "startFailed": "Failed to start masternode: {{error}}",
-    "startAllFailed": "Failed to start all masternodes: {{error}}",
-    "startMissingFailed": "Failed to start missing masternodes: {{error}}",
     "fetchFailed": "Failed to fetch masternodes",
     "updateSuccess": "Masternode status updated",
+    "deleteSuccess": "Masternode \"{{alias}}\" deleted successfully",
     "removeSuccess": "Masternode \"{{alias}}\" removed",
     "unlockCancelled": "Operation cancelled: wallet unlock required"
   },
@@ -118,14 +113,13 @@
       "statusAll": "All Statuses",
       "search": "Search",
       "searchPlaceholder": "Wallet address...",
-      "clear": "Clear"
+      "clear": "Clear",
+      "clearSearch": "Clear search"
     }
   },
   "statistics": {
     "title": "Network Statistics",
     "loading": "Loading statistics...",
-    "tierDistribution": "Tier Distribution",
-    "networkSummary": "Network Summary",
     "total": "Total",
     "enabled": "Enabled",
     "totalCollateral": "Total Collateral Locked"
@@ -137,16 +131,15 @@
     "summary": {
       "totalPaid": "Total Paid",
       "totalPayments": "Total Payments",
-      "uniquePaymentAddresses": "Unique Payment Addresses",
-      "scannedBlocks": "Scanned Blocks (Low / High)"
+      "uniquePaymentAddresses": "Unique Addresses",
+      "scannedBlocks": "Scanned Blocks"
     },
     "table": {
       "address": "Address",
       "tier": "Tier",
       "paymentCount": "Payments",
-      "totalPaid": "Total Paid",
-      "lastPaidTime": "Last Payment",
-      "latestTxID": "Latest TX"
+      "totalPaid": "Total Paid ({{unit}})",
+      "lastPaidTime": "Last Payment"
     },
     "copied": "Transaction ID copied",
     "copyTxID": "Copy TX ID",
@@ -195,7 +188,18 @@
       "noCollateralAvailable": "No suitable collateral UTXOs found. Send exact tier amounts to your wallet first.",
       "collateralHint": "Select a wallet UTXO with the correct tier amount (1M/5M/20M/100M TWINS)",
       "pendingCollateralHint": "Some UTXOs are waiting for 15 confirmations.",
-      "collateralNotReady": "[{{count}}/15 conf — not ready]"
+      "collateralNotReady": "[{{count}}/15 conf — not ready]",
+      "privateKeyShow": "Show key",
+      "privateKeyHide": "Hide key",
+      "privateKeyCopy": "Copy private key",
+      "privateKeyCopied": "Private key copied",
+      "testnetPort": "Testnet port is 51474",
+      "regtestPort": "Regtest port is 51476"
+    },
+    "changeKeyConfirm": {
+      "title": "Change Private Key?",
+      "message": "Replacing the private key will require re-broadcasting the masternode to the network. Make sure you have the new key backed up. Continue?",
+      "confirm": "Change Key"
     },
     "buttons": {
       "add": "Add",

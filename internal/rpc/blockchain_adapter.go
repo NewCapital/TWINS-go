@@ -249,3 +249,29 @@ func (a *BlockchainAdapter) AddCheckpoint(height uint32, hash types.Hash) error 
 	}
 	return fmt.Errorf("AddCheckpoint not supported")
 }
+
+// GetStakeModifier retrieves the persisted PoS stake modifier for a block.
+// Delegates to the underlying blockchain via type assertion (mirrors the
+// AddCheckpoint pattern above -- the base Blockchain interface does not
+// expose this method, but the concrete *BlockChain impl does). Returns
+// "not supported" when the impl doesn't satisfy the assertion.
+func (a *BlockchainAdapter) GetStakeModifier(blockHash types.Hash) (uint64, error) {
+	if g, ok := a.bc.(interface {
+		GetStakeModifier(types.Hash) (uint64, error)
+	}); ok {
+		return g.GetStakeModifier(blockHash)
+	}
+	return 0, fmt.Errorf("GetStakeModifier not supported")
+}
+
+// GetBlockPoSMetadata retrieves the persisted hashProofOfStake (a.k.a. kernel
+// hash) and stake modifier checksum for a block. Same type-assertion pattern
+// as GetStakeModifier above.
+func (a *BlockchainAdapter) GetBlockPoSMetadata(blockHash types.Hash) (uint32, types.Hash, error) {
+	if g, ok := a.bc.(interface {
+		GetBlockPoSMetadata(types.Hash) (uint32, types.Hash, error)
+	}); ok {
+		return g.GetBlockPoSMetadata(blockHash)
+	}
+	return 0, types.Hash{}, fmt.Errorf("GetBlockPoSMetadata not supported")
+}

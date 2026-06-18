@@ -12,6 +12,7 @@ export interface AppSlice {
   isInitialized: boolean;
   displayUnit: number;   // 0=TWINS, 1=mTWINS, 2=uTWINS
   displayDigits: number; // Decimal places (2-8)
+  dateFormat: number;    // 0=local, 1=UTC, 2=age — controls date/age rendering app-wide
 
   // Actions
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
@@ -25,7 +26,8 @@ export interface AppSlice {
   setInitialized: (initialized: boolean) => void;
   setDisplayUnit: (unit: number) => void;
   setDisplayDigits: (digits: number) => void;
-  loadDisplayUnits: () => Promise<void>;
+  setDateFormat: (format: number) => void;
+  loadDisplaySettings: () => Promise<void>;
 
   // Computed
   getLatestNotification: () => Notification | undefined;
@@ -57,6 +59,7 @@ export const createAppSlice: SliceCreator<AppSlice> = (set, get) => ({
   isInitialized: false,
   displayUnit: 0,
   displayDigits: 8,
+  dateFormat: 0,
 
   // Actions
   addNotification: (notification) => {
@@ -115,13 +118,16 @@ export const createAppSlice: SliceCreator<AppSlice> = (set, get) => ({
 
   setDisplayDigits: (digits) => set({ displayDigits: digits }),
 
-  loadDisplayUnits: async () => {
+  setDateFormat: (format) => set({ dateFormat: format }),
+
+  loadDisplaySettings: async () => {
     try {
       const { GetSettings } = await import('@wailsjs/go/main/App');
       const settings = await GetSettings();
       set({
         displayUnit: (settings as any).nDisplayUnit ?? 0,
         displayDigits: (settings as any).digits ?? 8,
+        dateFormat: (settings as any).nDateDisplayFormat ?? 0,
       });
     } catch {
       // Use defaults on error

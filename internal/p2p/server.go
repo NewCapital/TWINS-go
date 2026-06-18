@@ -2141,6 +2141,16 @@ func (s *Server) GetPeerCount() int32 {
 	return s.peerCount.Load()
 }
 
+// GetInboundCount returns the number of active inbound peer connections.
+func (s *Server) GetInboundCount() int32 {
+	return s.inbounds.Load()
+}
+
+// GetOutboundCount returns the number of active outbound peer connections.
+func (s *Server) GetOutboundCount() int32 {
+	return s.outbounds.Load()
+}
+
 // GetLocalAddress returns the server's local address
 func (s *Server) GetLocalAddress() *NetAddress {
 	return s.localAddr

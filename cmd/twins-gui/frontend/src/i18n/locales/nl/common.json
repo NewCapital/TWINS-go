@@ -141,6 +141,7 @@
     "height": "Hoogte",
     "hash": "Hash",
     "time": "Tijd",
+    "date": "Datum",
     "age": "Leeftijd",
     "txCount": "Txs",
     "size": "Grootte",

@@ -141,6 +141,7 @@
     "height": "Visina",
     "hash": "Hash",
     "time": "Vrijeme",
+    "date": "Datum",
     "age": "Starost",
     "txCount": "Txs",
     "size": "Veličina",

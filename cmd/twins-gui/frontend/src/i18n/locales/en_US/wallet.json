@@ -168,7 +168,6 @@
     "error": "Error: {{message}}",
     "type": {
       "all": "All",
-      "mostCommon": "Most Common",
       "sent": "Sent to",
       "received": "Received with",
       "toYourself": "To yourself",
@@ -229,7 +228,6 @@
       "hideOrphanStakes": "Hide orphan stakes"
     },
     "footer": {
-      "selectedAmount": "Selected amount:",
       "transactions": "{{count}} transaction",
       "transactions_other": "{{count}} transactions",
       "export": "Export"
@@ -295,5 +293,63 @@
     "copyTxid": "Copy Transaction ID",
     "lockCoin": "Lock Coin",
     "unlockCoin": "Unlock Coin"
+  },
+  "transactionDetails": {
+    "title": "Transaction Details",
+    "closeButton": "Close",
+    "closeAriaLabel": "Close transaction details",
+    "confirmationsCount": "{{count}} confirmations",
+    "openInExplorerHost": "Open in {{host}}",
+    "viewInExplorer": "View transaction in explorer",
+    "watchOnly": "(watch-only)",
+    "senderAddressUnknown": "Sender address unknown",
+    "unknown": "unknown",
+    "copyToast": "Copied to clipboard!",
+    "status": {
+      "conflicted": "Conflicted",
+      "unconfirmed": "Unconfirmed",
+      "immature": "Immature (matures in {{blocks}} more blocks)",
+      "confirming": "Confirming ({{count}}/6)",
+      "confirmed": "Confirmed"
+    },
+    "banner": {
+      "maturityCoinbase": "Generated coins must mature 60 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to \"not accepted\" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.",
+      "maturityMasternode": "Masternode rewards must mature 60 blocks before they can be spent. This transaction represents your masternode reward which is currently maturing.",
+      "maturityStaking": "Staking rewards must mature 60 blocks before they can be spent. This transaction represents your staking reward which is currently maturing.",
+      "conflicted": "This transaction conflicts with another transaction and will not be confirmed. The conflicting transaction may have been double-spent or replaced."
+    },
+    "addressLabel": {
+      "consolidatedTo": "Consolidated to",
+      "toYourself": "To yourself",
+      "sentFrom": "Sent from",
+      "receivedWith": "Received with",
+      "address": "Address"
+    },
+    "row": {
+      "type": "Type",
+      "from": "From",
+      "sentFrom": "Sent from",
+      "to": "To",
+      "toNumbered": "To #{{index}}",
+      "label": "Label",
+      "debit": "Debit",
+      "credit": "Credit",
+      "fee": "Fee",
+      "netAmount": "Net Amount",
+      "txid": "TXID",
+      "blockHeight": "Block Height",
+      "blockHash": "Block Hash"
+    },
+    "section": {
+      "message": "Message",
+      "transactionId": "Transaction ID"
+    },
+    "copy": {
+      "senderAddress": "Copy sender address",
+      "recipientAddress": "Copy recipient address",
+      "address": "Copy address",
+      "transactionId": "Copy transaction ID",
+      "blockHash": "Copy block hash"
+    }
   }
 }

@@ -10,6 +10,7 @@ import { createSendSlice } from './slices/sendSlice';
 import { createCoinControlSlice } from './slices/coinControlSlice';
 import { createReceiveSlice } from './slices/receiveSlice';
 import { createReceivingAddressesSlice } from './slices/receivingAddressesSlice';
+import { createPaymentRequestsSlice } from './slices/paymentRequestsSlice';
 import { createTransactionsSlice } from './slices/transactionsSlice';
 import { createExplorerSlice } from './slices/explorerSlice';
 import { createOptionsSlice } from './slices/optionsSlice';
@@ -36,6 +37,7 @@ export const useStore = create<StoreState>()(
           ...createCoinControlSlice(...a),
           ...createReceiveSlice(...a),
           ...createReceivingAddressesSlice(...a),
+          ...createPaymentRequestsSlice(...a),
           ...createTransactionsSlice(...a),
           ...createExplorerSlice(...a),
           ...createOptionsSlice(...a),
@@ -80,13 +82,13 @@ export const useWallet = () =>
 export const useMasternodes = () =>
   useStore(useShallow((state) => ({
     // State - My Masternodes
+    // `selectedMasternode` + `selectMasternode` were dropped end-to-end by
+    // m-masternodes-table-ux-cleanup (2026-06-11) — see masternodeSlice.ts for
+    // the rationale.
     masternodes: state.masternodes,
-    selectedMasternode: state.selectedMasternode,
     isLoading: state.isLoading,
     isStartingMasternode: state.isStartingMasternode,
     lastRefresh: state.lastRefresh,
-    operationError: state.operationError,
-    operationSuccess: state.operationSuccess,
     // State - Network Masternodes
     networkMasternodes: state.networkMasternodes,
     isLoadingNetwork: state.isLoadingNetwork,
@@ -94,14 +96,10 @@ export const useMasternodes = () =>
     networkFilters: state.networkFilters,
     masternodeActiveTab: state.masternodeActiveTab,
     // Actions - My Masternodes
-    selectMasternode: state.selectMasternode,
     setMasternodes: state.setMasternodes,
     setLoading: state.setLoading,
     setStartingMasternode: state.setStartingMasternode,
     setLastRefresh: state.setLastRefresh,
-    setOperationError: state.setOperationError,
-    setOperationSuccess: state.setOperationSuccess,
-    clearOperationMessages: state.clearOperationMessages,
     // Actions - Network Masternodes
     setNetworkMasternodes: state.setNetworkMasternodes,
     setLoadingNetwork: state.setLoadingNetwork,
@@ -236,6 +234,7 @@ export const useTransactions = () =>
     typeFilter: state.typeFilter,
     searchText: state.searchText,
     minAmount: state.minAmount,
+    maxAmount: state.maxAmount,
     dateRangeFrom: state.dateRangeFrom,
     dateRangeTo: state.dateRangeTo,
     watchOnlyFilter: state.watchOnlyFilter,
@@ -245,9 +244,6 @@ export const useTransactions = () =>
     // Sort state
     sortColumn: state.sortColumn,
     sortDirection: state.sortDirection,
-
-    // Selection state
-    selectedTxids: state.selectedTxids,
 
     // Notification
     newTransactionCount: state.newTransactionCount,
@@ -271,23 +267,19 @@ export const useTransactions = () =>
     setTypeFilter: state.setTypeFilter,
     setSearchText: state.setSearchText,
     setMinAmount: state.setMinAmount,
+    setMaxAmount: state.setMaxAmount,
+    setAmountRange: state.setAmountRange,
     setDateRange: state.setDateRange,
+    applyCustomDateRange: state.applyCustomDateRange,
     setWatchOnlyFilter: state.setWatchOnlyFilter,
     syncHideOrphanStakes: state.syncHideOrphanStakes,
     syncBlockExplorerUrls: state.syncBlockExplorerUrls,
     clearFilters: state.clearFilters,
+    dispatchSmartSearch: state.dispatchSmartSearch,
 
     // Sort actions
     setSortColumn: state.setSortColumn,
     toggleSortDirection: state.toggleSortDirection,
-
-    // Selection actions
-    toggleSelection: state.toggleSelection,
-    selectAll: state.selectAll,
-    unselectAll: state.unselectAll,
-    isSelected: state.isSelected,
-    getSelectedAmount: state.getSelectedAmount,
-    getSelectedCount: state.getSelectedCount,
 
     // Export
     exportCSV: state.exportCSV,
@@ -295,6 +287,14 @@ export const useTransactions = () =>
     // Notification actions
     incrementNewTransactionCount: state.incrementNewTransactionCount,
     clearNewTransactionCount: state.clearNewTransactionCount,
+
+    // Saved views (Phase 2)
+    views: state.views,
+    loadViews: state.loadViews,
+    saveCurrentAs: state.saveCurrentAs,
+    applyView: state.applyView,
+    renameView: state.renameView,
+    deleteView: state.deleteView,
   })));
 
 export const useTools = () =>
@@ -354,6 +354,39 @@ export const useReceivingAddresses = () =>
 
     // Export
     exportCSV: state.recvAddrsExportCSV,
+  })));
+
+export const usePaymentRequests = () =>
+  useStore(useShallow((state) => ({
+    // Current page data
+    requests: state.paymentReqsRequests,
+    total: state.paymentReqsTotal,
+    totalPages: state.paymentReqsTotalPages,
+    isLoading: state.paymentReqsIsLoading,
+    error: state.paymentReqsError,
+
+    // Pagination
+    currentPage: state.paymentReqsCurrentPage,
+    pageSize: state.paymentReqsPageSize,
+
+    // Sort
+    sortColumn: state.paymentReqsSortColumn,
+    sortDirection: state.paymentReqsSortDirection,
+
+    // Data loading
+    fetchPage: state.paymentReqsFetchPage,
+
+    // Pagination actions
+    setPage: state.paymentReqsSetPage,
+    setPageSize: state.paymentReqsSetPageSize,
+    goToFirstPage: state.paymentReqsGoToFirstPage,
+    goToPrevPage: state.paymentReqsGoToPrevPage,
+    goToNextPage: state.paymentReqsGoToNextPage,
+    goToLastPage: state.paymentReqsGoToLastPage,
+
+    // Sort actions
+    setSortColumn: state.paymentReqsSetSortColumn,
+    toggleSortDirection: state.paymentReqsToggleSortDirection,
   })));
 
 export const useSignVerify = () =>

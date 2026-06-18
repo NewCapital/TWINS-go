@@ -49,9 +49,9 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
       <div style={{
         padding: '12px',
         marginBottom: '12px',
-        backgroundColor: '#2a2a2a',
+        backgroundColor: '#2f2f2f',
         border: '1px solid #3a3a3a',
-        borderRadius: '4px',
+        borderRadius: '8px',
       }}>
         <div style={{ color: '#888', fontSize: '12px' }}>
           {t('statistics.loading')}
@@ -71,15 +71,15 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
     <div style={{
       padding: '12px',
       marginBottom: '12px',
-      backgroundColor: '#2a2a2a',
+      backgroundColor: '#2f2f2f',
       border: '1px solid #3a3a3a',
-      borderRadius: '4px',
+      borderRadius: '8px',
     }}>
       {/* Header */}
       <div style={{
         fontSize: '13px',
-        fontWeight: 'bold',
-        color: '#ffffff',
+        fontWeight: 600,
+        color: '#ccc',
         marginBottom: '12px',
         borderBottom: '1px solid #3a3a3a',
         paddingBottom: '8px',
@@ -95,15 +95,6 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
       }}>
         {/* Left: Tier Distribution */}
         <div>
-          <div style={{
-            fontSize: '11px',
-            color: '#888',
-            marginBottom: '8px',
-            textTransform: 'uppercase',
-          }}>
-            {t('statistics.tierDistribution')}
-          </div>
-
           {/* Tier bars */}
           {TIER_ORDER.map((tier) => {
             const count = statistics.tierCounts[tier] || 0;
@@ -128,7 +119,7 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
                   </span>
                   <span style={{
                     fontSize: '11px',
-                    color: '#ccc',
+                    color: '#ddd',
                   }}>
                     {count.toLocaleString()} ({percentage.toFixed(1)}%)
                   </span>
@@ -137,7 +128,7 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
                 {/* Progress bar */}
                 <div style={{
                   height: '6px',
-                  backgroundColor: '#1a1a1a',
+                  backgroundColor: '#3a3a3a',
                   borderRadius: '3px',
                   overflow: 'hidden',
                 }}>
@@ -156,15 +147,6 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
 
         {/* Right: Summary Stats */}
         <div>
-          <div style={{
-            fontSize: '11px',
-            color: '#888',
-            marginBottom: '8px',
-            textTransform: 'uppercase',
-          }}>
-            {t('statistics.networkSummary')}
-          </div>
-
           {/* Total / Enabled */}
           <div style={{
             display: 'grid',
@@ -173,76 +155,104 @@ export const MasternodeStatisticsPanel: React.FC<MasternodeStatisticsPanelProps>
             marginBottom: '12px',
           }}>
             <div style={{
-              backgroundColor: '#1a1a1a',
-              padding: '8px',
-              borderRadius: '4px',
-              textAlign: 'center',
+              backgroundColor: '#2a2a2a',
+              border: '1px solid #3a3a3a',
+              padding: '12px',
+              borderRadius: '6px',
+              minHeight: '60px',
+              display: 'flex',
+              flexDirection: 'column',
             }}>
-              <div style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: '#4a8af4',
-              }}>
-                {formatNumber(totalCount)}
-              </div>
               <div style={{
                 fontSize: '10px',
                 color: '#888',
-                textTransform: 'uppercase',
               }}>
                 {t('statistics.total')}
+              </div>
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                fontWeight: 600,
+                fontFamily: 'monospace',
+                color: '#ddd',
+              }}>
+                {formatNumber(totalCount)}
               </div>
             </div>
 
             <div style={{
-              backgroundColor: '#1a1a1a',
-              padding: '8px',
-              borderRadius: '4px',
-              textAlign: 'center',
+              backgroundColor: '#2a2a2a',
+              border: '1px solid #3a3a3a',
+              padding: '12px',
+              borderRadius: '6px',
+              minHeight: '60px',
+              display: 'flex',
+              flexDirection: 'column',
             }}>
-              <div style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: '#00cc66',
-              }}>
-                {formatNumber(enabledCount)}
-              </div>
               <div style={{
                 fontSize: '10px',
                 color: '#888',
-                textTransform: 'uppercase',
               }}>
                 {t('statistics.enabled')}
+              </div>
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                fontWeight: 600,
+                fontFamily: 'monospace',
+                color: '#27ae60',
+              }}>
+                {formatNumber(enabledCount)}
               </div>
             </div>
           </div>
 
           {/* Total Collateral */}
           <div style={{
-            backgroundColor: '#1a1a1a',
-            padding: '8px',
-            borderRadius: '4px',
+            backgroundColor: '#2a2a2a',
+            border: '1px solid #3a3a3a',
+            padding: '12px',
+            borderRadius: '6px',
+            minHeight: '60px',
+            display: 'flex',
+            flexDirection: 'column',
           }}>
             <div style={{
-              fontSize: '10px',
-              color: '#888',
-              textTransform: 'uppercase',
-              marginBottom: '4px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '8px',
             }}>
-              {t('statistics.totalCollateral')}
+              <div style={{
+                fontSize: '10px',
+                color: '#888',
+              }}>
+                {t('statistics.totalCollateral')}
+              </div>
+              <div style={{
+                fontSize: '10px',
+                color: '#666',
+              }}>
+                ({formatNumber(statistics.totalCollateral || 0)})
+              </div>
             </div>
             <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               fontSize: '14px',
-              fontWeight: 'bold',
+              fontWeight: 600,
+              fontFamily: 'monospace',
               color: '#ffd700',
             }}>
               {formatCollateral(statistics.totalCollateral || 0)} TWINS
-            </div>
-            <div style={{
-              fontSize: '10px',
-              color: '#666',
-            }}>
-              ({formatNumber(statistics.totalCollateral || 0)})
             </div>
           </div>
         </div>

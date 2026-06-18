@@ -194,6 +194,9 @@ type BlockInfo struct {
 	NextBlockHash     string   `json:"nextblockhash,omitempty"`
 	MoneySupply       float64  `json:"moneysupply"`
 	StakeModifier     string   `json:"stakemodifier,omitempty"`
+	HashProofOfStake  string   `json:"hashproofofstake,omitempty"`
+	StakeAmount       float64  `json:"stakeamount,omitempty"`
+	StakeAge          int64    `json:"stakeage,omitempty"`
 }
 
 // TransactionInfo represents transaction information

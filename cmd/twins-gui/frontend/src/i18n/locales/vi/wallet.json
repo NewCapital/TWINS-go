@@ -136,7 +136,6 @@
     "error": "Lỗi: {{message}}",
     "type": {
       "all": "Tất cả",
-      "mostCommon": "Phổ biến nhất",
       "sent": "Đã gửi đến",
       "received": "Đã nhận từ",
       "toYourself": "Đến chính mình",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Ẩn stake mồ côi"
     },
     "footer": {
-      "selectedAmount": "Số lượng đã chọn:",
       "transactions": "{{count}} giao dịch",
       "transactions_other": "{{count}} giao dịch",
       "export": "Xuất"

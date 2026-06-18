@@ -141,6 +141,7 @@
     "height": "Höjd",
     "hash": "Hash",
     "time": "Tid",
+    "date": "Datum",
     "age": "Ålder",
     "txCount": "Txs",
     "size": "Storlek",

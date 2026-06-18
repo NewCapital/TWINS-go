@@ -136,7 +136,6 @@
     "error": "Error: {{message}}",
     "type": {
       "all": "Totes",
-      "mostCommon": "Més comunes",
       "sent": "Enviades a",
       "received": "Rebudes amb",
       "toYourself": "A tu mateix",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Amaga stakes orfes"
     },
     "footer": {
-      "selectedAmount": "Import seleccionat:",
       "transactions": "{{count}} transacció",
       "transactions_other": "{{count}} transaccions",
       "export": "Exporta"

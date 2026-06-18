@@ -83,17 +83,38 @@ export function getTransactionStatus(confirmations: number, isConflicted: boolea
   return TransactionStatus.Confirmed;
 }
 
+// Module-level Intl.NumberFormat cache: avoid constructing a fresh formatter
+// per row × per render. Keyed on displayDigits (typically 0-8); the cache
+// stays small and lives for the application lifetime.
+const formatterCache = new Map<number, Intl.NumberFormat>();
+
+function getNumberFormatter(digits: number): Intl.NumberFormat {
+  let formatter = formatterCache.get(digits);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+    formatterCache.set(digits, formatter);
+  }
+  return formatter;
+}
+
 /**
  * Format amount for display with brackets if unconfirmed
- * Matches Qt's formatTxAmount() behavior
+ * Matches Qt's formatTxAmount() behavior.
+ * Pass `includeUnit=false` when the unit label is rendered once at the parent
+ * card header (e.g. Overview Recent Transactions card via DashboardCard's
+ * headerRight slot, or Transactions list column header).
  */
 export function formatTransactionAmount(
   amount: number,
   confirmations: number,
   displayUnit: number = 0,
-  displayDigits: number = 8
+  displayDigits: number = 8,
+  includeUnit: boolean = true
 ): string {
-  const formattedAmount = formatAmount(amount, displayUnit, displayDigits);
+  const formattedAmount = formatAmount(amount, displayUnit, displayDigits, includeUnit);
 
   // Wrap unconfirmed amounts in brackets
   if (confirmations === 0) {
@@ -104,24 +125,33 @@ export function formatTransactionAmount(
 }
 
 /**
- * Format amount with sign, decimal places, and unit label
+ * Format amount with sign, locale-formatted thousands separators, and optional
+ * unit label. Uses cached `Intl.NumberFormat('en-US')` so large values render
+ * with comma separators (`+180,010.45` instead of `+180010.45`). Pass
+ * `includeUnit=false` to omit the trailing ` <unit>` suffix when the unit is
+ * rendered once at a parent card header.
  */
 export function formatAmount(
   amount: number,
   displayUnit: number = 0,
-  displayDigits: number = 8
+  displayDigits: number = 8,
+  includeUnit: boolean = true
 ): string {
   const converted = convertToDisplayUnit(amount, displayUnit);
-  const unitLabel = getUnitLabel(displayUnit);
   const sign = converted >= 0 ? '+' : '';
-  return `${sign}${converted.toFixed(displayDigits)} ${unitLabel}`;
+  const numericPart = `${sign}${getNumberFormatter(displayDigits).format(converted)}`;
+  return includeUnit ? `${numericPart} ${getUnitLabel(displayUnit)}` : numericPart;
 }
 
 /**
- * Get text color class for amount based on value
+ * Get hex color token for amount based on value (Receive design language).
+ * Returns hex strings consumed by inline `style={{ color }}` at callsites.
+ * Negative -> error fg, positive -> TWINS green, zero -> primary text.
  */
 export function getAmountColorClass(amount: number): string {
-  return amount < 0 ? 'text-red-500' : 'text-white';
+  if (amount < 0) return '#ff6666';
+  if (amount > 0) return '#27ae60';
+  return '#ddd';
 }
 
 /**

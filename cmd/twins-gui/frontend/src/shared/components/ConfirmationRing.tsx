@@ -18,6 +18,16 @@ interface ConfirmationRingProps {
   isCoinstake?: boolean;
   maturesIn?: number;
   size: number;
+  /**
+   * When false, suppresses the inner type-icon `<img>` and renders the ring/arc only.
+   * For the 6+ confirmations branch (which normally renders just the icon), a green
+   * checkmark SVG is rendered instead so the indicator column is never empty.
+   * Default: true (icon + ring combined — the canonical visual used by Transactions
+   * page rows and TransactionDetailsDialog). Set to false when the type icon is
+   * already rendered in a sibling column (e.g. the Overview Recent Transactions
+   * row's split-column layout).
+   */
+  showIcon?: boolean;
 }
 
 const CONFIRMED_THRESHOLD = 6;
@@ -30,6 +40,7 @@ export const ConfirmationRing: React.FC<ConfirmationRingProps> = ({
   isCoinstake = false,
   maturesIn = 0,
   size,
+  showIcon = true,
 }) => {
   const confs = Math.max(0, confirmations);
   const isImmature = isCoinstake && maturesIn > 0;
@@ -45,19 +56,87 @@ export const ConfirmationRing: React.FC<ConfirmationRingProps> = ({
   // Icon size leaves room for ring + gap
   const iconSize = size - (strokeWidth + padding) * 2 - 2;
 
-  // No ring needed for confirmed transactions
+  // 6+ confirmations: icon-only mode renders the type icon with a small green ✓
+  // badge in the bottom-right corner — mirror-symmetric with the conflicted `!`
+  // badge below — so settled transactions carry an explicit "confirmed" signal.
+  // Indicator-only mode (showIcon=false) still renders a green check inside a
+  // faint green ring so the column is not empty.
   if (isConfirmed) {
+    if (showIcon) {
+      const badgeSize = Math.max(14, size / 3);
+      const checkStrokeWidth = Math.max(1.5, badgeSize / 7);
+      return (
+        <div style={{ width: size, height: size, position: 'relative', overflow: 'visible' }}>
+          {/* Type icon rendered at iconSize (the same size used by the in-flight / immature
+              branches) so the icon does not visibly jump larger at the 5→6 confirmation
+              boundary. The green ✓ badge anchors to the outer size×size container's
+              bottom-right corner — symmetric with the conflicted `!` badge. */}
+          <img
+            src={typeIcon}
+            alt="Transaction Type"
+            style={{
+              position: 'absolute',
+              top: (size - iconSize) / 2,
+              left: (size - iconSize) / 2,
+              width: iconSize,
+              height: iconSize,
+              objectFit: 'contain',
+            }}
+          />
+          {/* Green ✓ confirmed badge — symmetric with the conflicted `!` badge */}
+          <div
+            aria-label="Fully confirmed"
+            style={{
+              position: 'absolute',
+              bottom: -1,
+              right: -1,
+              width: badgeSize,
+              height: badgeSize,
+              borderRadius: '50%',
+              backgroundColor: '#27ae60',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1.5px solid #2b2b2b',
+            }}
+          >
+            <svg width={badgeSize} height={badgeSize} viewBox={`0 0 ${badgeSize} ${badgeSize}`}>
+              <polyline
+                fill="none"
+                stroke="#fff"
+                strokeWidth={checkStrokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points={`${badgeSize * 0.22},${badgeSize * 0.52} ${badgeSize * 0.43},${badgeSize * 0.72} ${badgeSize * 0.78},${badgeSize * 0.32}`}
+              />
+            </svg>
+          </div>
+        </div>
+      );
+    }
+    // Indicator-only: green check ✓ in a green outline ring
+    const checkPad = Math.max(2, size / 5);
     return (
-      <div style={{ width: size, height: size, position: 'relative' }}>
-        <img
-          src={typeIcon}
-          alt="Transaction Type"
-          style={{
-            width: size,
-            height: size,
-            objectFit: 'contain',
-          }}
-        />
+      <div style={{ width: size, height: size, position: 'relative' }} aria-label="Fully confirmed">
+        <svg width={size} height={size} style={{ position: 'absolute', top: 0, left: 0 }}>
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke="#22c55e"
+            strokeWidth={strokeWidth}
+            opacity={0.7}
+          />
+          <polyline
+            fill="none"
+            stroke="#22c55e"
+            strokeWidth={Math.max(1.5, size / 14)}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            points={`${checkPad},${size / 2} ${size / 2 - 1},${size - checkPad - 1} ${size - checkPad},${checkPad + 1}`}
+          />
+        </svg>
       </div>
     );
   }
@@ -81,18 +160,20 @@ export const ConfirmationRing: React.FC<ConfirmationRingProps> = ({
             transform={`rotate(-90 ${center} ${center})`}
           />
         </svg>
-        <img
-          src={typeIcon}
-          alt="Transaction Type"
-          style={{
-            position: 'absolute',
-            top: (size - iconSize) / 2,
-            left: (size - iconSize) / 2,
-            width: iconSize,
-            height: iconSize,
-            objectFit: 'contain',
-          }}
-        />
+        {showIcon && (
+          <img
+            src={typeIcon}
+            alt="Transaction Type"
+            style={{
+              position: 'absolute',
+              top: (size - iconSize) / 2,
+              left: (size - iconSize) / 2,
+              width: iconSize,
+              height: iconSize,
+              objectFit: 'contain',
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -160,19 +241,21 @@ export const ConfirmationRing: React.FC<ConfirmationRingProps> = ({
         )}
       </svg>
 
-      {/* Type icon centered inside */}
-      <img
-        src={typeIcon}
-        alt="Transaction Type"
-        style={{
-          position: 'absolute',
-          top: (size - iconSize) / 2,
-          left: (size - iconSize) / 2,
-          width: iconSize,
-          height: iconSize,
-          objectFit: 'contain',
-        }}
-      />
+      {/* Type icon centered inside (suppressed when showIcon=false) */}
+      {showIcon && (
+        <img
+          src={typeIcon}
+          alt="Transaction Type"
+          style={{
+            position: 'absolute',
+            top: (size - iconSize) / 2,
+            left: (size - iconSize) / 2,
+            width: iconSize,
+            height: iconSize,
+            objectFit: 'contain',
+          }}
+        />
+      )}
 
       {/* Conflicted badge */}
       {isConflicted && (

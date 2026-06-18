@@ -87,9 +87,24 @@ func MempoolTransactionKey(hash types.Hash) []byte {
 	return key
 }
 
-// AddressHistoryKey generates a key for address history index
-// Format: [0x05][scripthash:20][height:4][txhash:32][index:2] -> history entry
-// This allows chronological ordering by height for address history queries
+// AddressHistoryKey generates a key for address history index.
+//
+// Format: [0x05][scripthash:20][height:4][txhash:32][index:2] -> history entry.
+//
+// The trailing 2-byte `index` field encodes both the direction (input vs
+// output) and the position within the transaction via EncodeAddressHistoryIndex:
+//
+//	high bit (0x8000) = IsInput flag
+//	low 15 bits        = output index (when high bit clear) or input index (when high bit set)
+//
+// Inputs therefore occupy 0x8000-0xFFFF, outputs 0x0000-0x7FFF. Each input
+// and each output of a transaction gets a unique key, eliminating the
+// pre-2026-06-01 collision where all inputs and outputs of one tx to one
+// address shared a single key (the old encoding used uint16(tx_position_in_block)
+// which silently lost data via last-write-wins). Pebble lexicographic
+// iteration still yields chronological height ordering for the outer
+// prefix scan; per-tx entry ordering within a single tx is unspecified
+// (the aggregator does not depend on it).
 func AddressHistoryKey(scriptHash [20]byte, height uint32, txHash types.Hash, index uint16) []byte {
 	key := make([]byte, 59)
 	key[0] = PrefixAddressHistory
@@ -98,6 +113,36 @@ func AddressHistoryKey(scriptHash [20]byte, height uint32, txHash types.Hash, in
 	copy(key[25:57], txHash[:])
 	binary.LittleEndian.PutUint16(key[57:], index)
 	return key
+}
+
+// AddressHistoryIndexInputBit is set in the high bit of the AddressHistoryKey
+// index field when the entry represents a spent input. Cleared for received
+// outputs. Combined with the low 15 bits (the input/output index within the
+// transaction) to form a per-(address, tx, direction, ioIdx) unique key.
+const AddressHistoryIndexInputBit uint16 = 0x8000
+
+// AddressHistoryIndexIOMask masks the low 15 bits of the AddressHistoryKey
+// index field, isolating the input/output index within the transaction.
+// Callers must guarantee `ioIdx <= AddressHistoryIndexIOMask` (the protocol
+// limit on inputs/outputs per tx is well below 32 768; MaxStandardTxSize
+// caps tx size such that the i/o count cannot exceed a few thousand).
+const AddressHistoryIndexIOMask uint16 = 0x7FFF
+
+// EncodeAddressHistoryIndex packs an input/output index plus its direction
+// flag into the 2-byte index field of AddressHistoryKey.
+//
+//	encoded = (isInput ? 0x8000 : 0x0000) | (ioIdx & 0x7fff)
+//
+// Callers should validate `ioIdx <= AddressHistoryIndexIOMask` separately
+// and skip the index entry with a warning if the bound is exceeded (a tx
+// with more than 32 768 inputs or outputs is a protocol violation and
+// would already be rejected upstream).
+func EncodeAddressHistoryIndex(ioIdx uint16, isInput bool) uint16 {
+	encoded := ioIdx & AddressHistoryIndexIOMask
+	if isInput {
+		encoded |= AddressHistoryIndexInputBit
+	}
+	return encoded
 }
 
 // AddressHistoryPrefix generates a prefix for scanning address history

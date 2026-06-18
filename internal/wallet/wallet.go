@@ -1352,9 +1352,15 @@ type TransactionFilterParams struct {
 	DateFilter    string // "all","today","week","month","lastMonth","year","range"
 	DateRangeFrom string // ISO date for "range"
 	DateRangeTo   string // ISO date for "range"
-	TypeFilter    string // "all","mostCommon","received","sent","toYourself","mined","minted","masternode", etc.
+	// TypeFilter is OR-matched: any tx matching one of the slice entries
+	// passes. Valid entries: "received","sent","toYourself","consolidation",
+	// "mined","minted","masternode","other". An entry of "all" or an empty/nil
+	// slice means "no type filter" (match all). The legacy "mostCommon"
+	// pseudo-entry was removed when the GUI switched to checkbox multi-select.
+	TypeFilter    []string
 	SearchText    string
-	MinAmount     float64 // minimum absolute amount in satoshis
+	MinAmount     float64 // minimum absolute amount in satoshis (0 = no lower bound)
+	MaxAmount     float64 // maximum absolute amount in satoshis (0 = no upper bound)
 
 	WatchOnlyFilter  string // "all","yes","no"
 	HideOrphanStakes bool
@@ -1427,10 +1433,10 @@ func (w *Wallet) ListTransactionsFiltered(params TransactionFilterParams) (Trans
 		if !matchesWatchOnlyFilter(tx.WatchOnly, params.WatchOnlyFilter) {
 			continue
 		}
-		if !matchesSearchText(tx.Address, tx.Label, params.SearchText) {
+		if !w.txMatchesSearchText(tx, params.SearchText) {
 			continue
 		}
-		if params.MinAmount > 0 && math.Abs(float64(tx.Amount)) < params.MinAmount {
+		if !matchesAmountFilter(math.Abs(float64(tx.Amount)), params.MinAmount, params.MaxAmount) {
 			continue
 		}
 		filtered = append(filtered, tx)
@@ -1498,15 +1504,29 @@ func matchesDateFilter(txTime time.Time, filter, rangeFrom, rangeTo string) bool
 	case "today":
 		return !txTime.Before(startOfDay)
 	case "week":
-		startOfWeek := startOfDay.AddDate(0, 0, -int(startOfDay.Weekday()))
+		// ISO weekday: Monday is the first day of the week. time.Weekday()
+		// returns Sunday=0..Saturday=6 (US convention); the (weekday+6)%7
+		// remapping gives Monday=0..Sunday=6 so subtracting it from
+		// startOfDay lands on the most recent Monday. Matches the inline
+		// calendar picker's day-of-week labels (Mo-Tu-We-Th-Fr-Sa-Su in
+		// TxFilterDateEditor.tsx:121) and the Europe/Warsaw / ISO-week
+		// convention. Source bug: ?-research-tx-date-filter-presets.
+		isoWeekday := (int(startOfDay.Weekday()) + 6) % 7
+		startOfWeek := startOfDay.AddDate(0, 0, -isoWeekday)
 		return !txTime.Before(startOfWeek)
 	case "month":
 		startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 		return !txTime.Before(startOfMonth)
 	case "lastMonth":
 		startOfLastMonth := time.Date(now.Year(), now.Month()-1, 1, 0, 0, 0, 0, now.Location())
-		endOfLastMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location()).Add(-time.Nanosecond)
-		return !txTime.Before(startOfLastMonth) && !txTime.After(endOfLastMonth)
+		// End-exclusive: first instant of THIS month. Mirrors the "range"
+		// branch (h-fix-tx-date-range-filter-local-tz, 2026-05-24) for
+		// consistency and to avoid the Add(-time.Nanosecond) idiom, which
+		// would be DST-fragile at any hypothetical month boundary that
+		// coincides with a DST transition. time.Date normalizes correctly
+		// regardless of DST.
+		endExclusive := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+		return !txTime.Before(startOfLastMonth) && txTime.Before(endExclusive)
 	case "year":
 		startOfYear := time.Date(now.Year(), 1, 1, 0, 0, 0, 0, now.Location())
 		return !txTime.Before(startOfYear)
@@ -1514,34 +1534,46 @@ func matchesDateFilter(txTime time.Time, filter, rangeFrom, rangeTo string) bool
 		if rangeFrom == "" || rangeTo == "" {
 			return true
 		}
-		fromDate, err1 := time.Parse("2006-01-02", rangeFrom)
-		toDate, err2 := time.Parse("2006-01-02", rangeTo)
+		// Parse range bounds in the server's local timezone so they agree
+		// with how preset filters (today/week/month/...) compute their
+		// boundaries via now.Location(). Using time.Parse (UTC) instead
+		// caused txs whose UTC instant fell on the adjacent calendar day
+		// in UTC but on the picked day in the user's local TZ to be
+		// silently excluded. See research ?-research-tx-date-filter-timezone.
+		fromDate, err1 := time.ParseInLocation("2006-01-02", rangeFrom, time.Local)
+		toDate, err2 := time.ParseInLocation("2006-01-02", rangeTo, time.Local)
 		if err1 != nil || err2 != nil {
 			return true
 		}
-		toDate = toDate.Add(24*time.Hour - time.Nanosecond) // include entire "to" day
-		return !txTime.Before(fromDate) && !txTime.After(toDate)
+		// Include the entire "to" calendar day in local time. Compute the
+		// exclusive end bound as the next local midnight via time.Date —
+		// NOT toDate.Add(24h - 1ns). On DST transition days the selected
+		// local day is 23 or 25 hours long, so a fixed +24h offset would
+		// over- or under-include up to one hour of transactions near the
+		// boundary. time.Date normalizes day+1 into the correct local
+		// midnight regardless of DST.
+		endExclusive := time.Date(toDate.Year(), toDate.Month(), toDate.Day()+1, 0, 0, 0, 0, time.Local)
+		return !txTime.Before(fromDate) && txTime.Before(endExclusive)
 	default:
 		return true
 	}
 }
 
-func matchesTypeFilter(category string, filter string) bool {
-	if filter == "" || filter == "all" {
-		return true
-	}
-
-	if filter == "mostCommon" {
-		return true
-	}
-
+// matchesTypeFilterSingle checks whether a transaction category matches a single
+// filter key (e.g. "sent", "received", "mined"). Returns false for unknown filter
+// keys — multi-select callers iterate over a slice and OR-combine results, so
+// unknown keys must NOT short-circuit to true.
+//
+// Comment-based filters ("consolidation", "toYourself") are NOT handled here;
+// they live in matchesTypeFilterWithComment which has access to the tx comment.
+func matchesTypeFilterSingle(category, filter string) bool {
 	switch filter {
+	case "", "all":
+		return true
 	case "received":
 		return category == "receive"
 	case "sent":
 		return category == "send"
-	case "toYourself":
-		return category == "send_to_self"
 	case "mined":
 		return category == "generate"
 	case "minted":
@@ -1556,21 +1588,70 @@ func matchesTypeFilter(category string, filter string) bool {
 		}
 		return !known[category]
 	default:
-		return true
+		// Unknown filter key — caller treats as "no match" so OR-combine works
+		// correctly across a multi-select slice. (Legacy "mostCommon" entry
+		// is intentionally dropped per Phase 3 redesign.)
+		return false
 	}
 }
 
-// matchesTypeFilterWithComment extends matchesTypeFilter with comment-based filtering.
-// Used for types like "consolidation" that are distinguished by comment, not category.
-func matchesTypeFilterWithComment(category, comment, filter string) bool {
-	if filter == "consolidation" {
-		return category == "send_to_self" && comment == "autocombine"
+// matchesTypeFilterWithComment OR-matches a transaction category against a
+// slice of filter keys. Empty/nil slice means "no filter" (match all). A slice
+// containing "all" also matches everything (legacy compat).
+//
+// Comment-aware keys are handled inline:
+//   - "consolidation" matches send_to_self txs with comment=="autocombine"
+//   - "toYourself"    matches send_to_self txs with comment!="autocombine"
+//
+// All other keys delegate to matchesTypeFilterSingle.
+func matchesTypeFilterWithComment(category, comment string, filters []string) bool {
+	if len(filters) == 0 {
+		return true
 	}
-	if filter == "toYourself" {
-		// Exclude autocombine transactions from "to yourself" filter
-		return category == "send_to_self" && comment != "autocombine"
+	for _, f := range filters {
+		// Skip empty entries defensively — OR-combine semantics mean an empty
+		// string in the middle of a narrow slice (e.g. ["sent", ""]) must NOT
+		// short-circuit to true. The GUI cleans input before persisting, but
+		// this function is a defensive boundary for any caller. A slice
+		// containing exactly "all" or a slice of [""] is still treated as
+		// "no filter" via the empty-slice early-return only.
+		if f == "" {
+			continue
+		}
+		if f == "all" {
+			return true
+		}
+		switch f {
+		case "consolidation":
+			if category == "send_to_self" && comment == "autocombine" {
+				return true
+			}
+		case "toYourself":
+			if category == "send_to_self" && comment != "autocombine" {
+				return true
+			}
+		default:
+			if matchesTypeFilterSingle(category, f) {
+				return true
+			}
+		}
 	}
-	return matchesTypeFilter(category, filter)
+	return false
+}
+
+// matchesAmountFilter returns true when absAmount falls within the [min,max]
+// bounds. A bound of 0 is treated as "no constraint" — 0 min means no lower
+// bound, 0 max means no upper bound. Both bounds are inclusive (amount == min
+// and amount == max both pass). Callers pass absolute values (math.Abs of the
+// signed tx amount).
+func matchesAmountFilter(absAmount, min, max float64) bool {
+	if min > 0 && absAmount < min {
+		return false
+	}
+	if max > 0 && absAmount > max {
+		return false
+	}
+	return true
 }
 
 func matchesWatchOnlyFilter(isWatchOnly bool, filter string) bool {
@@ -1584,13 +1665,93 @@ func matchesWatchOnlyFilter(isWatchOnly bool, filter string) bool {
 	}
 }
 
-func matchesSearchText(address, label, search string) bool {
+// txMatchesSearchText returns true when the search string matches any of:
+//
+//  1. tx.Address substring (own / funding address — preserves the legacy
+//     matchesSearchText behavior).
+//  2. address-book label resolved dynamically via w.GetAddressLabel(tx.Address).
+//     WalletTransaction.Label is never populated at construction time; the
+//     visible label in the GUI is computed at response time from the address
+//     book, so we mirror the same lookup here to keep filter and display
+//     semantics aligned.
+//  3. recipient addresses extracted from tx.Tx.Outputs for send transactions
+//     only. Change outputs (wallet-owned) are filtered via isOurScriptLocked so
+//     they cannot accidentally match.
+//
+// Caller MUST hold w.mu.RLock(). The function uses lock-free helpers
+// (extractAddress reads only w.config.Network, isOurScriptLocked is the
+// documented locked variant, GetAddressLabel reads w.wdb without acquiring
+// w.mu). w.mu is NOT re-acquired.
+//
+// Performance: layer 3 decodes outputs via binarystorage.AnalyzeScript only for
+// TxCategorySend entries (a minority of wallet history in typical wallets). For
+// cache-loaded entries where tx.Tx is nil, layer 3 is skipped gracefully.
+func (w *Wallet) txMatchesSearchText(tx *WalletTransaction, search string) bool {
 	if search == "" {
 		return true
 	}
 	s := strings.ToLower(search)
-	return strings.Contains(strings.ToLower(address), s) ||
-		strings.Contains(strings.ToLower(label), s)
+
+	// Layer 1: own address substring (legacy behavior).
+	if tx.Address != "" && strings.Contains(strings.ToLower(tx.Address), s) {
+		return true
+	}
+
+	// Layer 2a: persisted tx.Label substring (defense-in-depth). The field is
+	// currently never populated at construction (notifications.go and rescan
+	// build WalletTransaction without setting Label), but txcache.go:487-612
+	// serializes/deserializes it, and the GUI display path at
+	// internal/gui/core/go_client.go:1272-1275 already falls back to wtx.Label
+	// when GetAddressLabel returns empty. Checking it here keeps search aligned
+	// with display if a future code path populates the field.
+	if tx.Label != "" && strings.Contains(strings.ToLower(tx.Label), s) {
+		return true
+	}
+
+	// Layer 2b: dynamically resolved address-book label (Bug 1 fix).
+	if tx.Address != "" {
+		if label := w.GetAddressLabel(tx.Address); label != "" {
+			if strings.Contains(strings.ToLower(label), s) {
+				return true
+			}
+		}
+	}
+
+	// Layer 3: external recipient addresses on send transactions (Bug 2 fix).
+	//
+	// Cache-loaded entries have tx.Tx == nil because txcache.go is metadata-only
+	// (see txcache.go:611 "Tx intentionally nil"). After a daemon restart EVERY
+	// WalletTransaction has nil Tx until the wallet receives a fresh block
+	// notification, so layer 3 must fall back to storage to be useful in
+	// production. Mirrors the GUI-core pattern at
+	// internal/gui/core/go_client.go:1295-1298.
+	if tx.Category == TxCategorySend {
+		matchTx := tx.Tx
+		if matchTx == nil && w.storage != nil {
+			if td, err := w.storage.GetTransactionData(tx.Hash); err == nil && td != nil {
+				matchTx = td.TxData
+			}
+		}
+		if matchTx != nil {
+			for _, output := range matchTx.Outputs {
+				if output == nil || len(output.ScriptPubKey) == 0 {
+					continue
+				}
+				if _, isOurs := w.isOurScriptLocked(output.ScriptPubKey); isOurs {
+					continue // skip wallet-owned change
+				}
+				addr := w.extractAddress(output.ScriptPubKey)
+				if addr == "" {
+					continue
+				}
+				if strings.Contains(strings.ToLower(addr), s) {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }
 
 func sortTransactions(txs []*WalletTransaction, column, direction string) {

@@ -136,7 +136,6 @@
     "error": "錯誤：{{message}}",
     "type": {
       "all": "全部",
-      "mostCommon": "最常見",
       "sent": "發送至",
       "received": "接收自",
       "toYourself": "發送給自己",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "隱藏孤立質押"
     },
     "footer": {
-      "selectedAmount": "已選金額：",
       "transactions": "{{count}} 筆交易",
       "transactions_other": "{{count}} 筆交易",
       "export": "匯出"

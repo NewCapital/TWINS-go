@@ -136,7 +136,6 @@
     "error": "Fejl: {{message}}",
     "type": {
       "all": "Alle",
-      "mostCommon": "Mest almindelige",
       "sent": "Sendt til",
       "received": "Modtaget med",
       "toYourself": "Til dig selv",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Skjul forældreløse stakes"
     },
     "footer": {
-      "selectedAmount": "Valgt beløb:",
       "transactions": "{{count}} transaktion",
       "transactions_other": "{{count}} transaktioner",
       "export": "Eksportér"

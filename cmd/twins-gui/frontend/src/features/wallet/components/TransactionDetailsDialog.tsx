@@ -1,22 +1,31 @@
 /**
  * TransactionDetailsDialog Component
- * Displays comprehensive transaction details matching Qt's TransactionDescDialog
- * Based on Qt wallet transactiondescdialog.cpp and transactiondesc.cpp
+ *
+ * Displays transaction details using the Receive design language.
+ * Structure: Hero (amount + status pill + date), optional Banner
+ * (maturity / conflicted), Details ledger, optional Message, Transaction ID.
+ * The bottom Close button is removed; the header X is the sole close affordance.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { X, Copy, ExternalLink, Clock, Check, AlertTriangle, Info } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { X, Copy, ExternalLink } from 'lucide-react';
 import { BrowserOpenURL } from '@wailsjs/runtime/runtime';
 import { core } from '@/shared/types/wallet.types';
 import {
   getTransactionTypeIcon,
   getTransactionTypeLabel,
-  formatTransactionDate,
-  formatTransactionDateUTC,
 } from '@/shared/utils/transactionIcons';
 import { ConfirmationRing } from '@/shared/components/ConfirmationRing';
 import { useDisplayUnits } from '@/shared/hooks/useDisplayUnits';
+import { useDisplayDateTime } from '@/shared/hooks/useDisplayDateTime';
 import { sanitizeText } from '@/shared/utils/sanitize';
+import { Banner } from '@/shared/components/Banner';
+import { IconButton } from '@/shared/components/IconButton';
+import { StatusPill, type StatusPillTone } from '@/shared/components/StatusPill';
+import { truncateAddress } from '@/shared/utils/format';
+import { useTransactions } from '@/store/useStore';
+import { LEGACY_EXPLORER_TX_FALLBACK, buildExplorerURL } from '@/shared/constants/explorer';
 
 interface TransactionDetailsDialogProps {
   isOpen: boolean;
@@ -24,678 +33,1008 @@ interface TransactionDetailsDialogProps {
   transaction: core.Transaction | null;
 }
 
+const TXID_REGEX = /^[a-fA-F0-9]{64}$/;
+
+// ---- Receive design tokens (inline constants) ----
+const cardStyle: React.CSSProperties = {
+  backgroundColor: '#2f2f2f',
+  border: '1px solid #3a3a3a',
+  borderRadius: '8px',
+  padding: '12px 16px',
+};
+
+const cardStyleHero: React.CSSProperties = {
+  ...cardStyle,
+  padding: '16px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '8px',
+};
+
+const labelStyle: React.CSSProperties = { fontSize: '11px', color: '#888' };
+const valueStyle: React.CSSProperties = { fontSize: '12px', color: '#ddd' };
+const monoAddressStyle: React.CSSProperties = {
+  fontSize: '12px',
+  fontFamily: 'monospace',
+  color: '#e0e0e0',
+  letterSpacing: '0.3px',
+};
+const dividerStyle: React.CSSProperties = {
+  borderTop: '1px solid #3a3a3a',
+  margin: '4px 0',
+};
+const rowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '4px 0',
+};
+const sectionTitleStyle: React.CSSProperties = {
+  fontSize: '13px',
+  fontWeight: 600,
+  color: '#ccc',
+  marginBottom: '8px',
+};
+const copyToastStyle: React.CSSProperties = {
+  fontSize: '10px',
+  color: '#27ae60',
+  marginTop: '2px',
+  textAlign: 'right',
+};
+
+// ---- Helpers ----
+
 /**
- * Get human-readable status text based on confirmations and transaction state
- * Matches Qt's FormatTxStatus() in transactiondesc.cpp
+ * Status text derivation. Mirrors the legacy logic with the
+ * Confirming branch collapsed onto the success tone (still on track to confirm).
+ * Now takes the i18next `t` function so all branches return localized strings.
  */
 function getStatusText(
+  t: (key: string, options?: Record<string, unknown>) => string,
   confirmations: number,
-  isConflicted = false,
-  isCoinbase = false,
-  isCoinstake = false,
-  maturesIn = 0
+  isConflicted: boolean,
+  isCoinbase: boolean,
+  isCoinstake: boolean,
+  maturesIn: number
 ): string {
-  if (isConflicted) {
-    return 'Conflicted';
-  }
-  if (confirmations === 0) {
-    return 'Unconfirmed (0 confirmations)';
-  }
+  if (isConflicted) return t('transactionDetails.status.conflicted');
+  if (confirmations === 0) return t('transactionDetails.status.unconfirmed');
   if ((isCoinbase || isCoinstake) && maturesIn > 0) {
-    return `Immature (${confirmations} confirmations, matures in ${maturesIn} more blocks)`;
+    return t('transactionDetails.status.immature', { blocks: maturesIn });
   }
-  if (confirmations < 6) {
-    return `Confirming (${confirmations}/6 confirmations)`;
-  }
-  return `Confirmed (${confirmations} confirmations)`;
+  if (confirmations < 6) return t('transactionDetails.status.confirming', { count: confirmations });
+  // U4: bare "Confirmed" label; full count surfaced via `title` tooltip on the status pill wrapper.
+  return t('transactionDetails.status.confirmed');
 }
 
-/**
- * Get status color class based on confirmations
- */
-function getStatusColorClass(
+function getStatusTone(
   confirmations: number,
-  isConflicted = false,
-  maturesIn = 0
-): string {
-  if (isConflicted) {
-    return 'text-red-500';
-  }
-  if (maturesIn > 0) {
-    return 'text-orange-400';
-  }
-  if (confirmations === 0) {
-    return 'text-yellow-500';
-  }
-  if (confirmations < 6) {
-    return 'text-blue-400';
-  }
-  return 'text-green-500';
+  isConflicted: boolean,
+  maturesIn: number
+): StatusPillTone {
+  if (isConflicted) return 'error';
+  if (maturesIn > 0) return 'warning';
+  if (confirmations === 0) return 'warning';
+  return 'success';
 }
 
+// (formatLongDate helper deleted — superseded by the global useDisplayDateTime hook.)
+
 /**
- * Format amount with proper sign, display unit conversion, and configured decimals.
- * Requires displayUnit and displayDigits from useDisplayUnits hook.
+ * Format a signed amount with the active display unit; strips an extra leading
+ * minus from the formatter and prepends the proper sign.
  */
 function formatAmountWithSign(amount: number, fmtAmount: (n: number) => string): string {
-  const sign = amount >= 0 ? '+' : '';
-  // fmtAmount handles conversion, digits, and unit label; strip leading minus for negative to avoid double sign
-  const formatted = fmtAmount(Math.abs(amount));
-  return amount < 0 ? `-${formatted}` : `${sign}${formatted}`;
+  if (amount < 0) return `-${fmtAmount(Math.abs(amount))}`;
+  if (amount > 0) return `+${fmtAmount(amount)}`;
+  return fmtAmount(0);
 }
 
-/**
- * Get amount color based on value
- */
-function getAmountColorClass(amount: number): string {
-  return amount < 0 ? 'text-red-400' : 'text-green-400';
+function getAmountColor(amount: number, isSelfTransfer: boolean): string {
+  if (isSelfTransfer) return '#888';
+  if (amount < 0) return '#ff6666';
+  if (amount > 0) return '#27ae60';
+  return '#ddd';
 }
 
-/**
- * Truncate transaction ID for display with ellipsis
- */
-function truncateTxId(txid: string, chars = 12): string {
-  if (txid.length <= chars * 2) return txid;
-  return `${txid.slice(0, chars)}...${txid.slice(-chars)}`;
-}
-
-/**
- * Determine if this is a receive transaction based on type
- */
 function isReceiveTransaction(type: string): boolean {
-  return type.startsWith('receive') ||
-         type === 'generated' ||
-         type === 'stake' ||
-         type === 'masternode';
+  return (
+    type.startsWith('receive') ||
+    type === 'generated' ||
+    type === 'stake' ||
+    type === 'masternode'
+  );
 }
+
+// ---- Sub-component: explorer button (single icon or popover dropdown) ----
+
+interface ExplorerButtonProps {
+  /** Pre-formatted value to substitute into each URL's `%s`. */
+  value: string;
+  /** Each entry: `{ url: string; hostname: string }`. */
+  urls: Array<{ url: string; hostname: string }>;
+  /** Hidden when no URLs are available (and no legacy fallback applies). */
+  ariaLabel: string;
+  title: string;
+}
+
+const ExplorerButton: React.FC<ExplorerButtonProps> = ({ value, urls, ariaLabel, title }) => {
+  const { t } = useTranslation('wallet');
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Close popover on outside mousedown.
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  // Close popover on Escape. Capture phase + stopPropagation prevents the
+  // parent dialog's Escape handler from also firing and closing the dialog
+  // beneath us — without this guard, the user opens the explorer menu to
+  // compare options and pressing Escape collapses the whole dialog instead
+  // of just dismissing the menu.
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handler, true); // capture phase: runs before bubble-phase listeners
+    return () => document.removeEventListener('keydown', handler, true);
+  }, [open]);
+
+  // Close popover on scroll/resize. The popover uses fixed positioning captured
+  // at click time; scrolling the dialog body or resizing the window would otherwise
+  // visually decouple the popover from its trigger button.
+  useEffect(() => {
+    if (!open) return;
+    const handler = () => setOpen(false);
+    window.addEventListener('resize', handler);
+    document.addEventListener('scroll', handler, true); // capture phase to catch nested scroll containers
+    return () => {
+      window.removeEventListener('resize', handler);
+      document.removeEventListener('scroll', handler, true);
+    };
+  }, [open]);
+
+  if (urls.length === 0) return null;
+
+  if (urls.length === 1) {
+    return (
+      <IconButton
+        icon={<ExternalLink size={12} />}
+        title={t('transactionDetails.openInExplorerHost', { host: urls[0].hostname })}
+        ariaLabel={ariaLabel}
+        onClick={() => BrowserOpenURL(buildExplorerURL(urls[0].url, value))}
+      />
+    );
+  }
+
+  const togglePopover = () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({ x: rect.right, y: rect.top });
+    }
+    setOpen(true);
+  };
+
+  const handlePick = (url: string) => {
+    BrowserOpenURL(buildExplorerURL(url, value));
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <div ref={buttonRef} style={{ display: 'inline-flex' }}>
+        <IconButton
+          icon={<ExternalLink size={12} />}
+          title={title}
+          ariaLabel={ariaLabel}
+          onClick={togglePopover}
+        />
+      </div>
+      {open && position && (
+        <div
+          ref={popoverRef}
+          role="menu"
+          style={{
+            position: 'fixed',
+            top: position.y,
+            left: position.x,
+            transform: 'translate(-100%, calc(-100% - 4px))',
+            zIndex: 60,
+            backgroundColor: '#2f2f2f',
+            border: '1px solid #3a3a3a',
+            borderRadius: '6px',
+            padding: '4px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.6)',
+            minWidth: '180px',
+          }}
+        >
+          {urls.map((u) => (
+            <button
+              key={u.url}
+              type="button"
+              onClick={() => handlePick(u.url)}
+              role="menuitem"
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                padding: '6px 12px',
+                borderRadius: '4px',
+                background: 'none',
+                border: 'none',
+                color: '#ddd',
+                fontSize: '12px',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#383838';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              {u.hostname}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
+
+// ---- Main component ----
 
 export const TransactionDetailsDialog: React.FC<TransactionDetailsDialogProps> = ({
   isOpen,
   onClose,
   transaction,
 }) => {
+  const { t } = useTranslation('wallet');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const { formatAmount } = useDisplayUnits();
+  const { blockExplorerUrls, syncBlockExplorerUrls } = useTransactions();
 
-  // Handle escape key to close
+  // Track whether we've resolved the block-explorer URL setting at least once.
+  // While unresolved, the TXID explorer button is suppressed so a user can't
+  // click it during the brief window between dialog open and the
+  // `syncBlockExplorerUrls()` call resolving — without this gate, an open from
+  // a context that hasn't pre-synced (rare but possible) could route the user
+  // to the legacy `explorer.win.win` fallback even when they have a custom
+  // explorer configured. Initialized true if the store already has URLs (the
+  // normal case — Overview / Transactions pages pre-sync on mount).
+  const [urlsResolved, setUrlsResolved] = useState(blockExplorerUrls.length > 0);
+
+  // Defense-in-depth: sync block explorer URLs on dialog open if store is empty.
+  // We mark `urlsResolved` once the sync settles (success or failure) so the
+  // TXID explorer button can render with the correct URLs (or fall back to
+  // the legacy `explorer.win.win` only if the sync genuinely returned empty).
+  //
+  // The component stays mounted while the dialog is closed (returns null) so
+  // useState persists across reopens. We re-evaluate `urlsResolved` at every
+  // (re)open: if the store currently has URLs, mark resolved immediately; if
+  // the store is empty, reset to false and re-run the sync — this prevents a
+  // stale `urlsResolved=true` from a prior mount cycle from briefly exposing
+  // the legacy fallback when the user has cleared their custom explorer URL
+  // setting between opens.
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+    if (!isOpen) return;
+    if (blockExplorerUrls.length > 0) {
+      setUrlsResolved(true);
+      return;
+    }
+    setUrlsResolved(false);
+    let cancelled = false;
+    Promise.resolve(syncBlockExplorerUrls()).finally(() => {
+      if (!cancelled) setUrlsResolved(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, blockExplorerUrls.length, syncBlockExplorerUrls]);
+
+  // A3: dialog focus management — auto-focus on open, Tab-cycling trap, restore focus on close.
+  // Escape continues to close the dialog (no regression).
+  //
+  // The effect is keyed ONLY on `isOpen` so that the cleanup runs exactly once per
+  // open→close transition. An earlier draft included `onClose` in the dep array;
+  // parents (e.g. OverviewPage) commonly pass an inline arrow `() => setSelected(null)`
+  // which produces a new function identity on every render, causing the cleanup to
+  // fire on every parent re-render mid-open and yank focus back to the opener,
+  // defeating the trap. The handler reads the latest `onClose` via a ref so we
+  // still call the up-to-date callback on Escape.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Snapshot the previously-focused element so we can restore on close.
+    previouslyFocusedRef.current = (document.activeElement as HTMLElement) ?? null;
+
+    const getFocusable = (): HTMLElement[] => {
+      const root = dialogRef.current;
+      if (!root) return [];
+      const selector =
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),' +
+        ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
+        (el) => !el.hasAttribute('disabled') && el.offsetParent !== null
+      );
     };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
+    // Place initial focus on the first focusable child (typically the X close button)
+    // instead of the dialog root. This gives keyboard users an immediately visible
+    // focus indicator on an expected interactive element (small ring on a 24×24 button),
+    // avoids the visually heavy browser-default ring around the entire dialog frame,
+    // and keeps the root reserved as the no-children fallback anchor for the Tab trap.
+    const initialFocusables = getFocusable();
+    if (initialFocusables.length > 0) {
+      initialFocusables[0].focus();
+    } else {
+      // No focusable children — fall back to programmatic focus on the dialog root
+      // (tabIndex={-1}) so Tab keystrokes still land in the dialog scope. The root's
+      // outline is suppressed visually; this branch is structurally unreachable in
+      // the current dialog (X button is always present) but kept for defensive depth.
+      dialogRef.current?.focus();
     }
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        // No focusable children — keep focus on the dialog root.
+        e.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || active === dialogRef.current)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      // Restore focus to the element that opened the dialog. Guard against the
+      // element having been removed from the DOM in the meantime.
+      const prev = previouslyFocusedRef.current;
+      if (prev && document.body.contains(prev)) {
+        prev.focus();
+      }
+      previouslyFocusedRef.current = null;
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
-  // Handle copy to clipboard
+  // Clear any pending copy-feedback timer on unmount so it doesn't fire
+  // setCopiedField on an unmounted component.
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const handleCopy = useCallback(async (text: string, field: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
-      setTimeout(() => setCopiedField(null), 2000);
+      // Cancel any in-flight prior timer so the new copy gets the full 2s window.
+      if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => {
+        setCopiedField(null);
+        copyTimerRef.current = null;
+      }, 2000);
     } catch {
-      // Clipboard copy failed - UI won't show success state
+      // Clipboard copy failed - UI won't show success state.
     }
   }, []);
 
-  // Handle view in explorer
-  const handleViewInExplorer = useCallback(() => {
-    if (transaction?.txid) {
-      // Validate txid format (64 hex characters for SHA256 hash)
-      const txidRegex = /^[a-fA-F0-9]{64}$/;
-      if (!txidRegex.test(transaction.txid)) {
-        // Invalid txid - prevent opening potentially malicious URL
-        return;
-      }
-      // TODO: Use actual block explorer URL from config
-      const explorerUrl = `https://explorer.win.win/tx/${encodeURIComponent(transaction.txid)}`;
-      BrowserOpenURL(explorerUrl);
-    }
-  }, [transaction?.txid]);
+  // CRITICAL: `useDisplayDateTime()` MUST be called BEFORE the early-return
+  // guard below. The dialog stays mounted with `isOpen=false` while the parent
+  // tree is alive (e.g. Transactions page or Overview Recent Transactions
+  // keeps `<TransactionDetailsDialog isOpen={...}>` rendered across both
+  // states). Initial render with `isOpen=false` runs N hooks then short-circuits
+  // at the early-return; clicking the Eye flips `isOpen` to true on the same
+  // instance (no unmount), re-renders past the guard, and if the hook is
+  // called AFTER the guard the second render runs N+1 hooks. React throws
+  // "Rendered more hooks than during the previous render", which the React
+  // Router error boundary at app/router.tsx:22-62 catches and renders as
+  // "Something went wrong loading this page". Fixed in
+  // h-fix-tx-details-dialog-rules-of-hooks (2026-06-11); mirrors the
+  // Explorer-side precedent
+  // m-fix-explorer-blockdetail-txdetail-navigation-error (2026-06-04) on
+  // BlockDetail.tsx + TransactionDetail.tsx. The same-day regression origin
+  // for this file is m-fix-date-display-inconsistencies (2026-06-04), which
+  // migrated this dialog onto the global `useDisplayDateTime` hook without
+  // accounting for the early-return placement. Do NOT relocate this back
+  // below the guard.
+  const { formatDateTime, formatTooltip } = useDisplayDateTime();
 
   if (!isOpen || !transaction) return null;
 
   const typeIcon = getTransactionTypeIcon(transaction.type);
   const typeLabel = getTransactionTypeLabel(transaction.type);
 
-  // Get transaction state flags
   const isConflicted = transaction.is_conflicted || false;
   const isCoinbase = transaction.is_coinbase || false;
   const isCoinstake = transaction.is_coinstake || false;
   const maturesIn = transaction.matures_in || 0;
   const isWatchOnly = transaction.is_watch_only || false;
+  const confirmations = transaction.confirmations || 0;
 
-  const statusText = getStatusText(
-    transaction.confirmations || 0,
-    isConflicted,
-    isCoinbase,
-    isCoinstake,
-    maturesIn
-  );
-  const statusColorClass = getStatusColorClass(
-    transaction.confirmations || 0,
-    isConflicted,
-    maturesIn
-  );
-  const formattedDate = formatTransactionDate(transaction.time);
-  const formattedDateUTC = formatTransactionDateUTC(transaction.time);
-  // send_to_self and consolidation net amount equals -(fee), which is technically correct but
-  // not a loss — use neutral color instead of red to avoid confusion.
-  const isSelfTransfer = transaction.type === 'send_to_self' || transaction.type === 'consolidation';
-  const amountColorClass = isSelfTransfer
-    ? 'text-gray-400'
-    : getAmountColorClass(transaction.amount);
+  const statusText = getStatusText(t, confirmations, isConflicted, isCoinbase, isCoinstake, maturesIn);
+  const statusTone = getStatusTone(confirmations, isConflicted, maturesIn);
 
-  // Calculate net amount (for display purposes)
-  const netAmount = transaction.amount;
+  // `useDisplayDateTime()` hook was hoisted above the early-return guard — see
+  // the CRITICAL comment block above. These are plain function calls on the
+  // destructured outputs and stay here so they can read `transaction.time`
+  // after the non-null guard has passed.
+  const formattedDate = formatDateTime(transaction.time);
+  const formattedDateUTC = formatTooltip(transaction.time);
+
+  const isSelfTransfer =
+    transaction.type === 'send_to_self' || transaction.type === 'consolidation';
+  const amountColor = getAmountColor(transaction.amount, isSelfTransfer);
+
   const fee = transaction.fee || 0;
-
-  // Determine transaction direction based on type
   const isReceive = isReceiveTransaction(transaction.type);
   const isSend = !isReceive;
+
+  // Maturity message body (preserved verbatim from the legacy implementation, now i18n'd).
+  const maturityMessage = isCoinbase
+    ? t('transactionDetails.banner.maturityCoinbase')
+    : transaction.type === 'masternode'
+      ? t('transactionDetails.banner.maturityMasternode')
+      : t('transactionDetails.banner.maturityStaking');
+
+  const conflictedMessage = t('transactionDetails.banner.conflicted');
+
+  // Recipient addresses for send transactions (from backend extractRecipientAddressesFromTx).
+  // Populated only for TxCategorySend; empty for receive / stake / masternode / etc.
+  // When non-empty, we render one row per recipient under a "To" label.
+  // When empty for a send (cache-loaded entry with storage miss), we fall back to
+  // displaying transaction.address under a "Sent from" label — wtx.Address is the
+  // wallet's funding address, NOT a recipient.
+  const recipientAddresses = transaction.recipient_addresses ?? [];
+  const isSendWithRecipients = isSend && recipientAddresses.length > 0;
+  const isSendFallback = isSend && recipientAddresses.length === 0;
+
+  // Address row label for the non-send cases handled by the single-address fallthrough.
+  // Send transactions are handled by the dedicated Recipients block below (or the
+  // "Sent from" fallback when recipient_addresses is empty).
+  const addressLabel =
+    transaction.type === 'consolidation'
+      ? t('transactionDetails.addressLabel.consolidatedTo')
+      : transaction.type === 'send_to_self'
+        ? t('transactionDetails.addressLabel.toYourself')
+        : isSendFallback
+          ? t('transactionDetails.addressLabel.sentFrom')
+          : isReceive
+            ? t('transactionDetails.addressLabel.receivedWith')
+            : t('transactionDetails.addressLabel.address');
+
+  // For TXID legacy fallback: only the txid gets the legacy hardcoded URL.
+  // Gated on `urlsResolved` so we never render the button (and never expose the
+  // legacy fallback) while a sync from an empty store is still in flight —
+  // see the `urlsResolved` state declaration above for the rationale.
+  const isTxidValid = TXID_REGEX.test(transaction.txid);
+  const txidExplorerUrls = !urlsResolved
+    ? []
+    : blockExplorerUrls.length > 0
+      ? blockExplorerUrls
+      : isTxidValid
+        ? [{ url: LEGACY_EXPLORER_TX_FALLBACK, hostname: 'explorer.win.win' }]
+        : [];
 
   return (
     <>
       {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-black/60 z-50"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/60 z-50" onClick={onClose} />
 
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
         <div
-          className="qt-frame pointer-events-auto"
+          ref={dialogRef}
+          className="pointer-events-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="tx-details-title"
+          tabIndex={-1}
           style={{
-            width: '550px',
+            width: '560px',
             maxWidth: '90vw',
             maxHeight: '90vh',
             overflow: 'auto',
-            backgroundColor: '#2b2b2b',
-            border: '1px solid #4a4a4a',
-            borderRadius: '4px',
+            backgroundColor: '#2f2f2f',
+            border: '1px solid #3a3a3a',
+            borderRadius: '8px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8)',
+            // Suppress the browser default focus ring on the dialog root. The root
+            // carries tabIndex={-1} solely so the A3 focus-trap can place focus on
+            // it programmatically (open + empty-children fallback) — the user never
+            // interacts with the root directly, and all real interactive descendants
+            // (X, Copy, Open-in-explorer) keep their own visible focus indicators.
+            outline: 'none',
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="qt-vbox" style={{ padding: '20px', gap: '16px' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              padding: '16px 20px',
+            }}
+          >
             {/* Header */}
-            <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-              <div className="qt-hbox" style={{ gap: '12px', alignItems: 'center' }}>
-                {/* Transaction Type Icon with Confirmation Ring */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <ConfirmationRing
                   typeIcon={typeIcon}
-                  confirmations={transaction.confirmations || 0}
+                  confirmations={confirmations}
                   isConflicted={isConflicted}
                   isCoinstake={isCoinstake}
                   maturesIn={maturesIn}
                   size={40}
                 />
-                <div className="qt-vbox" style={{ gap: '2px' }}>
-                  <span className="qt-header-label" style={{ fontSize: '16px' }}>
-                    Transaction Details
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span id="tx-details-title" style={{ fontSize: '14px', fontWeight: 600, color: '#ddd' }}>
+                    {t('transactionDetails.title')}
                   </span>
-                  <span className="qt-label" style={{ fontSize: '12px', color: '#999' }}>
-                    {typeLabel}
-                  </span>
+                  {/* U3: type subtitle removed — body Type row is the single source of type information. */}
                 </div>
               </div>
-              <button
-                type="button"
+              <IconButton
+                icon={<X size={14} />}
+                title={t('transactionDetails.closeButton')}
+                ariaLabel={t('transactionDetails.closeAriaLabel')}
                 onClick={onClose}
-                className="qt-button-icon"
+              />
+            </div>
+
+            {/* Hero card */}
+            <div style={cardStyleHero}>
+              <span
                 style={{
-                  padding: '4px',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
+                  fontSize: '24px',
+                  fontWeight: 600,
+                  fontFamily: 'monospace',
+                  color: amountColor,
+                  letterSpacing: '0.5px',
                 }}
               >
-                <X size={20} style={{ color: '#999' }} />
-              </button>
+                {formatAmountWithSign(transaction.amount, formatAmount)}
+              </span>
+              {/* U4: bare status label; full confirmation count is surfaced via the title tooltip. */}
+              <span title={confirmations > 0 ? t('transactionDetails.confirmationsCount', { count: confirmations }) : undefined}>
+                <StatusPill tone={statusTone} label={statusText} />
+              </span>
+              <span
+                style={{ fontSize: '11px', color: '#888', cursor: 'default' }}
+                title={formattedDateUTC}
+              >
+                {formattedDate}
+              </span>
             </div>
 
-            {/* Status Section */}
-            <div
-              className="qt-frame-secondary"
-              style={{
-                padding: '12px',
-                backgroundColor: '#3a3a3a',
-                border: '1px solid #4a4a4a',
-                borderRadius: '2px',
-              }}
-            >
-              <div className="qt-hbox" style={{ gap: '12px', alignItems: 'center' }}>
-                {maturesIn > 0 ? (
-                  <Clock size={20} className="text-orange-400" />
-                ) : (transaction.confirmations || 0) >= 6 ? (
-                  <Check size={20} className="text-green-500" />
-                ) : (transaction.confirmations || 0) === 0 ? (
-                  <Clock size={20} className="text-yellow-500" />
-                ) : (
-                  <Clock size={20} className="text-blue-400" />
-                )}
-                <div className="qt-vbox" style={{ gap: '2px', flex: 1 }}>
-                  <span className={`qt-label ${statusColorClass}`} style={{ fontSize: '13px', fontWeight: 'bold' }}>
-                    {statusText}
-                  </span>
-                  <span className="qt-label" style={{ fontSize: '11px', color: '#888' }}>
-                    {transaction.confirmations || 0} confirmation{(transaction.confirmations || 0) !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Maturity / Conflicted banners */}
+            {(isCoinbase || isCoinstake) && maturesIn > 0 && (
+              <Banner variant="warning" message={maturityMessage} />
+            )}
+            {isConflicted && <Banner variant="error" message={conflictedMessage} />}
 
-            {/* Transaction Info Grid */}
-            <div
-              className="qt-frame-secondary"
-              style={{
-                padding: '12px',
-                backgroundColor: '#3a3a3a',
-                border: '1px solid #4a4a4a',
-                borderRadius: '2px',
-              }}
-            >
-              <div className="qt-vbox" style={{ gap: '10px' }}>
-                {/* Date */}
-                <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Date</span>
-                  <span
-                    className="qt-label"
-                    style={{ fontSize: '12px', cursor: 'help' }}
-                    title={`UTC: ${formattedDateUTC}`}
-                  >
-                    {formattedDate}
-                  </span>
-                </div>
-
+            {/* Details ledger card */}
+            <div style={cardStyle}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {/* Type */}
-                <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Type</span>
-                  <span className="qt-label" style={{ fontSize: '12px' }}>{typeLabel}</span>
+                <div style={rowStyle}>
+                  <span style={labelStyle}>{t('transactionDetails.row.type')}</span>
+                  <span style={valueStyle}>{typeLabel}</span>
                 </div>
 
-                {/* Source - for coinbase/coinstake/masternode transactions */}
-                {(isCoinbase || isCoinstake) && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Source</span>
-                    <span className="qt-label" style={{ fontSize: '12px' }}>
-                      {isCoinbase ? 'Mined' : transaction.type === 'masternode' ? 'Masternode Reward' : 'Staking Reward'}
-                    </span>
-                  </div>
-                )}
+                {/* Source row dropped — was tautological with Type (Mined / Staking Reward / Masternode Reward). */}
 
-                {/* From Address - for receive transactions (sender if known) */}
+                {/* From (receive transactions, when sender known) */}
                 {isReceive && !isCoinbase && !isCoinstake && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>From</span>
-                    <div className="qt-hbox" style={{ gap: '6px', alignItems: 'center' }}>
-                      <span
-                        className="qt-label"
-                        style={{ fontSize: '11px', fontFamily: 'monospace', wordBreak: 'break-all', textAlign: 'right', maxWidth: '280px', color: transaction.from_address ? '#ddd' : '#888' }}
-                        title={transaction.from_address ? sanitizeText(transaction.from_address) : 'Sender address unknown'}
-                      >
-                        {transaction.from_address ? sanitizeText(transaction.from_address) : 'unknown'}
-                      </span>
-                      {transaction.from_address && (
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(transaction.from_address || '', 'fromAddress')}
-                          className="qt-button-icon"
+                  <>
+                    <div style={rowStyle}>
+                      <span style={labelStyle}>{t('transactionDetails.row.from')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span
                           style={{
-                            padding: '3px',
-                            backgroundColor: copiedField === 'fromAddress' ? '#4a4a4a' : 'transparent',
-                            border: '1px solid #555',
-                            borderRadius: '2px',
-                            cursor: 'pointer',
-                            flexShrink: 0,
+                            ...monoAddressStyle,
+                            color: transaction.from_address ? '#e0e0e0' : '#888',
+                            maxWidth: '320px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
                           }}
-                          title="Copy sender address"
+                          title={
+                            transaction.from_address
+                              ? sanitizeText(transaction.from_address)
+                              : t('transactionDetails.senderAddressUnknown')
+                          }
                         >
-                          <Copy size={12} style={{ color: copiedField === 'fromAddress' ? '#00ff00' : '#ddd' }} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* To Address - your receiving address (for receive) or recipient (for send) */}
-                {transaction.address && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>
-                      {transaction.type === 'consolidation'
-                        ? 'Consolidated to'
-                        : transaction.type === 'send_to_self'
-                        ? 'To yourself'
-                        : (isSend ? 'To' : (isReceive ? 'Received with' : 'Address'))}
-                    </span>
-                    <div className="qt-hbox" style={{ gap: '6px', alignItems: 'center' }}>
-                      <span
-                        className="qt-label"
-                        style={{ fontSize: '11px', fontFamily: 'monospace', wordBreak: 'break-all', textAlign: 'right', maxWidth: '260px' }}
-                        title={sanitizeText(transaction.address)}
-                      >
-                        {sanitizeText(transaction.address)}
-                        {/* Show ownership indicator for receive transactions and watch-only addresses. */}
-                        {(isReceive) && (
-                          <span style={{ color: '#888', fontFamily: 'inherit' }}>
-                            {' '}({isWatchOnly ? 'watch-only' : 'own address'})
-                          </span>
+                          {transaction.from_address
+                            ? truncateAddress(sanitizeText(transaction.from_address), 12, 10)
+                            : t('transactionDetails.unknown')}
+                        </span>
+                        {transaction.from_address && (
+                          <IconButton
+                            icon={<Copy size={12} />}
+                            title={t('transactionDetails.copy.senderAddress')}
+                            ariaLabel={t('transactionDetails.copy.senderAddress')}
+                            onClick={() =>
+                              handleCopy(transaction.from_address || '', 'fromAddress')
+                            }
+                          />
                         )}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(transaction.address, 'address')}
-                        className="qt-button-icon"
-                        style={{
-                          padding: '3px',
-                          backgroundColor: copiedField === 'address' ? '#4a4a4a' : 'transparent',
-                          border: '1px solid #555',
-                          borderRadius: '2px',
-                          cursor: 'pointer',
-                          flexShrink: 0,
-                        }}
-                        title="Copy address"
-                      >
-                        <Copy size={12} style={{ color: copiedField === 'address' ? '#00ff00' : '#ddd' }} />
-                      </button>
+                      </div>
                     </div>
-                  </div>
+                    {copiedField === 'fromAddress' && (
+                      <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>
+                    )}
+                  </>
                 )}
 
-                {/* Output Index (vout) */}
-                {transaction.vout !== undefined && transaction.vout >= 0 && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Output Index</span>
-                    <span className="qt-label" style={{ fontSize: '12px', fontFamily: 'monospace' }}>{transaction.vout}</span>
-                  </div>
+                {/* Sent from — wallet's own funding-source address for SEND
+                    transactions with populated recipient_addresses. Pairs
+                    symmetrically with the per-recipient "To" rows below: user
+                    sees both who they sent from and who they sent to. The
+                    `isSendFallback` path (cache miss with no recipients) is
+                    handled by the single-address row further below, so we
+                    only render this here when recipients ARE present. */}
+                {isSendWithRecipients && transaction.address && (
+                  <>
+                    <div style={rowStyle}>
+                      <span style={labelStyle}>{t('transactionDetails.row.sentFrom')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span
+                          style={{
+                            ...monoAddressStyle,
+                            maxWidth: '320px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                          title={sanitizeText(transaction.address)}
+                        >
+                          {truncateAddress(sanitizeText(transaction.address), 12, 10)}
+                        </span>
+                        <IconButton
+                          icon={<Copy size={12} />}
+                          title={t('transactionDetails.copy.senderAddress')}
+                          ariaLabel={t('transactionDetails.copy.senderAddress')}
+                          onClick={() => handleCopy(transaction.address, 'sentFromAddress')}
+                        />
+                      </div>
+                    </div>
+                    {copiedField === 'sentFromAddress' && (
+                      <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>
+                    )}
+                  </>
+                )}
+
+                {/* Recipients (send transactions with non-empty recipient_addresses).
+                    Renders one row per external recipient extracted from the raw tx
+                    outputs. Replaces the legacy single "To" row that misleadingly
+                    showed wtx.Address (the wallet's funding address, not the recipient). */}
+                {isSendWithRecipients && (
+                  <>
+                    {recipientAddresses.map((addr, idx) => {
+                      const safeAddr = sanitizeText(addr);
+                      const fieldKey = `recipient-${idx}`;
+                      return (
+                        <React.Fragment key={fieldKey}>
+                          <div style={rowStyle}>
+                            <span style={labelStyle}>
+                              {recipientAddresses.length === 1
+                                ? t('transactionDetails.row.to')
+                                : t('transactionDetails.row.toNumbered', { index: idx + 1 })}
+                            </span>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  ...monoAddressStyle,
+                                  maxWidth: '320px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}
+                                title={safeAddr}
+                              >
+                                {truncateAddress(safeAddr, 12, 10)}
+                              </span>
+                              <IconButton
+                                icon={<Copy size={12} />}
+                                title={t('transactionDetails.copy.recipientAddress')}
+                                ariaLabel={t('transactionDetails.copy.recipientAddress')}
+                                onClick={() => handleCopy(addr, fieldKey)}
+                              />
+                            </div>
+                          </div>
+                          {copiedField === fieldKey && (
+                            <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </>
+                )}
+
+                {/* Single-address row (receive / stake / masternode / send-to-self / consolidation / send fallback).
+                    Skipped for sends with populated recipient_addresses — the Recipients block above
+                    handles those. Send fallback (cache-loaded entry, no raw tx) renders here under
+                    a "Sent from" label so the funding address is at least visible. */}
+                {transaction.address && !isSendWithRecipients && (
+                  <>
+                    <div style={rowStyle}>
+                      <span style={labelStyle}>{addressLabel}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span
+                          style={{
+                            ...monoAddressStyle,
+                            maxWidth: '320px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                          title={sanitizeText(transaction.address)}
+                        >
+                          {truncateAddress(sanitizeText(transaction.address), 12, 10)}
+                          {isReceive && isWatchOnly && (
+                            <span style={{ color: '#888', fontFamily: 'inherit' }}>
+                              {' '}
+                              {t('transactionDetails.watchOnly')}
+                            </span>
+                          )}
+                        </span>
+                        <IconButton
+                          icon={<Copy size={12} />}
+                          title={t('transactionDetails.copy.address')}
+                          ariaLabel={t('transactionDetails.copy.address')}
+                          onClick={() => handleCopy(transaction.address, 'address')}
+                        />
+                      </div>
+                    </div>
+                    {copiedField === 'address' && (
+                      <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>
+                    )}
+                  </>
                 )}
 
                 {/* Label */}
-                {transaction.label && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Label</span>
-                    <span className="qt-label" style={{ fontSize: '12px' }}>{sanitizeText(transaction.label)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Amount Section */}
-            <div
-              className="qt-frame-secondary"
-              style={{
-                padding: '12px',
-                backgroundColor: '#3a3a3a',
-                border: '1px solid #4a4a4a',
-                borderRadius: '2px',
-              }}
-            >
-              <div className="qt-vbox" style={{ gap: '8px' }}>
-                {/* Debit/Credit */}
-                {/* For send_to_self/consolidation, debit equals the fee which is already shown in the
-                    Transaction Fee row below — suppress the redundant debit entry. */}
-                {transaction.debit !== undefined && transaction.debit !== 0 && !isSelfTransfer && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Debit</span>
-                    <span className="qt-label text-red-400" style={{ fontSize: '12px', fontFamily: 'monospace' }}>
-                      -{formatAmount(Math.abs(transaction.debit))}
-                    </span>
+                {/* Label row suppressed when external recipients are shown.
+                    transaction.label is derived from wtx.Address (the wallet's
+                    funding address for sends), so it does not correspond to the
+                    recipients listed in the Recipients block above — showing
+                    both side-by-side would be misleading. Contacts-aware
+                    recipient labels are deferred to a follow-up task. */}
+                {transaction.label && !isSendWithRecipients && (
+                  <div style={rowStyle}>
+                    <span style={labelStyle}>{t('transactionDetails.row.label')}</span>
+                    <span style={valueStyle}>{sanitizeText(transaction.label)}</span>
                   </div>
                 )}
 
+                {/* Money rows separator — gated to mirror the union of conditions that actually
+                    render a money row (Debit / Credit / Fee). Mirrors the Fee gate exactly so
+                    we never render a lone divider above an empty money block. */}
+                {(transaction.debit !== undefined && transaction.debit !== 0 && !isSelfTransfer) ||
+                (transaction.credit !== undefined && transaction.credit !== 0) ||
+                (isSend && fee > 0) ? (
+                  <div style={dividerStyle} />
+                ) : null}
+
+                {/* Debit (send_to_self/consolidation suppressed; debit equals fee, shown below) */}
+                {transaction.debit !== undefined &&
+                  transaction.debit !== 0 &&
+                  !isSelfTransfer && (
+                    <div style={rowStyle}>
+                      <span style={labelStyle}>{t('transactionDetails.row.debit')}</span>
+                      <span
+                        style={{ ...valueStyle, fontFamily: 'monospace', color: '#ff6666' }}
+                      >
+                        -{formatAmount(Math.abs(transaction.debit))}
+                      </span>
+                    </div>
+                  )}
+
+                {/* Credit */}
                 {transaction.credit !== undefined && transaction.credit !== 0 && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Credit</span>
-                    <span className="qt-label text-green-400" style={{ fontSize: '12px', fontFamily: 'monospace' }}>
+                  <div style={rowStyle}>
+                    <span style={labelStyle}>{t('transactionDetails.row.credit')}</span>
+                    <span style={{ ...valueStyle, fontFamily: 'monospace', color: '#27ae60' }}>
                       +{formatAmount(transaction.credit)}
                     </span>
                   </div>
                 )}
 
-                {/* Transaction Fee (for sent transactions) */}
+                {/* B3: Fee row — rendered for sent transactions when transaction.fee is populated.
+                    Per internal/wallet/CLAUDE.md, `transaction.fee` is currently only populated for
+                    self-transfer/consolidation paths; ordinary outgoing sends leave it at 0, so the
+                    row stays hidden for those until backend wiring is extended. Receive/reward/mined
+                    types continue to omit the Fee row entirely (they structurally have no fee).
+                    Rendering a fabricated "Fee: 0.00" when backend has no fee data would be
+                    actively misleading, so the `fee > 0` gate is preserved from the original
+                    implementation; only the visible label changes ("Network Fee" → "Fee"). */}
                 {isSend && fee > 0 && (
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Transaction Fee</span>
-                    <span className="qt-label" style={{ fontSize: '12px', fontFamily: 'monospace', color: '#999' }}>
+                  <div style={rowStyle}>
+                    <span style={labelStyle}>{t('transactionDetails.row.fee')}</span>
+                    <span style={{ ...valueStyle, fontFamily: 'monospace', color: '#888' }}>
                       -{formatAmount(fee)}
                     </span>
                   </div>
                 )}
 
-                {/* Separator */}
-                <div style={{ borderTop: '1px solid #4a4a4a', marginTop: '4px', paddingTop: '8px' }}>
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="qt-label" style={{ fontSize: '13px', fontWeight: 'bold' }}>Net Amount</span>
-                    <span className={`qt-label ${amountColorClass}`} style={{ fontSize: '14px', fontFamily: 'monospace', fontWeight: 'bold' }}>
-                      {formatAmountWithSign(netAmount, formatAmount)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Comment/Message (if present) */}
-            {transaction.comment && (
-              <div
-                className="qt-frame-secondary"
-                style={{
-                  padding: '12px',
-                  backgroundColor: '#3a3a3a',
-                  border: '1px solid #4a4a4a',
-                  borderRadius: '2px',
-                }}
-              >
-                <div className="qt-vbox" style={{ gap: '6px' }}>
-                  <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Message</span>
-                  <span className="qt-label" style={{ fontSize: '12px', whiteSpace: 'pre-wrap' }}>
-                    {sanitizeText(transaction.comment)}
+                {/* Final divider + Net Amount */}
+                <div style={dividerStyle} />
+                <div style={rowStyle}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#ddd' }}>
+                    {t('transactionDetails.row.netAmount')}
                   </span>
-                </div>
-              </div>
-            )}
-
-            {/* Coinbase/Coinstake Maturity Notice */}
-            {(isCoinbase || isCoinstake) && maturesIn > 0 && (
-              <div
-                className="qt-frame-secondary"
-                style={{
-                  padding: '12px',
-                  backgroundColor: '#3d3520',
-                  border: '1px solid #5a4a2a',
-                  borderRadius: '2px',
-                }}
-              >
-                <div className="qt-hbox" style={{ gap: '10px', alignItems: 'flex-start' }}>
-                  <Info size={18} style={{ color: '#f0a000', flexShrink: 0, marginTop: '2px' }} />
-                  <div className="qt-vbox" style={{ gap: '4px' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#f0a000', fontWeight: 'bold' }}>
-                      Maturity Notice
-                    </span>
-                    <span className="qt-label" style={{ fontSize: '11px', color: '#ccc', lineHeight: '1.4' }}>
-                      {/* isCoinbase/isCoinstake gate uses transaction.is_coinstake (set for both
-                          stake and masternode in go_client.go). The inner type check uses
-                          transaction.type which comes from mapCategoryToType — both are kept in
-                          sync by the same mapping; if a new coinstake-like category is added,
-                          update mapCategoryToType and add a branch here accordingly. */}
-                      {isCoinbase
-                        ? 'Generated coins must mature 60 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won\'t be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.'
-                        : transaction.type === 'masternode'
-                          ? 'Masternode rewards must mature 60 blocks before they can be spent. This transaction represents your masternode reward which is currently maturing.'
-                          : 'Staking rewards must mature 60 blocks before they can be spent. This transaction represents your staking reward which is currently maturing.'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Conflicted Transaction Warning */}
-            {isConflicted && (
-              <div
-                className="qt-frame-secondary"
-                style={{
-                  padding: '12px',
-                  backgroundColor: '#3d2020',
-                  border: '1px solid #5a2a2a',
-                  borderRadius: '2px',
-                }}
-              >
-                <div className="qt-hbox" style={{ gap: '10px', alignItems: 'flex-start' }}>
-                  <AlertTriangle size={18} style={{ color: '#ff4444', flexShrink: 0, marginTop: '2px' }} />
-                  <div className="qt-vbox" style={{ gap: '4px' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#ff4444', fontWeight: 'bold' }}>
-                      Transaction Conflicted
-                    </span>
-                    <span className="qt-label" style={{ fontSize: '11px', color: '#ccc', lineHeight: '1.4' }}>
-                      This transaction conflicts with another transaction and will not be confirmed. The conflicting transaction may have been double-spent or replaced.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Transaction ID Section */}
-            <div
-              className="qt-frame-secondary"
-              style={{
-                padding: '12px',
-                backgroundColor: '#3a3a3a',
-                border: '1px solid #4a4a4a',
-                borderRadius: '2px',
-              }}
-            >
-              <div className="qt-vbox" style={{ gap: '8px' }}>
-                <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Transaction ID</span>
-                <div className="qt-hbox" style={{ gap: '8px', alignItems: 'center' }}>
                   <span
-                    className="qt-label"
                     style={{
-                      fontSize: '11px',
+                      fontSize: '14px',
+                      fontWeight: 600,
                       fontFamily: 'monospace',
-                      wordBreak: 'break-all',
-                      flex: 1,
+                      color: amountColor,
                     }}
                   >
-                    {transaction.txid}
+                    {formatAmountWithSign(transaction.amount, formatAmount)}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(transaction.txid, 'txid')}
-                    className="qt-button-icon"
-                    style={{
-                      padding: '4px',
-                      backgroundColor: copiedField === 'txid' ? '#4a4a4a' : 'transparent',
-                      border: '1px solid #555',
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                    }}
-                    title="Copy Transaction ID"
-                  >
-                    <Copy size={14} style={{ color: copiedField === 'txid' ? '#00ff00' : '#ddd' }} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleViewInExplorer}
-                    className="qt-button-icon"
-                    style={{
-                      padding: '4px',
-                      backgroundColor: 'transparent',
-                      border: '1px solid #555',
-                      borderRadius: '2px',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                    }}
-                    title="View in Explorer"
-                  >
-                    <ExternalLink size={14} style={{ color: '#ddd' }} />
-                  </button>
                 </div>
-                {copiedField === 'txid' && (
-                  <span className="qt-label" style={{ fontSize: '10px', color: '#00ff00' }}>
-                    Copied to clipboard!
-                  </span>
-                )}
               </div>
             </div>
 
-            {/* Block Info (if confirmed) */}
-            {transaction.block_hash && (
-              <div
-                className="qt-frame-secondary"
-                style={{
-                  padding: '12px',
-                  backgroundColor: '#3a3a3a',
-                  border: '1px solid #4a4a4a',
-                  borderRadius: '2px',
-                }}
-              >
-                <div className="qt-vbox" style={{ gap: '8px' }}>
-                  {transaction.block_height !== undefined && transaction.block_height > 0 && (
-                    <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Block Height</span>
-                      <span className="qt-label" style={{ fontSize: '12px', fontFamily: 'monospace' }}>
+            {/* Optional Message card */}
+            {transaction.comment && (
+              <div style={cardStyle}>
+                <div style={sectionTitleStyle}>{t('transactionDetails.section.message')}</div>
+                <span
+                  style={{
+                    fontSize: '12px',
+                    color: '#ddd',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {sanitizeText(transaction.comment)}
+                </span>
+              </div>
+            )}
+
+            {/* Transaction ID card */}
+            <div style={cardStyle}>
+              <div style={sectionTitleStyle}>{t('transactionDetails.section.transactionId')}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {/* TXID row */}
+                <div style={rowStyle}>
+                  <span style={labelStyle}>{t('transactionDetails.row.txid')}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={monoAddressStyle} title={transaction.txid}>
+                      {truncateAddress(transaction.txid, 12, 10)}
+                    </span>
+                    <IconButton
+                      icon={<Copy size={12} />}
+                      title={t('transactionDetails.copy.transactionId')}
+                      ariaLabel={t('transactionDetails.copy.transactionId')}
+                      onClick={() => handleCopy(transaction.txid, 'txid')}
+                    />
+                    {isTxidValid && (
+                      <ExplorerButton
+                        value={transaction.txid}
+                        urls={txidExplorerUrls}
+                        title={t('transactionDetails.viewInExplorer')}
+                        ariaLabel={t('transactionDetails.viewInExplorer')}
+                      />
+                    )}
+                  </div>
+                </div>
+                {copiedField === 'txid' && <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>}
+
+                {/* Block Height row */}
+                {/*
+                  Block Height + Block Hash rows do NOT render explorer buttons.
+                  `blockExplorerUrls` comes from `strThirdPartyTxUrls`, which is a
+                  list of TRANSACTION URL templates (the `%s` placeholder is the
+                  txid). Reusing those templates with a block height or block hash
+                  would produce broken links (e.g. `/tx/<height>`). Block-specific
+                  explorer URLs require a separate `strThirdPartyBlockUrls` setting
+                  which does not yet exist. Copy buttons are still rendered so the
+                  user can manually paste the value into a block explorer.
+                */}
+                {transaction.block_height !== undefined && transaction.block_height > 0 && (
+                  <div style={rowStyle}>
+                    <span style={labelStyle}>{t('transactionDetails.row.blockHeight')}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ ...valueStyle, fontFamily: 'monospace' }}>
                         {transaction.block_height.toLocaleString()}
                       </span>
                     </div>
-                  )}
-                  <div className="qt-hbox" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <span className="qt-label" style={{ fontSize: '12px', color: '#888' }}>Block Hash</span>
-                    <div className="qt-hbox" style={{ gap: '6px', alignItems: 'center' }}>
-                      <span
-                        className="qt-label"
-                        style={{ fontSize: '10px', fontFamily: 'monospace', maxWidth: '200px' }}
-                        title={transaction.block_hash}
-                      >
-                        {truncateTxId(transaction.block_hash, 8)}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(transaction.block_hash || '', 'blockhash')}
-                        className="qt-button-icon"
-                        style={{
-                          padding: '3px',
-                          backgroundColor: copiedField === 'blockhash' ? '#4a4a4a' : 'transparent',
-                          border: '1px solid #555',
-                          borderRadius: '2px',
-                          cursor: 'pointer',
-                          flexShrink: 0,
-                        }}
-                        title="Copy Block Hash"
-                      >
-                        <Copy size={12} style={{ color: copiedField === 'blockhash' ? '#00ff00' : '#ddd' }} />
-                      </button>
-                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* Close Button */}
-            <div className="qt-hbox" style={{ justifyContent: 'flex-end', marginTop: '8px' }}>
-              <button
-                type="button"
-                onClick={onClose}
-                className="qt-button"
-                style={{
-                  padding: '8px 24px',
-                  fontSize: '13px',
-                  backgroundColor: '#5a5a5a',
-                  border: '1px solid #666',
-                  borderRadius: '3px',
-                  color: '#fff',
-                  cursor: 'pointer',
-                }}
-              >
-                Close
-              </button>
+                {/* Block Hash row */}
+                {transaction.block_hash && (
+                  <>
+                    <div style={rowStyle}>
+                      <span style={labelStyle}>{t('transactionDetails.row.blockHash')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={monoAddressStyle} title={transaction.block_hash}>
+                          {truncateAddress(transaction.block_hash, 12, 10)}
+                        </span>
+                        <IconButton
+                          icon={<Copy size={12} />}
+                          title={t('transactionDetails.copy.blockHash')}
+                          ariaLabel={t('transactionDetails.copy.blockHash')}
+                          onClick={() =>
+                            handleCopy(transaction.block_hash || '', 'blockhash')
+                          }
+                        />
+                      </div>
+                    </div>
+                    {copiedField === 'blockhash' && (
+                      <div style={copyToastStyle}>{t('transactionDetails.copyToast')}</div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

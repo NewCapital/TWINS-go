@@ -136,7 +136,6 @@
     "error": "Greška: {{message}}",
     "type": {
       "all": "Sve",
-      "mostCommon": "Najučestaliji",
       "sent": "Poslano na",
       "received": "Primljeno s",
       "toYourself": "Samom sebi",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Sakrij orphan stakeove"
     },
     "footer": {
-      "selectedAmount": "Odabrani iznos:",
       "transactions": "{{count}} transakcija",
       "transactions_other": "{{count}} transakcija",
       "export": "Izvezi"

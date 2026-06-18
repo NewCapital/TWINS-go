@@ -136,7 +136,6 @@
     "error": "오류: {{message}}",
     "type": {
       "all": "전체",
-      "mostCommon": "기본",
       "sent": "전송됨",
       "received": "수신됨",
       "toYourself": "자신에게",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "고아 스테이크 숨기기"
     },
     "footer": {
-      "selectedAmount": "선택한 금액:",
       "transactions": "{{count}}개 거래",
       "transactions_other": "{{count}}개 거래",
       "export": "내보내기"

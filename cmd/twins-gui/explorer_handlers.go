@@ -56,20 +56,56 @@ func (a *App) GetExplorerTransaction(txid string) (*core.ExplorerTransaction, er
 	return &tx, nil
 }
 
-// GetExplorerAddress returns information about an address including balance and history.
-// address: the TWINS address to look up
-// limit: maximum number of transactions to include in history (default 25)
-func (a *App) GetExplorerAddress(address string, limit int) (*core.AddressInfo, error) {
+// GetExplorerAddressBasic returns the minimal, O(1) subset of address
+// information (Address only) for the Explorer Address Detail hero header.
+// No storage access beyond crypto.DecodeAddress validation — renders the
+// hero header (address text + QR) immediately while balance and stats
+// fetches are still in flight.
+func (a *App) GetExplorerAddressBasic(address string) (*core.AddressBasic, error) {
 	if a.coreClient == nil {
 		return nil, fmt.Errorf("core client not initialized")
 	}
 
-	info, err := a.coreClient.GetAddressInfo(address, limit)
+	info, err := a.coreClient.GetAddressBasic(address)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get address info: %w", err)
+		return nil, fmt.Errorf("failed to get address basic: %w", err)
 	}
 
 	return &info, nil
+}
+
+// GetExplorerAddressBalance returns the address's current spendable
+// balance via a GetUTXOsByAddress prefix scan. Cost is O(U) where
+// U = current UTXO count; called separately from GetExplorerAddressBasic
+// so the hero header is not blocked by the UTXO scan.
+func (a *App) GetExplorerAddressBalance(address string) (*core.AddressBalance, error) {
+	if a.coreClient == nil {
+		return nil, fmt.Errorf("core client not initialized")
+	}
+
+	info, err := a.coreClient.GetAddressBalance(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address balance: %w", err)
+	}
+
+	return &info, nil
+}
+
+// GetExplorerAddressStats returns the expensive aggregate statistics for
+// an address (TxCount, TotalReceived, TotalSent, FirstSeen, LastSeen).
+// Cost is O(n) storage reads; called separately from the basic fetch so
+// the hero card does not block on this work.
+func (a *App) GetExplorerAddressStats(address string) (*core.AddressStats, error) {
+	if a.coreClient == nil {
+		return nil, fmt.Errorf("core client not initialized")
+	}
+
+	stats, err := a.coreClient.GetAddressStats(address)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address stats: %w", err)
+	}
+
+	return &stats, nil
 }
 
 // ExplorerSearch searches for a block, transaction, or address.
@@ -99,6 +135,23 @@ func (a *App) GetAddressTransactions(address string, limit, offset int) (*core.A
 	page, err := a.coreClient.GetAddressTransactions(address, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get address transactions: %w", err)
+	}
+
+	return &page, nil
+}
+
+// GetAddressUTXOs returns a page of unspent outputs for an address.
+// address: the TWINS address
+// limit: number of UTXOs per batch
+// offset: starting position (0-based, from newest first by confirmations)
+func (a *App) GetAddressUTXOs(address string, limit, offset int) (*core.AddressUTXOPage, error) {
+	if a.coreClient == nil {
+		return nil, fmt.Errorf("core client not initialized")
+	}
+
+	page, err := a.coreClient.GetAddressUTXOs(address, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get address utxos: %w", err)
 	}
 
 	return &page, nil

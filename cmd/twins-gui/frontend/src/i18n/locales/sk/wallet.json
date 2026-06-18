@@ -136,7 +136,6 @@
     "error": "Chyba: {{message}}",
     "type": {
       "all": "Všetky",
-      "mostCommon": "Najčastejšie",
       "sent": "Odoslané na",
       "received": "Prijaté od",
       "toYourself": "Sebe",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "Skryť osirelé stake"
     },
     "footer": {
-      "selectedAmount": "Vybraná suma:",
       "transactions": "{{count}} transakcia",
       "transactions_other": "{{count}} transakcií",
       "export": "Exportovať"

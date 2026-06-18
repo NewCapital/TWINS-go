@@ -141,6 +141,7 @@
     "height": "Yükseklik",
     "hash": "Hash",
     "time": "Zaman",
+    "date": "Tarih",
     "age": "Yaş",
     "txCount": "Txs",
     "size": "Boyut",

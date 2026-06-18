@@ -74,6 +74,8 @@ export function GetAddressLabel(arg1:string):Promise<string>;
 
 export function GetAddressTransactions(arg1:string,arg2:number,arg3:number):Promise<core.AddressTxPage>;
 
+export function GetAddressUTXOs(arg1:string,arg2:number,arg3:number):Promise<core.AddressUTXOPage>;
+
 export function GetAllSettingsMetadata():Promise<Record<string, main.SettingMetadata>>;
 
 export function GetAvailableThemes():Promise<Array<main.ThemeInfo>>;
@@ -110,7 +112,11 @@ export function GetDebugSummary():Promise<debug.Summary>;
 
 export function GetDefaultDataDirectory():Promise<string>;
 
-export function GetExplorerAddress(arg1:string,arg2:number):Promise<core.AddressInfo>;
+export function GetExplorerAddressBalance(arg1:string):Promise<core.AddressBalance>;
+
+export function GetExplorerAddressBasic(arg1:string):Promise<core.AddressBasic>;
+
+export function GetExplorerAddressStats(arg1:string):Promise<core.AddressStats>;
 
 export function GetExplorerBlock(arg1:string):Promise<core.BlockDetail>;
 
@@ -141,6 +147,8 @@ export function GetNetworkTraffic():Promise<main.TrafficInfo>;
 export function GetP2PStatus():Promise<Record<string, any>>;
 
 export function GetPaymentRequests():Promise<Array<core.PaymentRequest>>;
+
+export function GetPaymentRequestsPage(arg1:core.PaymentRequestFilter):Promise<core.PaymentRequestPage>;
 
 export function GetPaymentStats(arg1:main.PaymentStatsFilter):Promise<main.PaymentStatsResponse>;
 

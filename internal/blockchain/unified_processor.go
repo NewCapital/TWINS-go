@@ -82,51 +82,82 @@ func (bc *BlockChain) getSpentOutputsForTx(tx *types.Transaction, precomputedOut
 	return spentOutputs, nil
 }
 
-// indexTransactionAddresses indexes transaction by involved addresses.
-// precomputedOutputs provides spent output data from applyBlockToBatch to avoid DB lookups.
-// This enables wallet-related RPC calls like listreceivedbyaddress.
-func (bc *BlockChain) indexTransactionAddresses(tx *types.Transaction, height uint32, txIndex uint32, batch storage.Batch, blockHash types.Hash, precomputedOutputs map[types.Outpoint]*types.TxOutput) error {
+// indexTransactionAddresses indexes a transaction by every address it touches.
+//
+// Each input is written as a separate 0x05 entry with `IsInput=true` and the
+// full positive spent-output value; each output is written as a separate
+// 0x05 entry with `IsInput=false` and the full positive output value. The
+// key index field carries `(IsInput<<15) | ioIdx` (see EncodeAddressHistoryIndex
+// in internal/storage/binary/schema.go), so every input and every output of
+// the same tx to the same address gets a unique key — no collision, no data
+// loss. `GetAddressAggregates` sums these entries to produce the user-visible
+// `Balance = TotalReceived - TotalSent` invariant.
+//
+// Prior to 2026-06-01 this function passed the block-level transaction
+// position as the key index, causing all inputs and outputs of one tx to
+// one address to collide on one key. A `spentValues[key] -= ...` netting
+// workaround attempted to compensate but produced int64→uint64 overflow on
+// split-stakes and silently undercounted multi-input withdrawals. Both
+// pathologies are eliminated by the unique-key scheme implemented here.
+//
+// precomputedOutputs provides spent-output data from applyBlockToBatch so
+// the input loop avoids redundant DB lookups. Pass nil to fall back to DB
+// lookups (used during reindex).
+func (bc *BlockChain) indexTransactionAddresses(tx *types.Transaction, height uint32, _ uint32, batch storage.Batch, blockHash types.Hash, precomputedOutputs map[types.Outpoint]*types.TxOutput) error {
 	txHash := tx.Hash()
 
-	spentValues := make(map[string]int64, len(tx.Inputs))
-
-	// Index inputs (spending addresses)
+	// Index inputs (spending addresses) — one entry per input, full positive
+	// spent-output value, IsInput=true.
 	if !tx.IsCoinbase() {
 		spentOutputs, err := bc.getSpentOutputsForTx(tx, precomputedOutputs)
 		if err != nil {
 			return fmt.Errorf("failed to get spent outputs: %w", err)
 		}
 
-		for _, spentOutput := range spentOutputs {
-			if spentOutput.Output != nil {
-				scriptType, scriptHash := binary.AnalyzeScript(spentOutput.Output.ScriptPubKey)
-				addressBinary := binary.ScriptHashToAddressBinary(scriptType, scriptHash, bc.config.IsTestNet())
-				if addressBinary != nil {
-					spentValues[string(binary.AddressHistoryKey(scriptHash, height, txHash, uint16(txIndex)))] = spentOutput.Output.Value
-					if err := batch.IndexTransactionByAddress(addressBinary, txHash, height, txIndex, -spentOutput.Output.Value, true, blockHash); err != nil {
-						return fmt.Errorf("failed to index input address: %w", err)
-					}
-				}
+		for inIdx, spentOutput := range spentOutputs {
+			if spentOutput.Output == nil {
+				continue
+			}
+			scriptType, scriptHash := binary.AnalyzeScript(spentOutput.Output.ScriptPubKey)
+			addressBinary := binary.ScriptHashToAddressBinary(scriptType, scriptHash, bc.config.IsTestNet())
+			if addressBinary == nil {
+				continue
+			}
+			if inIdx > int(binary.AddressHistoryIndexIOMask) {
+				bc.logger.WithFields(map[string]interface{}{
+					"txhash": txHash.String(),
+					"height": height,
+					"inIdx":  inIdx,
+				}).Warn("input index exceeds AddressHistoryIndexIOMask; skipping address-history entry")
+				continue
+			}
+			if err := batch.IndexTransactionByAddress(addressBinary, txHash, height, uint32(inIdx), spentOutput.Output.Value, true, blockHash); err != nil {
+				return fmt.Errorf("failed to index input address (inIdx=%d): %w", inIdx, err)
 			}
 		}
 	}
 
-	// Index outputs (receiving addresses)
-	for _, output := range tx.Outputs {
+	// Index outputs (receiving addresses) — one entry per output, full
+	// positive output value, IsInput=false. No subtraction-against-inputs:
+	// the unique-key scheme means inputs and outputs of the same tx to the
+	// same address are stored separately and netted by GetAddressAggregates.
+	for outIdx, output := range tx.Outputs {
 		scriptType, scriptHash := binary.AnalyzeScript(output.ScriptPubKey)
 		addressBinary := binary.ScriptHashToAddressBinary(scriptType, scriptHash, bc.config.IsTestNet())
-		if addressBinary != nil {
-			key := string(binary.AddressHistoryKey(scriptHash, height, txHash, uint16(txIndex)))
-			value := output.Value
-			if spentValues[key] != 0 {
-				value -= spentValues[key]
-			}
-			if err := batch.IndexTransactionByAddress(addressBinary, txHash, height, txIndex, value, false, blockHash); err != nil {
-				return fmt.Errorf("failed to index output address: %w", err)
-			}
+		if addressBinary == nil {
+			continue // Non-addressable script (PoS coinstake marker, OP_RETURN, Zerocoin/Sigma).
 		}
-		// else: skip non-addressable scripts (coinstake empty marker, PoS coinbase
-		// marker, OP_RETURN 0x6a, Zerocoin/Sigma privacy scripts 0xc1-0xc4)
+		if outIdx > int(binary.AddressHistoryIndexIOMask) {
+			bc.logger.WithFields(map[string]interface{}{
+				"txhash": txHash.String(),
+				"height": height,
+				"outIdx": outIdx,
+			}).Warn("output index exceeds AddressHistoryIndexIOMask; skipping address-history entry")
+			continue
+		}
+		if err := batch.IndexTransactionByAddress(addressBinary, txHash, height, uint32(outIdx), output.Value, false, blockHash); err != nil {
+			return fmt.Errorf("failed to index output address (outIdx=%d): %w", outIdx, err)
+		}
 	}
 
 	return nil

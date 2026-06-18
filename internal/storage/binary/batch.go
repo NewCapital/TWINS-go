@@ -658,13 +658,18 @@ func (b *BinaryBatch) DeleteTransaction(txHash types.Hash, height uint32) error 
 	}
 	b.size += len(txKey)
 
-	// Delete address history entries for outputs
+	// Delete address history entries. Each output and each input of the tx
+	// was indexed at its own unique key via EncodeAddressHistoryIndex (the
+	// high bit of the index field marks IsInput). Deletion mirrors the same
+	// encoding so the right key is removed.
 	if txData != nil && txData.TxData != nil {
 		for outIdx, output := range txData.TxData.Outputs {
 			scriptType, scriptHash := AnalyzeScript(output.ScriptPubKey)
 			if scriptType != ScriptTypeUnknown && scriptHash != [20]byte{} {
-				// Delete address history entry
-				historyKey := AddressHistoryKey(scriptHash, height, txHash, uint16(outIdx))
+				if outIdx > int(AddressHistoryIndexIOMask) {
+					continue // Defensive: skip pathological output index.
+				}
+				historyKey := AddressHistoryKey(scriptHash, height, txHash, EncodeAddressHistoryIndex(uint16(outIdx), false))
 				if err := b.batch.Delete(historyKey, nil); err != nil {
 					return fmt.Errorf("failed to delete address history for output %d: %w", outIdx, err)
 				}
@@ -672,22 +677,21 @@ func (b *BinaryBatch) DeleteTransaction(txHash types.Hash, height uint32) error 
 			}
 		}
 
-		// Delete address history entries for inputs (if not coinbase)
 		if !txData.TxData.IsCoinbase() {
 			for inIdx, input := range txData.TxData.Inputs {
-				// Get the previous output to find the address
 				prevTxData, err := b.storage.GetTransactionData(input.PreviousOutput.Hash)
 				if err != nil || prevTxData == nil || prevTxData.TxData == nil {
-					continue // Skip if we can't find the previous tx
+					continue // Skip if we can't find the previous tx.
 				}
 
 				if int(input.PreviousOutput.Index) < len(prevTxData.TxData.Outputs) {
 					prevOutput := prevTxData.TxData.Outputs[input.PreviousOutput.Index]
 					scriptType, scriptHash := AnalyzeScript(prevOutput.ScriptPubKey)
 					if scriptType != ScriptTypeUnknown && scriptHash != [20]byte{} {
-						// Delete address history entry for this input
-						// Note: inputs are indexed with txIndex = inIdx but marked as IsInput=true
-						historyKey := AddressHistoryKey(scriptHash, height, txHash, uint16(inIdx))
+						if inIdx > int(AddressHistoryIndexIOMask) {
+							continue // Defensive: skip pathological input index.
+						}
+						historyKey := AddressHistoryKey(scriptHash, height, txHash, EncodeAddressHistoryIndex(uint16(inIdx), true))
 						if err := b.batch.Delete(historyKey, nil); err != nil {
 							return fmt.Errorf("failed to delete address history for input %d: %w", inIdx, err)
 						}
@@ -701,20 +705,32 @@ func (b *BinaryBatch) DeleteTransaction(txHash types.Hash, height uint32) error 
 	return nil
 }
 
-// IndexTransactionByAddress stores address → transaction mapping in the batch
-// addressBinary is the decoded address (netID + hash160 = 21 bytes)
-func (b *BinaryBatch) IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, txIndex uint32, value int64, isInput bool, blockHash types.Hash) error {
+// IndexTransactionByAddress stores an address → transaction mapping in the batch.
+//
+// `ioIdx` is the input or output index WITHIN the transaction (NOT the
+// transaction's position within the block — that was the pre-2026-06-01
+// encoding which caused key-collision data loss). Combined with `isInput`,
+// it encodes to the 2-byte key index field via EncodeAddressHistoryIndex,
+// giving every input and every output a unique key. `addressBinary` is the
+// decoded address (netID + hash160 = 21 bytes).
+//
+// Returns an error if `ioIdx > 0x7fff` — TWINS protocol limits txs to a few
+// thousand i/o, so this bound is purely defensive.
+func (b *BinaryBatch) IndexTransactionByAddress(addressBinary []byte, txHash types.Hash, height uint32, ioIdx uint32, value int64, isInput bool, blockHash types.Hash) error {
 	if len(addressBinary) != 21 {
 		return fmt.Errorf("invalid address binary length: %d", len(addressBinary))
+	}
+	if ioIdx > uint32(AddressHistoryIndexIOMask) {
+		return fmt.Errorf("ioIdx %d exceeds AddressHistoryIndexIOMask (0x7fff)", ioIdx)
 	}
 
 	var scriptHash [20]byte
 	copy(scriptHash[:], addressBinary[1:21])
 
-	// Create complete index entry with full transaction context
+	// Create complete index entry with full transaction context.
 	entry := &AddressHistoryEntry{
 		IsInput:   isInput,
-		Value:     uint64(value), // Convert int64 to uint64
+		Value:     uint64(value), // Direction is carried by IsInput; Value is always positive sats.
 		BlockHash: blockHash,
 	}
 
@@ -723,7 +739,7 @@ func (b *BinaryBatch) IndexTransactionByAddress(addressBinary []byte, txHash typ
 		return fmt.Errorf("failed to encode history entry: %w", err)
 	}
 
-	key := AddressHistoryKey(scriptHash, height, txHash, uint16(txIndex))
+	key := AddressHistoryKey(scriptHash, height, txHash, EncodeAddressHistoryIndex(uint16(ioIdx), isInput))
 	if err := b.batch.Set(key, data, nil); err != nil {
 		return fmt.Errorf("failed to store address history: %w", err)
 	}

@@ -1,7 +1,29 @@
 {
   "overview": {
-    "title": "OVERVIEW",
     "recentTransactions": "Recent transactions"
+  },
+  "sync": {
+    "title": "Sync",
+    "lastBlock": "Last block",
+    "lastBlockTime": "Last block time",
+    "chainDifficulty": "Chain difficulty",
+    "chainSizeOnDisk": "Chain size on disk",
+    "moneySupply": "Money supply",
+    "blockCounterLabel": "Block",
+    "speedLabel": "Speed",
+    "etaLabel": "ETA"
+  },
+  "network": {
+    "title": "Network",
+    "peers": "Peers",
+    "inbound": "Inbound",
+    "outbound": "Outbound",
+    "connectionsInOut": "Connections (in/out)",
+    "networkHeight": "Network height"
+  },
+  "staking": {
+    "title": "Staking",
+    "reserveBalance": "Reserve balance"
   },
   "balance": {
     "title": "Balance",
@@ -13,6 +35,7 @@
     "pending": "Pending",
     "immature": "Immature",
     "locked": "Locked",
+    "lockedTooltip": "Coins locked by masternode collateral or coin lock",
     "lockedMasternodes": "Locked (Masternodes)",
     "watchOnly": "Watch-only",
     "spendable": "Spendable"
@@ -157,7 +180,6 @@
     "qrSaved": "QR code saved",
     "uriTooLong": "URI is very long and may not scan reliably",
     "requestPaymentTitle": "Request Payment",
-    "requestPaymentSubtitle": "Fill in optional details to create a shareable payment request.",
     "createRequest": "Create Request",
     "requestingPayment": "Creating...",
     "amount": "Amount",
@@ -168,7 +190,6 @@
     "newAddressPerRequest": "Generate new address for each request",
     "clear": "Clear",
     "receivingAddresses": "Receiving Addresses",
-    "recentRequests": "Recent Requests",
     "noRequests": "No payment requests yet",
     "noLabel": "(no label)",
     "show": "Show",
@@ -180,6 +201,7 @@
     "table": {
       "date": "Date",
       "label": "Label",
+      "message": "Message",
       "amount": "Amount"
     },
     "addressesDialog": {
@@ -256,15 +278,15 @@
     }
   },
   "transactions": {
-    "title": "HISTORY",
     "recent": "Recent Transactions",
     "all": "All Transactions",
     "noTransactions": "No transactions found",
     "loading": "Loading transactions...",
     "error": "Error: {{message}}",
+    "viewDetails": "View details",
+    "watchOnly": "[watch-only]",
     "type": {
       "all": "All",
-      "mostCommon": "Most Common",
       "sent": "Sent to",
       "received": "Received with",
       "toYourself": "To yourself",
@@ -307,7 +329,64 @@
       "type": "Type",
       "minAmount": "Min amount",
       "search": "Enter address or label to search",
-      "rangeTo": "to"
+      "rangeTo": "to",
+      "dateRangeLabel": "Date range",
+      "typeLabel": "Type",
+      "searchLabel": "Search",
+      "minAmountLabel": "Min amount",
+      "chip": {
+        "addFilter": "Add filter",
+        "clearAll": "Clear all",
+        "searchPlaceholder": "Search by address or label",
+        "searchAmountHint": "Type \">N\" to filter by minimum amount",
+        "searchAmountBannerMessage": "\"{{query}}\" matched 0 transactions. Did you mean to filter by amount?",
+        "searchAmountBannerCTA": "Use \">{{value}}\" as min amount filter",
+        "dateLabel": "Date",
+        "typeLabel": "Type",
+        "typeMore": "+{{count}} more",
+        "amountLabel": "Amount",
+        "amountFromLabel": "From",
+        "amountToLabel": "To",
+        "searchLabel": "Search",
+        "addressLabel": "Address",
+        "datePresets": {
+          "today": "Today",
+          "thisWeek": "This week",
+          "thisMonth": "This month",
+          "lastMonth": "Last month",
+          "thisYear": "This year",
+          "allTime": "All time"
+        },
+        "customRangeFrom": "From",
+        "customRangeTo": "To",
+        "localTzHint": "Dates are interpreted in your local timezone ({{tz}})",
+        "customRangeActive": "Custom range is active.",
+        "amountSuffix": "TWINS",
+        "amountApply": "Apply",
+        "amountClear": "Clear",
+        "invertedRangeError": "From must be less than or equal to To",
+        "watchOnlyAll": "All transactions",
+        "watchOnlyOnly": "Watch-only only",
+        "watchOnlyNon": "Non-watch-only only",
+        "removeFilter": "Remove filter"
+      }
+    },
+    "views": {
+      "viewsButton": "Views",
+      "viewsButtonActive": "Views: {{name}}",
+      "customLabel": "Custom",
+      "defaultViewsHeader": "Default views",
+      "userViewsHeader": "My views",
+      "noSavedViews": "No saved views yet.",
+      "saveCurrentAs": "Save current view as…",
+      "savePlaceholder": "View name",
+      "renameLabel": "Rename",
+      "deleteLabel": "Delete",
+      "overflowLabel": "More actions",
+      "deleteConfirmTitle": "Delete view?",
+      "deleteConfirmMessage": "Delete \"{{name}}\"? This cannot be undone.",
+      "deleteConfirmButton": "Delete",
+      "cancelButton": "Cancel"
     },
     "table": {
       "date": "Date",
@@ -325,10 +404,27 @@
       "hideOrphanStakes": "Hide orphan stakes"
     },
     "footer": {
-      "selectedAmount": "Selected amount:",
       "transactions": "{{count}} transaction",
       "transactions_other": "{{count}} transactions",
       "export": "Export"
+    },
+    "export": {
+      "confirmTitle": "Export Transactions",
+      "confirmMessage": "Export {{total}} transactions as CSV?",
+      "filterInfo": "Filtered from {{totalAll}} total.",
+      "confirmButton": "Export",
+      "cancelButton": "Cancel"
+    },
+    "emptyState": {
+      "filteredTitle": "No transactions match your filters",
+      "filteredMessage": "Try adjusting your search, date range, or amount filter.",
+      "clearFiltersButton": "Clear filters"
+    },
+    "address": {
+      "toPrefix": "To",
+      "fromPrefix": "From",
+      "moreSuffix": "(+{{count}} more)",
+      "unknown": "Unknown"
     },
     "notifications": {
       "noTransactionsToExport": "No transactions to export",
@@ -421,5 +517,63 @@
     "copyUtxo": "Copy UTXO",
     "lockCoin": "Lock Coin",
     "unlockCoin": "Unlock Coin"
+  },
+  "transactionDetails": {
+    "title": "Transaction Details",
+    "closeButton": "Close",
+    "closeAriaLabel": "Close transaction details",
+    "confirmationsCount": "{{count}} confirmations",
+    "openInExplorerHost": "Open in {{host}}",
+    "viewInExplorer": "View transaction in explorer",
+    "watchOnly": "(watch-only)",
+    "senderAddressUnknown": "Sender address unknown",
+    "unknown": "unknown",
+    "copyToast": "Copied to clipboard!",
+    "status": {
+      "conflicted": "Conflicted",
+      "unconfirmed": "Unconfirmed",
+      "immature": "Immature (matures in {{blocks}} more blocks)",
+      "confirming": "Confirming ({{count}}/6)",
+      "confirmed": "Confirmed"
+    },
+    "banner": {
+      "maturityCoinbase": "Generated coins must mature 60 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to \"not accepted\" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.",
+      "maturityMasternode": "Masternode rewards must mature 60 blocks before they can be spent. This transaction represents your masternode reward which is currently maturing.",
+      "maturityStaking": "Staking rewards must mature 60 blocks before they can be spent. This transaction represents your staking reward which is currently maturing.",
+      "conflicted": "This transaction conflicts with another transaction and will not be confirmed. The conflicting transaction may have been double-spent or replaced."
+    },
+    "addressLabel": {
+      "consolidatedTo": "Consolidated to",
+      "toYourself": "To yourself",
+      "sentFrom": "Sent from",
+      "receivedWith": "Received with",
+      "address": "Address"
+    },
+    "row": {
+      "type": "Type",
+      "from": "From",
+      "sentFrom": "Sent from",
+      "to": "To",
+      "toNumbered": "To #{{index}}",
+      "label": "Label",
+      "debit": "Debit",
+      "credit": "Credit",
+      "fee": "Fee",
+      "netAmount": "Net Amount",
+      "txid": "TXID",
+      "blockHeight": "Block Height",
+      "blockHash": "Block Hash"
+    },
+    "section": {
+      "message": "Message",
+      "transactionId": "Transaction ID"
+    },
+    "copy": {
+      "senderAddress": "Copy sender address",
+      "recipientAddress": "Copy recipient address",
+      "address": "Copy address",
+      "transactionId": "Copy transaction ID",
+      "blockHash": "Copy block hash"
+    }
   }
 }

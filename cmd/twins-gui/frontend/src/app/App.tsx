@@ -10,7 +10,7 @@ import ShutdownDialog from '@/shared/components/ShutdownDialog';
 import { OptionsDialog } from '@/features/settings/components/OptionsDialog';
 import { ToolsDialog } from '@/features/tools/components/ToolsDialog';
 import { ToolsTab, type ToolsTabValue } from '@/features/tools/constants';
-import { useOptions, useTools, useNotifications, useSignVerify, useAddressBook } from '@/store/useStore';
+import { useOptions, useTools, useNotifications, useSignVerify, useAddressBook, useTransactions, useStore } from '@/store/useStore';
 import { EventsOn, EventsOff, WindowShow } from '@wailsjs/runtime/runtime';
 import {
   SetWindowToSplash,
@@ -155,6 +155,68 @@ function AddressBookEventHandler() {
   }, [openAddressBookDialog]);
 
   return <AddressBookDialog />;
+}
+
+// Eager-prefetch the first page of transactions on app boot so the Transactions
+// page renders rows immediately on first visit (no skeleton flash). Subsequent
+// visits also benefit — the slice keeps the cached page in memory across route
+// changes, and the page's own on-mount fetchPage() refresh runs in the
+// background without unmounting the visible rows (per the antiflicker render
+// branch in `pages/Transactions.tsx`).
+//
+// Trade-off: one extra RPC at boot even if the user never opens Transactions.
+// The fetch is small (one page = up to 250 rows) and runs in parallel with
+// other boot-time work, so the cost is negligible vs. the first-open flash
+// the user reported.
+function TransactionsPreloadHandler() {
+  const { fetchPage, syncHideOrphanStakes, syncBlockExplorerUrls } = useTransactions();
+  useEffect(() => {
+    // Mirror the Transactions page's own mount effect: sync the orphan-stakes
+    // filter and the block-explorer URL list from backend settings BEFORE
+    // fetching, so the preloaded page matches what the page would fetch on
+    // its own. Without this, a user with `fHideOrphans=true` would see
+    // orphan rows briefly when navigating to Transactions for the first
+    // time (preloaded page used the default `false`, page mount re-syncs
+    // and refetches with `true` → rows swap).
+    //
+    // Both syncs run in parallel — `syncBlockExplorerUrls` doesn't affect
+    // the fetch payload (URLs are consumed by the context-menu, not the
+    // fetch path), but its early resolution closes the race where a user
+    // could right-click a transaction with `blockExplorerUrls === []`
+    // before the sync lands and get routed to the legacy fallback even
+    // when they have custom URLs configured. See Transactions.tsx
+    // `urlsResolved` guard for the symmetric defense.
+    //
+    // Race defense (Codex round-4 finding): `fetchPage(1)` in the slice has
+    // no request-versioning, so a late preload response could overwrite a
+    // newer user-initiated fetch (e.g. user opens Transactions and changes
+    // filter before preload lands). After the syncs resolve, read the LIVE
+    // store state via `useStore.getState()` — if `transactions.length > 0`,
+    // someone else (page mount or user) already populated the cache during
+    // the ~100ms sync window, and we no-op. Closes the visible-flash case.
+    Promise.all([syncBlockExplorerUrls(), syncHideOrphanStakes()])
+      .then(() => {
+        // Cache-warm guard: skip the preload fetch if EITHER (a) the store
+        // already has rows (page mount or user fetch completed during sync
+        // window), or (b) a fetch is currently in flight. Both conditions
+        // matter — `syncHideOrphanStakes` internally dispatches `fetchPage(1)`
+        // when the GUISetting value differs from the slice default (see
+        // transactionsSlice.ts line 454), so by the time we reach this
+        // `.then()` block there may already be a fire-and-forget fetch in
+        // flight that hasn't yet populated `transactions`. Without the
+        // `isLoadingTransactions` check we'd issue a duplicate fetch with
+        // identical args; the two responses then race in the slice.
+        const live = useStore.getState();
+        if (live.transactions.length > 0 || live.isLoadingTransactions) return;
+        fetchPage(1);
+      })
+      .catch((err) => logger.warn('Transactions preload failed:', err));
+    // Intentionally empty deps: run exactly once on mount. Store-action
+    // references are stable in practice but listing them would suggest
+    // re-running on identity change, which is wrong for an eager preload.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
 }
 
 // Component that checks for repair results after app restart.
@@ -463,6 +525,7 @@ function App() {
             <AddressBookEventHandler />
             <RepairResultHandler />
             <MinimizeToTrayHandler />
+            <TransactionsPreloadHandler />
             <RouterProvider router={router} />
           </StoreProvider>
         </QueryClientProvider>

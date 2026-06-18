@@ -136,7 +136,6 @@
     "error": "エラー：{{message}}",
     "type": {
       "all": "すべて",
-      "mostCommon": "一般的",
       "sent": "送金先",
       "received": "受取元",
       "toYourself": "自分自身へ",
@@ -197,7 +196,6 @@
       "hideOrphanStakes": "孤立ステークを非表示"
     },
     "footer": {
-      "selectedAmount": "選択金額：",
       "transactions": "{{count}}件の取引",
       "transactions_other": "{{count}}件の取引",
       "export": "エクスポート"

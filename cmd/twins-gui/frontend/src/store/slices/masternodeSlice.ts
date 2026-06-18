@@ -3,13 +3,15 @@ import { Masternode, MasternodeTier, MasternodeStatus, NetworkMasternode, Networ
 
 export interface MasternodeSlice {
   // State - My Masternodes
+  // `selectedMasternode` + `selectMasternode` action dropped by
+  // m-masternodes-table-ux-cleanup (2026-06-11) — row selection chrome was
+  // removed end-to-end alongside the right-click context menu. Start alias
+  // now operates per-row via a Play IconButton in MasternodesTable's Actions
+  // column (no selection state needed).
   masternodes: Masternode[];
-  selectedMasternode: Masternode | null;
   isLoading: boolean;
   isStartingMasternode: boolean;
   lastRefresh: number | null;
-  operationError: string | null;
-  operationSuccess: string | null;
 
   // State - Network Masternodes
   networkMasternodes: NetworkMasternode[];
@@ -23,13 +25,9 @@ export interface MasternodeSlice {
   addMasternode: (masternode: Masternode) => void;
   updateMasternode: (id: string, updates: Partial<Masternode>) => void;
   removeMasternode: (id: string) => void;
-  selectMasternode: (masternode: Masternode | null) => void;
   setLoading: (loading: boolean) => void;
   setStartingMasternode: (starting: boolean) => void;
   setLastRefresh: (timestamp: number) => void;
-  setOperationError: (error: string | null) => void;
-  setOperationSuccess: (message: string | null) => void;
-  clearOperationMessages: () => void;
 
   // Actions - Network Masternodes
   setNetworkMasternodes: (masternodes: NetworkMasternode[]) => void;
@@ -62,12 +60,9 @@ const defaultNetworkFilters: NetworkMasternodeFilters = {
 export const createMasternodeSlice: SliceCreator<MasternodeSlice> = (set, get) => ({
   // Initial state - My Masternodes
   masternodes: [],
-  selectedMasternode: null,
   isLoading: false,
   isStartingMasternode: false,
   lastRefresh: null,
-  operationError: null,
-  operationSuccess: null,
 
   // Initial state - Network Masternodes
   networkMasternodes: [],
@@ -96,19 +91,11 @@ export const createMasternodeSlice: SliceCreator<MasternodeSlice> = (set, get) =
       masternodes: state.masternodes.filter((mn) => mn.id !== id),
     })),
 
-  selectMasternode: (masternode) => set({ selectedMasternode: masternode }),
-
   setLoading: (loading) => set({ isLoading: loading }),
 
   setStartingMasternode: (starting) => set({ isStartingMasternode: starting }),
 
   setLastRefresh: (timestamp) => set({ lastRefresh: timestamp }),
-
-  setOperationError: (error) => set({ operationError: error }),
-
-  setOperationSuccess: (message) => set({ operationSuccess: message }),
-
-  clearOperationMessages: () => set({ operationError: null, operationSuccess: null }),
 
   // Actions - Network Masternodes
   setNetworkMasternodes: (masternodes) => set({ networkMasternodes: masternodes }),
@@ -166,14 +153,8 @@ export const createMasternodeSlice: SliceCreator<MasternodeSlice> = (set, get) =
         let aVal: string | number | undefined;
         let bVal: string | number | undefined;
 
-        // Handle virtual columns (not direct properties of NetworkMasternode)
-        if (networkFilters.sortColumn === 'network') {
-          aVal = a.addr.includes('[') ? 'IPv6' : 'IPv4';
-          bVal = b.addr.includes('[') ? 'IPv6' : 'IPv4';
-        } else {
-          aVal = a[networkFilters.sortColumn as keyof NetworkMasternode];
-          bVal = b[networkFilters.sortColumn as keyof NetworkMasternode];
-        }
+        aVal = a[networkFilters.sortColumn as keyof NetworkMasternode];
+        bVal = b[networkFilters.sortColumn as keyof NetworkMasternode];
 
         // Handle numeric vs string comparison
         if (typeof aVal === 'number' && typeof bVal === 'number') {

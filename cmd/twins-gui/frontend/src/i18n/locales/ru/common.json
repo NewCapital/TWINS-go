@@ -141,6 +141,7 @@
     "height": "Высота",
     "hash": "Хеш",
     "time": "Время",
+    "date": "Дата",
     "age": "Возраст",
     "txCount": "Txn",
     "size": "Размер",
@@ -156,7 +157,113 @@
     "value": "Значение",
     "from": "От",
     "to": "Кому",
-    "viewAll": "Показать все"
+    "viewAll": "Показать все",
+    "tx": {
+      "pill": {
+        "coinbase": "Coinbase",
+        "coinstake": "Coinstake",
+        "regular": "Обычная"
+      },
+      "input": {
+        "coinbaseLabel": "Новые монеты",
+        "coinbaseTooltip": "Без источника — награда за блок",
+        "mineChip": "МОЙ",
+        "mineTooltip": "Адрес вашего кошелька",
+        "kernelChip": "ЯДРО",
+        "kernelTooltip": "UTXO-ядро стейка, использованный для этого блока",
+        "fromLabel": "от"
+      },
+      "role": {
+        "blockMarker": {
+          "label": "Маркер блока",
+          "chip": "МАРКЕР БЛОКА",
+          "tooltip": "Обязательный маркерный выход протокола"
+        },
+        "stakeReturn": {
+          "label": "Возврат стейка",
+          "chip": "ВОЗВРАТ СТЕЙКА",
+          "tooltip": "Сумма стейка, возвращённая стейкеру (плюс новые монеты)",
+          "part1": "ЧАСТЬ 1 ИЗ 2",
+          "part2": "ЧАСТЬ 2 ИЗ 2",
+          "splitGroup": "Возврат стейка (разделён на 2 части)"
+        },
+        "masternodePayment": {
+          "label": "Выплата мастерноде",
+          "chip": "МАСТЕРНОДА",
+          "tooltip": "Награда выбранной мастерноде"
+        },
+        "devFund": {
+          "label": "Фонд разработчиков",
+          "chip": "ФОНД РАЗРАБОТКИ",
+          "tooltip": "Доля награды блока, направленная в фонд разработчиков"
+        },
+        "externalPayment": {
+          "label": "Внешний платёж",
+          "chip": "",
+          "tooltip": "Платёж на адрес вне вашего кошелька"
+        },
+        "change": {
+          "label": "Сдача",
+          "chip": "СДАЧА",
+          "tooltip": "Остаток средств, возвращённый в ваш кошелёк"
+        },
+        "selfSend": {
+          "label": "Себе",
+          "chip": "СЕБЕ",
+          "tooltip": "Выход в ваш кошелёк (не сдача)"
+        },
+        "dataCarrier": {
+          "label": "Данные",
+          "chip": "",
+          "tooltip": "OP_RETURN-носитель данных (без передачи средств)"
+        },
+        "miningReward": {
+          "label": "Награда за майнинг",
+          "chip": "НАГРАДА МАЙНИНГА",
+          "tooltip": "Награда блока, выплаченная PoW-майнеру"
+        },
+        "premine": {
+          "label": "Премайн",
+          "chip": "ПРЕМАЙН",
+          "tooltip": "Выход премайна генезис-блока"
+        },
+        "nonstandard": {
+          "label": "Неизвестный скрипт",
+          "chip": "",
+          "tooltip": "Нестандартный тип скрипта — доступен сырой hex"
+        },
+        "multisig": {
+          "label": "Мультиподпись",
+          "chip": "M-ИЗ-N",
+          "tooltip": "Выход с мультиподписью (требуется M из N)"
+        }
+      },
+      "dust": {
+        "chip": "ПЫЛЬ",
+        "tooltip": "Ниже порога пыли (0.0000546 TWINS)"
+      },
+      "empty": {
+        "noInputs": "Нет входов",
+        "noOutputs": "Нет выходов"
+      },
+      "dataModal": {
+        "title": "Данные OP_RETURN",
+        "hexLabel": "Hex",
+        "asciiLabel": "ASCII",
+        "binaryPlaceholder": "Бинарные данные (нет печатных ASCII-символов)",
+        "copyHex": "Копировать hex",
+        "copyAscii": "Копировать ASCII",
+        "close": "Закрыть",
+        "viewFullTooltip": "Показать полные данные",
+        "viewFullAriaLabel": "Открыть модальное окно OP_RETURN"
+      },
+      "spent": {
+        "label": "потрачен",
+        "tooltip": "Этот выход уже потрачен в другой транзакции"
+      },
+      "noAddressTooltip": "Этот выход не имеет адреса",
+      "unknownScript": "Неизвестный скрипт"
+    }
   },
   "staking": {
     "title": "Стейкинг",

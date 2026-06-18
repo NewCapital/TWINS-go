@@ -7,6 +7,7 @@ export interface GUISettings {
   fMinimizeToTray: boolean;
   fMinimizeOnClose: boolean;
   nDisplayUnit: number;
+  nDateDisplayFormat: number;
   theme: string;
   digits: number;
   language: string;
@@ -316,6 +317,9 @@ export const createOptionsSlice: SliceCreator<OptionsSlice> = (set, get) => ({
         if ('digits' in changedSettings) {
           set({ displayDigits: changedSettings.digits as number });
         }
+        if ('nDateDisplayFormat' in changedSettings) {
+          set({ dateFormat: changedSettings.nDateDisplayFormat as number });
+        }
       }
 
       // Save daemon settings one by one; wrap errors with the key that failed
@@ -431,9 +435,10 @@ export const createOptionsSlice: SliceCreator<OptionsSlice> = (set, get) => ({
         restartRequired: daemonRestartRequired,
         appliedRestartPending: daemonRestartRequired || get().appliedRestartPending,
         isSaving: false,
-        // Reset display units to defaults
+        // Reset display settings to defaults
         displayUnit: (newSettings as any).nDisplayUnit ?? 0,
         displayDigits: (newSettings as any).digits ?? 8,
+        dateFormat: (newSettings as any).nDateDisplayFormat ?? 0,
       });
 
       // Hot reload language if it changed from previous value
